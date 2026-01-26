@@ -1,0 +1,62 @@
+.app-header {
+  background-color: var(--header-background);
+  color: var(--header-text);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .mat-icon, .logo, .nav-links button, .actions button {
+    color: var(--header-text);
+  }
+
+  .logo {
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    margin: 0 16px;
+    font-size: 1.1rem;
+
+    @media (max-width: 599px) {
+      font-size: 0.95rem;
+      margin: 0 8px;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    @media (max-width: 599px) {
+      display: none;
+    }
+
+    button {
+      display: flex;
+      gap: 4px;
+      font-size: 0.9rem;
+
+      span {
+        @media (max-width: 959px) {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .spacer { flex: 1 1 auto; }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .menu-section { padding: .5rem 0; }
+  .menu-title {
+    font-size: .75rem;
+    opacity: .7;
+    padding: .25rem 1rem .5rem;
+  }
+  .check { margin-left: auto; }
+}

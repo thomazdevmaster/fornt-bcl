@@ -1,0 +1,195 @@
+/* ===============================
+   Angular 20 + Material 20 Theme
+   Autor: Thomaz (Banda Carmelitana)
+   =============================== */
+
+@use '@angular/material' as mat;
+@import 'scss/breakpoints';
+@import 'scss/musical-background';
+
+/* -------------------------------------------------------
+   1) Reset/Globais basicos (opcional, ajuste se já tiver)
+   ------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* As duas linhas abaixo aplicam as cores de superfície do tema ativo */
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* -------------------------------------------------------
+   2) Tema padrão (auto) com base no SO (prefers-color-scheme)
+      - Útil como fallback enquanto você não coloca a classe .light/.dark
+   ------------------------------------------------------- */
+html {
+  /* Habilita light/dark baseado no SO, quando você NÃO setar classes manualmente */
+  color-scheme: light dark;
+
+  /* Tema “base” (padrão claro), pode ser sobrescrito por .light/.dark abaixo */
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0, // 0 a -5 (quanto menor, mais compacto). Ex.: -2 fica bem “Material compact”.
+  ));
+}
+
+/* -------------------------------------------------------
+   3) Temas por classe no <html>
+      - Aplique <html class="light"> ou <html class="dark">
+      - Combine com <html class="light primary-blue">, etc.
+   ------------------------------------------------------- */
+
+/* Força tema claro */
+html.light {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+/* Força tema escuro */
+html.dark {
+  @include mat.theme((
+    color: (
+      theme-type: dark,
+      primary: mat.$magenta-palette,
+      tertiary: mat.$violet-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+/* -------------------------------------------------------
+   4) Escopo alternativo “primary azul” (apenas cores)
+      - Pode combinar com .light/.dark
+      - Ex.: <html class="light primary-blue"> ou <html class="dark primary-blue">
+   ------------------------------------------------------- */
+html.primary-blue {
+  @include mat.theme((
+    color: (
+      theme-type: light,            // será substituído pelo .dark.primary-blue abaixo
+      primary: mat.$blue-palette,   // primary azul
+      tertiary: mat.$blue-palette,
+    ),
+    // Tipografia e densidade podem ser omitidos aqui (herdam do tema aplicado)
+  ));
+}
+
+/* Variante escura do “primary azul” */
+html.dark.primary-blue {
+  @include mat.theme((
+    color: (
+      theme-type: dark,
+      primary: mat.$blue-palette,
+      tertiary: mat.$blue-palette,
+    ),
+  ));
+}
+
+/* -------------------------------------------------------
+   5) Utilitários e acessibilidade
+   ------------------------------------------------------- */
+
+/* Melhor foco visível (segue recomendações Material 3) */
+:root {
+  /* Ajuste se quiser um foco mais evidente */
+  --mat-focus-indicator-color: color-mix(in srgb, currentColor 30%, transparent);
+  --color-primary: #2187da;
+  --color-text-primary: #ffffff;
+}
+
+/* Classe para forçar foco “alto contraste” em elementos interativos */
+.high-contrast-focus :is(a, button, [role="button"], [tabindex]) {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------
+   6) Overrides opcionais (CSS Variables) para a toolbar do Header
+      - Útil se quiser cor diferente só no header sem mexer no tema todo
+   ------------------------------------------------------- */
+
+/* Ex.: deixe o header com fundo azul escuro e texto branco */
+.app-header {
+  /* Tokens expostos pelo Material 3 (Toolbar) */
+  --mat-toolbar-container-background-color: #143C6B;
+  --mat-toolbar-container-text-color: #ffffff;
+
+  /* Extras visuais */
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+
+  /* Ajustes de contraste em ícones/links dentro do header */
+  .mat-icon, .logo, .nav-links button, .actions button {
+    color: var(--mat-toolbar-container-text-color);
+  }
+
+  .spacer { flex: 1 1 auto; }
+}
+
+/* Divisor vertical dentro da toolbar (se usar <mat-divider vertical>) */
+mat-toolbar {
+  .mat-divider[vertical] {
+    height: 32px; /* ou 100% se preferir */
+    margin: 0 8px;
+  }
+}
+
+/* -------------------------------------------------------
+   7) Exemplo de utilitário de densidade por componente (opcional)
+      - Se quiser compactar apenas certos componentes
+   ------------------------------------------------------- */
+.compact-forms {
+  /* Deixa form-fields mais densos sem mexer no tema global */
+  @include mat.form-field-density(-2);
+  @include mat.select-density(-2);
+  @include mat.input-density(-2);
+  @include mat.button-density(-1);
+}
+
+/* -------------------------------------------------------
+   8) Preferência do usuário (automático) – opcional
+      - Se quiser que, por padrão, o app siga o SO
+      - Isso só vale quando você NÃO setar classes .light/.dark manualmente
+   ------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  html:not(.light):not(.dark) {
+    @include mat.theme((
+      color: (
+        theme-type: dark,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    ));
+  }
+}
+
+.title-table-row {
+  font-size: 20px;
+  font-weight: bold;
+  justify-content: center;
+  background-color: var(--color-primary);
+}

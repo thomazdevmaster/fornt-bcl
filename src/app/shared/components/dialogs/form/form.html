@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-container">
+    @for (field of data.fields; track field.fieldName) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ field.label }}</mat-label>
+
+        @switch (field.type) {
+          @case ('select') {
+            <mat-select [formControlName]="field.fieldName">
+              @for (option of field.options; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+          }
+          @case ('textarea') {
+            <textarea matInput
+              [formControlName]="field.fieldName"
+              [placeholder]="field.placeholder || ''"
+              rows="4">
+            </textarea>
+          }
+          @case ('date') {
+            <input matInput
+              type="date"
+              [formControlName]="field.fieldName">
+          }
+          @default {
+            <input matInput
+              [type]="field.type"
+              [formControlName]="field.fieldName"
+              [placeholder]="field.placeholder || ''">
+          }
+        }
+
+        @if (getControl(field.fieldName); as control) {
+          @if (control.hasError('required')) {
+            <mat-error>{{ field.label }} é obrigatório</mat-error>
+          }
+          @if (control.hasError('email')) {
+            <mat-error>Email inválido</mat-error>
+          }
+          @if (control.hasError('pattern')) {
+            <mat-error>Formato inválido</mat-error>
+          }
+          @if (control.hasError('minLength')) {
+            <mat-error>Mínimo de caracteres não atingido</mat-error>
+          }
+          @if (control.hasError('maxLength')) {
+            <mat-error>Máximo de caracteres excedido</mat-error>
+          }
+        }
+      </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions end>
+  <button mat-button (click)="cancel()">{{ data.cancelText || 'Cancelar' }}</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">
+    {{ data.submitText || 'Salvar' }}
+  </button>
+</mat-dialog-actions>

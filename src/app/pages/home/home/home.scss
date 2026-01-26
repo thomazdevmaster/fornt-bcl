@@ -1,0 +1,113 @@
+.welcome-card {
+  background: var(--gradient-welcome);
+  color: var(--color-text-primary);
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 24px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+
+  mat-card-title {
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin: 0;
+
+    @media (max-width: 959px) {
+      font-size: 1.3rem;
+    }
+
+    @media (max-width: 599px) {
+      font-size: 1.1rem;
+    }
+  }
+  mat-card-subtitle {
+    font-size: 1.2rem;
+    align-items: center;
+    margin: 0;
+
+    @media (max-width: 959px) {
+      font-size: 1rem;
+    }
+
+    @media (max-width: 599px) {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.shortcuts-section {
+  h2 {
+    margin-bottom: 12px;
+    font-size: 1.5rem;
+    color: var(--card-text);
+
+    @media (max-width: 599px) {
+      font-size: 1.2rem;
+    }
+  }
+
+  .shortcut-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    padding: 16px;
+
+    mat-icon {
+      font-size: 25px;
+      color: var(--mat-primary);
+    }
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 12px var(--button-hover-background);
+    }
+
+    @media (max-width: 599px) {
+      padding: 12px;
+
+      mat-icon {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.news-section {
+  h2 {
+    margin-bottom: 12px;
+    font-size: 1.5rem;
+    color: var(--card-text);
+
+    @media (max-width: 599px) {
+      font-size: 1.2rem;
+    }
+  }
+
+  .news-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+
+    @media (max-width: 959px) {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+
+    @media (max-width: 599px) {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+
+  .news-card {
+    transition: transform 0.2s ease-in-out;
+    &:hover {
+      transform: translateY(-4px);
+    }
+  }
+}

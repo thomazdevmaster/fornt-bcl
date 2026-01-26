@@ -1,0 +1,238 @@
+/**
+ * Fundo Minimalista com Tema Musical
+ * ==================================
+ */
+
+// Padrão de notas musicais flutuantes
+.musical-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+
+  // Gradiente suave de fundo
+  background: linear-gradient(
+    135deg,
+    #fafbfc 0%,
+    #f5f7fa 50%,
+    #eef2f7 100%
+  );
+
+  // Padrão de linhas musicais muito sutis
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(20, 60, 107, 0.12) 0px,
+        rgba(20, 60, 107, 0.12) 2px,
+        transparent 2px,
+        transparent 5px
+      );
+    pointer-events: none;
+  }
+
+  // Decoração de notas musicais
+  &::after {
+    content: '♪ ♫ ♪ ♫';
+    position: absolute;
+    width: 100%;
+    top: -5%;
+    left: -5%;
+    font-size: 280px;
+    font-weight: 300;
+    color: rgba(33, 150, 243, 0.08);
+    transform: rotate(-25deg);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: 60px;
+  }
+
+  // Notas musicais flutuantes
+  .note {
+    position: absolute;
+    font-size: 3rem;
+    opacity: 0;
+    color: rgba(33, 150, 243, 0.35);
+    animation: float 6s infinite ease-in-out;
+    pointer-events: none;
+    font-weight: 500;
+
+    &:nth-child(1) {
+      left: 10%;
+      top: 20%;
+      font-size: 4rem;
+      animation-delay: 0s;
+      animation-duration: 8s;
+      color: rgba(66, 133, 244, 0.45);
+    }
+
+    &:nth-child(2) {
+      left: 20%;
+      top: 60%;
+      font-size: 3.5rem;
+      animation-delay: 1s;
+      animation-duration: 7s;
+      color: rgba(156, 39, 176, 0.40);
+    }
+
+    &:nth-child(3) {
+      left: 60%;
+      top: 30%;
+      font-size: 3.8rem;
+      animation-delay: 2s;
+      animation-duration: 9s;
+      color: rgba(33, 150, 243, 0.45);
+    }
+
+    &:nth-child(4) {
+      left: 75%;
+      top: 70%;
+      font-size: 4.2rem;
+      animation-delay: 0.5s;
+      animation-duration: 10s;
+      color: rgba(244, 67, 54, 0.35);
+    }
+
+    &:nth-child(5) {
+      left: 85%;
+      top: 40%;
+      font-size: 3.6rem;
+      animation-delay: 1.5s;
+      animation-duration: 8.5s;
+      color: rgba(76, 175, 80, 0.40);
+    }
+
+    &:nth-child(6) {
+      left: 15%;
+      top: 80%;
+      font-size: 4rem;
+      animation-delay: 2.5s;
+      animation-duration: 9.5s;
+      color: rgba(255, 152, 0, 0.35);
+    }
+  }
+}
+
+// Animação de flutuação
+@keyframes float {
+  0% {
+    transform: translateY(-50px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(100vh) translateX(50px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+// Para temas escuros (se implementar)
+.dark .musical-background {
+  background: linear-gradient(
+    135deg,
+    #1a1a2e 0%,
+    #16213e 50%,
+    #0f3460 100%
+  );
+
+  &::before {
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.12) 0px,
+        rgba(255, 255, 255, 0.12) 2px,
+        transparent 2px,
+        transparent 5px
+      );
+  }
+
+  &::after {
+    color: rgba(76, 175, 80, 0.12);
+  }
+
+  .note {
+    color: rgba(76, 175, 80, 0.45);
+
+    &:nth-child(1) {
+      color: rgba(76, 175, 80, 0.50);
+    }
+
+    &:nth-child(2) {
+      color: rgba(156, 39, 176, 0.45);
+    }
+
+    &:nth-child(3) {
+      color: rgba(33, 150, 243, 0.50);
+    }
+
+    &:nth-child(4) {
+      color: rgba(244, 67, 54, 0.40);
+    }
+
+    &:nth-child(5) {
+      color: rgba(255, 152, 0, 0.45);
+    }
+
+    &:nth-child(6) {
+      color: rgba(63, 81, 181, 0.45);
+    }
+  }
+}
+
+// Responsividade para mobile
+@media (max-width: 599px) {
+  .musical-background {
+    &::after {
+      font-size: 150px;
+      letter-spacing: 30px;
+      top: 0%;
+      left: -10%;
+    }
+
+    .note {
+      font-size: 2.5rem !important;
+
+      &:nth-child(1) {
+        font-size: 2.2rem !important;
+      }
+
+      &:nth-child(2) {
+        font-size: 2rem !important;
+      }
+
+      &:nth-child(3) {
+        font-size: 2.3rem !important;
+      }
+
+      &:nth-child(4) {
+        font-size: 2.1rem !important;
+      }
+
+      &:nth-child(5) {
+        font-size: 2.2rem !important;
+      }
+
+      &:nth-child(6) {
+        font-size: 2.3rem !important;
+      }
+    }
+  }
+}

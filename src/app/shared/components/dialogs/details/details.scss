@@ -1,0 +1,23 @@
+.details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.detail-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.detail-label {
+  font-weight: 600;
+  min-width: 100px;
+  color: #666;
+}
+
+.detail-value {
+  flex: 1;
+  color: #333;
+}

@@ -1,0 +1,305 @@
+{
+  "musicians": [
+    {
+      "id": 1,
+      "firstName": "Thomaz",
+      "lastName": "Jorge",
+      "email": "thomaz.jorge@email.com",
+      "birthDate": "1990-05-15",
+      "phone": "35999999991",
+      "professionalTitle": "Trompetista",
+      "voz": 1,
+      "currentInstrumentSpecieId": 2,
+      "playedInstrumentsSpeciesIds": [
+        1,
+        2,
+        5
+      ]
+    },
+    {
+      "id": 3,
+      "firstName": "Lucas",
+      "lastName": "Oliveira",
+      "email": "lucas.oliva@email.com",
+      "birthDate": "1988-12-02",
+      "phone": "35999999993",
+      "professionalTitle": "Pianista",
+      "voz": 3,
+      "currentInstrumentSpecieId": 1,
+      "playedInstrumentsSpeciesIds": [
+        1,
+        10,
+        12
+      ]
+    },
+    {
+      "id": 4,
+      "firstName": "Beatriz",
+      "lastName": "Silva",
+      "email": "bia.silva@email.com",
+      "birthDate": "1995-03-10",
+      "phone": "35999999994",
+      "professionalTitle": "Flautista",
+      "voz": 1,
+      "currentInstrumentSpecieId": 8,
+      "playedInstrumentsSpeciesIds": [
+        8,
+        9
+      ]
+    },
+    {
+      "id": 5,
+      "firstName": "Ricardo",
+      "lastName": "Santos",
+      "email": "ricardo.sax@email.com",
+      "birthDate": "1985-07-25",
+      "phone": "35999999995",
+      "professionalTitle": "Saxofonista",
+      "voz": 4,
+      "currentInstrumentSpecieId": 3,
+      "playedInstrumentsSpeciesIds": [
+        3,
+        7,
+        15
+      ]
+    },
+    {
+      "id": 6,
+      "firstName": "Mariana",
+      "lastName": "Costa",
+      "email": "mari.costa@email.com",
+      "birthDate": "1998-11-30",
+      "phone": "35999999996",
+      "professionalTitle": "Violinista",
+      "voz": 1,
+      "currentInstrumentSpecieId": 5,
+      "playedInstrumentsSpeciesIds": [
+        5,
+        4
+      ]
+    },
+    {
+      "id": 7,
+      "firstName": "André",
+      "lastName": "Souza",
+      "email": "andre.souza@email.com",
+      "birthDate": "1991-01-12",
+      "phone": "35999999997",
+      "professionalTitle": "Baixista",
+      "voz": 3,
+      "currentInstrumentSpecieId": 11,
+      "playedInstrumentsSpeciesIds": [
+        11,
+        14
+      ]
+    },
+    {
+      "id": 8,
+      "firstName": "Fernanda",
+      "lastName": "Lima",
+      "email": "fer.lima@email.com",
+      "birthDate": "1993-06-18",
+      "phone": "35999999998",
+      "professionalTitle": "Clarinetista",
+      "voz": 2,
+      "currentInstrumentSpecieId": 7,
+      "playedInstrumentsSpeciesIds": [
+        7,
+        8
+      ]
+    },
+    {
+      "id": 9,
+      "firstName": "Gustavo",
+      "lastName": "Rocha",
+      "email": "gustavo.drum@email.com",
+      "birthDate": "1987-09-05",
+      "phone": "35999999999",
+      "professionalTitle": "Baterista",
+      "voz": 4,
+      "currentInstrumentSpecieId": 15,
+      "playedInstrumentsSpeciesIds": [
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "id": 10,
+      "firstName": "Juliana",
+      "lastName": "Pereira",
+      "email": "ju.pereira@email.com",
+      "birthDate": "1996-04-22",
+      "phone": "35999999910",
+      "professionalTitle": "Harpista",
+      "voz": 1,
+      "currentInstrumentSpecieId": 18,
+      "playedInstrumentsSpeciesIds": [
+        18,
+        5
+      ]
+    },
+    {
+      "id": 11,
+      "firstName": "Rafael",
+      "lastName": "Barbosa",
+      "email": "rafael.b@email.com",
+      "birthDate": "1989-10-14",
+      "phone": "35999999911",
+      "professionalTitle": "Guitarrista",
+      "voz": 3,
+      "currentInstrumentSpecieId": 10,
+      "playedInstrumentsSpeciesIds": [
+        10,
+        11,
+        14
+      ]
+    },
+    {
+      "id": 12,
+      "firstName": "Camila",
+      "lastName": "Alves",
+      "email": "camila.alves@email.com",
+      "birthDate": "1994-02-28",
+      "phone": "35999999912",
+      "professionalTitle": "Oboísta",
+      "voz": 2,
+      "currentInstrumentSpecieId": 9,
+      "playedInstrumentsSpeciesIds": [
+        9,
+        8
+      ]
+    },
+    {
+      "id": 13,
+      "firstName": "Tiago",
+      "lastName": "Nunes",
+      "email": "tiago.nunes@email.com",
+      "birthDate": "1986-12-15",
+      "phone": "35999999913",
+      "professionalTitle": "Trombonista",
+      "voz": 4,
+      "currentInstrumentSpecieId": 6,
+      "playedInstrumentsSpeciesIds": [
+        6,
+        2
+      ]
+    },
+    {
+      "id": 14,
+      "firstName": "Letícia",
+      "lastName": "Dias",
+      "email": "leticia.d@email.com",
+      "birthDate": "1997-07-07",
+      "phone": "35999999914",
+      "professionalTitle": "Fagotista",
+      "voz": 2,
+      "currentInstrumentSpecieId": 13,
+      "playedInstrumentsSpeciesIds": [
+        13,
+        9
+      ]
+    },
+    {
+      "id": 15,
+      "firstName": "Bruno",
+      "lastName": "Martins",
+      "email": "bruno.m@email.com",
+      "birthDate": "1992-03-19",
+      "phone": "35999999915",
+      "professionalTitle": "Percussionista",
+      "voz": 3,
+      "currentInstrumentSpecieId": 16,
+      "playedInstrumentsSpeciesIds": [
+        16,
+        15,
+        17
+      ]
+    },
+    {
+      "id": 16,
+      "firstName": "Sofia",
+      "lastName": "Gomes",
+      "email": "sofia.g@email.com",
+      "birthDate": "1995-11-25",
+      "phone": "35999999916",
+      "professionalTitle": "Viola",
+      "voz": 1,
+      "currentInstrumentSpecieId": 19,
+      "playedInstrumentsSpeciesIds": [
+        19,
+        5
+      ]
+    },
+    {
+      "id": 17,
+      "firstName": "Gabriel",
+      "lastName": "Ferreira",
+      "email": "gabriel.f@email.com",
+      "birthDate": "1988-05-30",
+      "phone": "35999999917",
+      "professionalTitle": "Tubista",
+      "voz": 4,
+      "currentInstrumentSpecieId": 20,
+      "playedInstrumentsSpeciesIds": [
+        20,
+        6,
+        2
+      ]
+    },
+    {
+      "id": 18,
+      "firstName": "Vanessa",
+      "lastName": "Carvalho",
+      "email": "vanessa.c@email.com",
+      "birthDate": "1990-09-12",
+      "phone": "35999999918",
+      "professionalTitle": "Acordeonista",
+      "voz": 2,
+      "currentInstrumentSpecieId": 12,
+      "playedInstrumentsSpeciesIds": [
+        12,
+        1
+      ]
+    },
+    {
+      "id": 19,
+      "firstName": "Rodrigo",
+      "lastName": "Teixeira",
+      "email": "rodrigo.t@email.com",
+      "birthDate": "1993-12-08",
+      "phone": "35999999919",
+      "professionalTitle": "Trompista",
+      "voz": 3,
+      "currentInstrumentSpecieId": 21,
+      "playedInstrumentsSpeciesIds": [
+        21,
+        2
+      ]
+    },
+    {
+      "id": 20,
+      "firstName": "Alice",
+      "lastName": "Vieira",
+      "email": "alice.v@email.com",
+      "birthDate": "1999-01-20",
+      "phone": "35999999920",
+      "professionalTitle": "Contrabaixista",
+      "voz": 2,
+      "currentInstrumentSpecieId": 14,
+      "playedInstrumentsSpeciesIds": [
+        14,
+        11
+      ]
+    },
+    {
+      "firstName": "antonho",
+      "lastName": "souza",
+      "email": "sldf@asdf.com",
+      "phone": "",
+      "professionalTitle": "",
+      "voz": "1",
+      "id": 21
+    }
+  ]
+}

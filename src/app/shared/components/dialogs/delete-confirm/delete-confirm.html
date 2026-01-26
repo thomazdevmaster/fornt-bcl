@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>
+      <mat-icon class="warning-icon">warning</mat-icon>
+      {{ data.title }}
+    </h2>
+
+    <mat-dialog-content>
+      <p>{{ data.message }}</p>
+      <p class="warning-text">Esta ação não pode ser desfeita.</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="cancel()">{{ data.cancelText || 'Cancelar' }}</button>
+      <button mat-raised-button color="warn" (click)="confirm()">
+        {{ data.confirmText || 'Deletar' }}
+      </button>
+    </mat-dialog-actions>

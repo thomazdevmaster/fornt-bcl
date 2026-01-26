@@ -1,0 +1,310 @@
+/**
+ * Sistema de Temas - Angular Material 20
+ * ==========================================
+ * Define variáveis de cores para light/dark mode
+ * Segue as recomendações de Material Design 3
+ */
+
+@use '@angular/material' as mat;
+@use 'sass:map';
+
+// ==========================================
+// 1) DEFINIÇÃO DAS PALETAS DE CORES
+// ==========================================
+
+// Paletas fornecidas pelo Material
+$light-primary-palette: mat.$azure-palette;
+$light-tertiary-palette: mat.$blue-palette;
+
+$dark-primary-palette: mat.$magenta-palette;
+$dark-tertiary-palette: mat.$violet-palette;
+
+// ==========================================
+// 2) MIXINS PARA CORES POR TEMA
+// ==========================================
+
+/**
+ * Aplica cores do tema claro
+ */
+@mixin light-theme-colors {
+  // Cores de superfície
+  --mat-surface: #fafbfc;
+  --mat-surface-dim: #eef2f7;
+  --mat-surface-bright: #ffffff;
+  --mat-surface-container: #f5f7fa;
+  --mat-surface-container-low: #fafbfc;
+  --mat-surface-container-high: #eeeff2;
+  --mat-surface-container-highest: #e8e9ee;
+
+  // Cores de texto
+  --mat-on-surface: #1a1c1e;
+  --mat-on-surface-variant: #49454e;
+
+  // Cores primárias (Azure Light)
+  --mat-primary: #2187da;
+  --mat-on-primary: #ffffff;
+  --mat-primary-container: #dae8f8;
+  --mat-on-primary-container: #001940;
+
+  // Cores secundárias
+  --mat-secondary: #625b71;
+  --mat-on-secondary: #ffffff;
+  --mat-secondary-container: #eaddff;
+  --mat-on-secondary-container: #21005d;
+
+  // Cores de erro
+  --mat-error: #b3261e;
+  --mat-on-error: #ffffff;
+  --mat-error-container: #f9dedc;
+  --mat-on-error-container: #410e0b;
+
+  // Cores de sucesso (verde)
+  --mat-success: #1b5e20;
+  --mat-on-success: #ffffff;
+  --mat-success-container: #c8e6c9;
+  --mat-on-success-container: #001d00;
+
+  // Cores de aviso (laranja)
+  --mat-warning: #f57c00;
+  --mat-on-warning: #ffffff;
+  --mat-warning-container: #ffe0b2;
+  --mat-on-warning-container: #331a00;
+
+  // Cores de informação (azul)
+  --mat-info: #0288d1;
+  --mat-on-info: #ffffff;
+  --mat-info-container: #b3e5fc;
+  --mat-on-info-container: #001e3c;
+
+  // Outline (bordas)
+  --mat-outline: #79747e;
+  --mat-outline-variant: #cac7d0;
+
+  // Cores de background personalizadas
+  --color-primary: #2187da;
+  --color-text-primary: #ffffff;
+  --color-background: #fafbfc;
+  --color-surface: #ffffff;
+  --color-border: #e0e0e0;
+
+  // Cores específicas para componentes
+  --header-background: #143c6b;
+  --header-text: #ffffff;
+  --card-background: #ffffff;
+  --card-text: #1a1c1e;
+  --table-header-background: #f5f7fa;
+  --table-header-text: #1a1c1e;
+  --table-row-hover: #f5f7fa;
+  --table-border: #e0e0e0;
+  --input-background: #ffffff;
+  --input-border: #cac7d0;
+  --button-hover-background: rgba(33, 135, 218, 0.08);
+}
+
+/**
+ * Aplica cores do tema escuro
+ */
+@mixin dark-theme-colors {
+  // Cores de superfície
+  --mat-surface: #1a1c1e;
+  --mat-surface-dim: #11131c;
+  --mat-surface-bright: #36343b;
+  --mat-surface-container: #21232b;
+  --mat-surface-container-low: #21232b;
+  --mat-surface-container-high: #2b2d36;
+  --mat-surface-container-highest: #373940;
+
+  // Cores de texto
+  --mat-on-surface: #e6e1e6;
+  --mat-on-surface-variant: #cac7d0;
+
+  // Cores primárias (Magenta Dark)
+  --mat-primary: #b885d9;
+  --mat-on-primary: #371b5c;
+  --mat-primary-container: #502074;
+  --mat-on-primary-container: #e6d9f6;
+
+  // Cores secundárias
+  --mat-secondary: #cfc2db;
+  --mat-on-secondary: #332d41;
+  --mat-secondary-container: #4a4458;
+  --mat-on-secondary-container: #e8def8;
+
+  // Cores de erro
+  --mat-error: #f2b8b5;
+  --mat-on-error: #601410;
+  --mat-error-container: #8c1d18;
+  --mat-on-error-container: #f9dedc;
+
+  // Cores de sucesso (verde)
+  --mat-success: #a5d6a7;
+  --mat-on-success: #003d00;
+  --mat-success-container: #1b5e20;
+  --mat-on-success-container: #c8e6c9;
+
+  // Cores de aviso (laranja)
+  --mat-warning: #ffb74d;
+  --mat-on-warning: #331a00;
+  --mat-warning-container: #cc6600;
+  --mat-on-warning-container: #ffe0b2;
+
+  // Cores de informação (azul)
+  --mat-info: #4fc3f7;
+  --mat-on-info: #00344e;
+  --mat-info-container: #004a77;
+  --mat-on-info-container: #b3e5fc;
+
+  // Outline (bordas)
+  --mat-outline: #938f99;
+  --mat-outline-variant: #49454e;
+
+  // Cores de background personalizadas
+  --color-primary: #b885d9;
+  --color-text-primary: #ffffff;
+  --color-background: #1a1c1e;
+  --color-surface: #21232b;
+  --color-border: #49454e;
+
+  // Cores específicas para componentes
+  --header-background: #1e3a5f;
+  --header-text: #ffffff;
+  --card-background: #21232b;
+  --card-text: #e6e1e6;
+  --table-header-background: #2b2d36;
+  --table-header-text: #e6e1e6;
+  --table-row-hover: #2b2d36;
+  --table-border: #49454e;
+  --input-background: #21232b;
+  --input-border: #49454e;
+  --button-hover-background: rgba(184, 133, 217, 0.12);
+}
+
+/**
+ * Aplica gradiente do tema claro
+ */
+@mixin light-theme-gradients {
+  --gradient-primary-secondary: linear-gradient(135deg, #2187da, #1e88e5);
+  --gradient-success: linear-gradient(135deg, #1b5e20, #2e7d32);
+  --gradient-warning: linear-gradient(135deg, #f57c00, #e65100);
+  --gradient-error: linear-gradient(135deg, #b3261e, #d32f2f);
+  --gradient-info: linear-gradient(135deg, #0288d1, #01579b);
+  --gradient-card: linear-gradient(135deg, #f5f7fa, #e8eef5);
+  --gradient-welcome: linear-gradient(135deg, #16a18f, #1565c0);
+}
+
+/**
+ * Aplica gradiente do tema escuro
+ */
+@mixin dark-theme-gradients {
+  --gradient-primary-secondary: linear-gradient(135deg, #b885d9, #9c6db5);
+  --gradient-success: linear-gradient(135deg, #66bb6a, #43a047);
+  --gradient-warning: linear-gradient(135deg, #ffb74d, #ffa726);
+  --gradient-error: linear-gradient(135deg, #f2b8b5, #ef5350);
+  --gradient-info: linear-gradient(135deg, #4fc3f7, #0288d1);
+  --gradient-card: linear-gradient(135deg, #2b2d36, #1a1c1e);
+  --gradient-welcome: linear-gradient(135deg, #1b5e20, #6a1b9a);
+}
+
+// ==========================================
+// 3) APLICAR TEMAS NO ROOT
+// ==========================================
+
+/**
+ * Tema Light (padrão)
+ */
+html,
+html.light {
+  @include light-theme-colors;
+  @include light-theme-gradients;
+
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: $light-primary-palette,
+      tertiary: $light-tertiary-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+/**
+ * Tema Dark
+ */
+html.dark {
+  @include dark-theme-colors;
+  @include dark-theme-gradients;
+
+  @include mat.theme((
+    color: (
+      theme-type: dark,
+      primary: $dark-primary-palette,
+      tertiary: $dark-tertiary-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+// ==========================================
+// 4) PREFERÊNCIA DE SISTEMA (FALLBACK)
+// ==========================================
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light):not(.dark) {
+    @include dark-theme-colors;
+    @include dark-theme-gradients;
+
+    @include mat.theme((
+      color: (
+        theme-type: dark,
+        primary: $dark-primary-palette,
+        tertiary: $dark-tertiary-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    ));
+  }
+}
+
+// ==========================================
+// 5) VARIANTES DE CORES ALTERNATIVAS
+// ==========================================
+
+/**
+ * Tema com primária em Azul (combinável com .light/.dark)
+ */
+html.primary-blue {
+  --color-primary: #1e88e5;
+  --mat-primary: #1e88e5;
+  --mat-on-primary: #ffffff;
+  --mat-primary-container: #d1e7ff;
+  --mat-on-primary-container: #001d3c;
+}
+
+html.dark.primary-blue {
+  --color-primary: #9cccff;
+  --mat-primary: #9cccff;
+  --mat-on-primary: #003c7f;
+  --mat-primary-container: #0052cc;
+  --mat-on-primary-container: #cce5ff;
+}
+
+/**
+ * Tema com primária em Púrpura
+ */
+html.primary-purple {
+  --color-primary: #7c4dff;
+  --mat-primary: #7c4dff;
+  --mat-on-primary: #ffffff;
+  --mat-primary-container: #eaddff;
+  --mat-on-primary-container: #21005d;
+}
+
+html.dark.primary-purple {
+  --color-primary: #d9bbff;
+  --mat-primary: #d9bbff;
+  --mat-on-primary: #3a0061;
+  --mat-primary-container: #5a00a3;
+  --mat-on-primary-container: #eaddff;
+}
