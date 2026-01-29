@@ -14,749 +14,94 @@ $breakpoint-sm: 600px;
 
 .table-controls-card {
   background: linear-gradient(135deg, var(--mat-primary) 0%, var(--mat-primary) 100%);
-  border-radius: var(--radius-xl);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  margin-bottom: 20px;
-  padding: 0;
-
-  @media (max-width: $breakpoint-tablet) {
-    margin-bottom: 24px;
-    border-radius: var(--radius-lg);
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    margin-bottom: 16px;
-    border-radius: var(--radius-md);
-  }
+  border-radius: 16px;
+  margin-bottom: 16px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
 }
 
 .title-table-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 20px 32px;
+  width: 100%;
+  padding: 0 24px;
   gap: 16px;
-  color: white;
-  flex-wrap: wrap;
-
-  @media (max-width: $breakpoint-tablet) {
-    padding: 16px 20px;
-    gap: 12px;
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    padding: 12px 16px;
-    gap: 10px;
-  }
 
   .table-title-text {
-    flex: 0 0 auto;
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 24px;
+    font-weight: 600;
     color: white;
-    letter-spacing: 0.2px;
-    text-transform: capitalize;
     white-space: nowrap;
-
-    @media (max-width: $breakpoint-tablet) {
-      font-size: 18px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      flex: 0 0 100%;
-      order: 1;
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
   }
 
-  .header-spacer {
-    flex: 1 1 auto;
-    min-width: 16px;
-
-    @media (max-width: $breakpoint-sm) {
-      display: none;
-    }
+  .controls-spacer {
+    flex: 1 1 auto; // Empurra tudo que vem depois para a direita
   }
 
+  .table-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  // Estilização do Campo de Busca para casar com o Botão
   .search-field {
-    flex: 0 1 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 250px;
-    max-width: 400px;
-    width: 100%;
-
-    @media (max-width: $breakpoint-lg) {
-      max-width: 320px;
-    }
-
-    @media (max-width: $breakpoint-tablet) {
-      max-width: 280px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      flex: 0 0 100%;
-      order: 2;
-      max-width: none;
-      width: 100%;
-      margin-bottom: 8px;
-    }
-
-    mat-form-field {
-      width: 100%;
-
-      &::ng-deep {
-        .mat-mdc-form-field {
-          width: 100%;
-        }
-
-        .mat-mdc-text-field-wrapper {
-          padding: 0 !important;
-          background-color: rgba(255, 255, 255, 0.95) !important;
-          border-radius: var(--radius-md);
-          height: 48px;
-          display: flex;
-          align-items: center;
-        }
-
-        .mat-mdc-form-field-infix {
-          padding: 0 16px !important;
-          border: none !important;
-          height: 48px;
-          display: flex;
-          align-items: center;
-        }
-
-        .mdc-text-field {
-          height: 48px;
-          padding: 0 !important;
-          display: flex;
-          align-items: center;
-
-          &--filled {
-            background-color: transparent;
-          }
-        }
-
-        .mat-mdc-form-field-focus-overlay {
-          display: none;
-        }
-
-        input {
-          height: 48px;
-          padding: 0 !important;
-          font-size: 14px !important;
-          line-height: 48px !important;
-          color: var(--text-primary);
-
-          &::placeholder {
-            color: var(--text-secondary);
-            opacity: 0.7;
-          }
-
-          &:focus {
-            outline: none;
-          }
-        }
-
-        .mat-mdc-form-field-label {
-          top: 14px !important;
-          font-size: 12px !important;
-        }
-
-        .mat-mdc-form-field-label-wrapper {
-          top: -1.34375em !important;
-        }
-
-        .mat-mdc-notched-outline {
-          display: none !important;
-        }
-
-        // Ícone de fechar
-        button[matSuffix] {
-          height: 48px;
-          width: 48px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: var(--text-secondary);
-
-          &:hover {
-            color: var(--text-primary);
-          }
-        }
-      }
-    }
-  }
-
-  .add-button {
-    flex: 0 0 auto;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    white-space: nowrap;
-    background-color: white !important;
-    color: var(--mat-primary) !important;
-    border-radius: var(--radius-md);
-    padding: 0 20px !important;
-    font-weight: 700;
-    font-size: 13px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    min-width: 110px;
-
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      transform: translateY(-1px);
-    }
-
-    mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-    }
-
-    span {
-      @media (max-width: $breakpoint-sm) {
-        display: none;
-      }
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      flex: 0 0 100%;
-      order: 3;
-      min-width: auto;
-    }
-  }
-}
-
-/* ===============================================
-   2) TABELA WRAPPER
-   =============================================== */
-
-.table-wrapper {
-  position: relative;
-  background-color: transparent;
-  box-shadow: none;
-  overflow: visible;
-  border-radius: 0;
-}
-
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-radius: 4px;
-
-  @media (max-width: $breakpoint-sm) {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  }
-
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.2);
-    }
-  }
-}
-
-/* ===============================================
-   3) TABELA PRINCIPAL
-   =============================================== */
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-
-  @media (max-width: $breakpoint-tablet) {
-    font-size: 13px;
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    font-size: 12px;
-  }
-
-  thead {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  th {
-    background: linear-gradient(135deg, var(--mat-primary) 0%, var(--mat-primary) 100%);
-    color: white;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    padding: 16px;
-    text-align: left;
-    vertical-align: middle;
-    border: none;
-
-    mat-icon {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
-      margin-right: 6px;
-      opacity: 0.9;
-    }
-
-    @media (max-width: $breakpoint-tablet) {
-      padding: 12px;
-      font-size: 10px;
-      letter-spacing: 0.5px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      padding: 10px 8px;
-      font-size: 9px;
-      letter-spacing: 0.3px;
-    }
-  }
-
-  tbody tr {
-    background-color: white;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background-color 150ms ease;
-
-    &:hover {
-      background-color: #f9f9f9;
-    }
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    &.selected-row {
-      background-color: #f0f7ff;
-    }
-  }
-
-  td {
-    padding: 14px 16px;
-    color: #333;
-    vertical-align: middle;
-    border: none;
-    transition: color 150ms ease;
-
-    &:hover {
-      color: var(--mat-primary);
-    }
-
-    @media (max-width: $breakpoint-tablet) {
-      padding: 12px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      padding: 10px 8px;
-      font-size: 12px;
-    }
-  }
-
-  [matColumnDef="select"] {
-    width: 48px;
-    text-align: center;
-
-    @media (max-width: $breakpoint-sm) {
-      width: 40px;
-    }
-  }
-
-  [matColumnDef="actions"] {
-    width: 140px;
-    text-align: center;
-
-    @media (max-width: $breakpoint-tablet) {
-      width: 120px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      width: 100px;
-    }
-  }
-}
-
-/* ===============================================
-   4) EMPTY STATE
-   =============================================== */
-
-.empty-cell {
-  padding: 0 !important;
-  border: none !important;
-
-  .empty-state-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 100%;
-    min-height: 320px;
-    padding: 40px 20px;
-    gap: 12px;
-
-    @media (max-width: $breakpoint-tablet) {
-      min-height: 280px;
-      padding: 30px 16px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      min-height: 240px;
-      padding: 24px 12px;
-    }
-
-    mat-icon {
-      font-size: 64px;
-      width: 64px;
-      height: 64px;
-      opacity: 0.25;
-      color: var(--mat-primary);
-
-      @media (max-width: $breakpoint-tablet) {
-        font-size: 56px;
-        width: 56px;
-        height: 56px;
-      }
-
-      @media (max-width: $breakpoint-sm) {
-        font-size: 48px;
-        width: 48px;
-        height: 48px;
-      }
-    }
-
-    p {
-      font-size: 15px;
-      font-weight: 500;
-      margin: 0;
-      color: #999;
-
-      @media (max-width: $breakpoint-tablet) {
-        font-size: 14px;
-      }
-
-      @media (max-width: $breakpoint-sm) {
-        font-size: 13px;
-      }
-    }
-  }
-}
-
-/* ===============================================
-   5) DESKTOP VIEW
-   =============================================== */
-
-.desktop-view {
-  display: block;
-
-  @media (max-width: $breakpoint-sm) {
-    display: none;
-  }
-}
-
-/* ===============================================
-   6) MOBILE VIEW - CARDS
-   =============================================== */
-
-.mobile-view {
-  display: none;
-
-  @media (max-width: $breakpoint-sm) {
-    display: block;
-    padding: 0;
-  }
-
-  .cards-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .data-card {
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    border-left: 4px solid var(--mat-primary);
-    transition: all 150ms ease;
-
-    &:active {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-    }
-
-    &.selected-card {
-      background-color: #f0f7ff;
-      border-left-color: #4caf50;
-    }
-
-    mat-card-header {
-      padding: 12px 16px;
-      background: linear-gradient(135deg, var(--mat-primary) 0%, var(--mat-primary) 100%);
-      border-bottom: none;
-
-      .card-header-content {
-        display: flex;
+    width: 500px;
+    height: 40px; // Mesma altura do botão
+
+    ::ng-deep {
+      .mat-mdc-form-field-wrapper { padding: 0; }
+      .mat-mdc-form-field-flex {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 8px !important;
         align-items: center;
-        gap: 12px;
-        width: 100%;
-
-        mat-card-title {
-          font-size: 14px;
-          font-weight: 600;
-          margin: 0;
-          flex: 1;
-          color: white;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
+        padding: 0 12px !important;
       }
-    }
-
-    mat-card-content {
-      padding: 12px 16px;
-
-      .card-field {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 8px 0;
-        border-bottom: 1px solid #f0f0f0;
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        .field-label {
-          font-weight: 600;
-          font-size: 11px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: #999;
-          flex: 0 0 40%;
-        }
-
-        .field-value {
-          flex: 1;
-          text-align: right;
-          font-size: 13px;
-          color: #333;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
+      .mat-mdc-form-field-infix {
+        padding: 0 !important;
+        min-height: auto;
       }
+      .mat-mdc-form-field-subscript-wrapper { display: none; } // Remove espaço extra embaixo
+      .mdc-notched-outline { display: none; } // Remove a borda padrão se quiser um look clean
     }
 
-    mat-card-actions {
-      padding: 8px 16px;
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-      border-top: 1px solid #f0f0f0;
-
-      button {
-        min-height: 36px;
-        min-width: 36px;
-      }
-    }
-  }
-}
-
-
-/* ===============================================
-   1) CARD CONTROLES - Título, Busca e Botão
-   =============================================== */
-
-.table-controls-card {
-  background: linear-gradient(135deg, var(--mat-primary) 0%, var(--mat-primary) 100%);
-  border-radius: var(--radius-xl);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  margin-bottom: 32px;
-
-  @media (max-width: $breakpoint-tablet) {
-    margin-bottom: 24px;
-    border-radius: var(--radius-lg);
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    margin-bottom: 16px;
-    border-radius: var(--radius-md);
-  }
-}
-
-.title-table-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-lg) var(--spacing-xl);
-  gap: var(--spacing-md);
-  color: white;
-
-  @media (max-width: $breakpoint-tablet) {
-    padding: var(--spacing-md) var(--spacing-lg);
-    gap: var(--spacing-sm);
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    padding: var(--spacing-md);
-    gap: var(--spacing-sm);
-    flex-wrap: wrap;
-  }
-
-  .table-title-text {
-    flex: 0 0 auto;
-    font-size: 22px;
-    font-weight: 700;
-    color: white;
-    letter-spacing: 0.2px;
-    text-transform: capitalize;
-
-    @media (max-width: $breakpoint-tablet) {
-      font-size: 18px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      flex: 0 0 100%;
-      order: 1;
-      font-size: 16px;
-    }
-  }
-
-  .header-spacer {
-    flex: 1 1 auto;
-
-    @media (max-width: $breakpoint-sm) {
-      display: none;
-    }
-  }
-
-  .search-field {
-    flex: 0 0 auto;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    width: 350px;
-
-    @media (max-width: $breakpoint-tablet) {
-      width: 280px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      width: 100%;
-      flex: 0 0 100%;
-      order: 2;
-    }
-
-    mat-form-field {
-      width: 100%;
-      height: 100%;
-
-      &::ng-deep {
-        .mat-mdc-form-field {
-          width: 100%;
-          height: 100%;
-        }
-
-        .mat-mdc-text-field-wrapper {
-          padding: 0 !important;
-          background-color: rgba(255, 255, 255, 0.95) !important;
-          border-radius: var(--radius-md);
-        }
-
-        .mat-mdc-form-field-infix {
-          padding: 0 !important;
-        }
-
-        .mdc-text-field {
-          height: 40px;
-          padding: 0 var(--spacing-md) !important;
-          border-radius: var(--radius-md);
-          background-color: transparent !important;
-          border: none !important;
-          box-shadow: none !important;
-
-          &--focused {
-            box-shadow: 0 0 0 2px white !important;
-          }
-        }
-
-        .mdc-text-field__input {
-          font-size: 13px;
-          color: #333;
-          padding: 10px 0 !important;
-
-          &::placeholder {
-            color: #aaa;
-            opacity: 1;
-          }
-        }
-
-        .mat-mdc-form-field-label {
-          font-size: 12px !important;
-          color: #aaa !important;
-          display: none !important;
-        }
-      }
+    input {
+      font-size: 14px;
+      color: #333;
     }
   }
 
   .add-button {
-    flex: 0 0 auto;
     height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-xs);
-    white-space: nowrap;
     background-color: white !important;
     color: var(--mat-primary) !important;
-    border-radius: var(--radius-md);
-    padding: 0 var(--spacing-lg) !important;
     font-weight: 700;
-    font-size: 13px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px !important;
 
     &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      transform: translateY(-1px);
+      background-color: #f5f5f5 !important;
     }
+  }
 
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
+  .icon-control {
+    color: white;
+  }
+}
 
-    @media (max-width: $breakpoint-sm) {
-      mat-icon {
-        margin: 0;
-      }
+// Responsividade: No mobile, empilha
+@media (max-width: 600px) {
+  .title-table-row {
+    flex-direction: column;
+    padding: 16px;
+    height: auto;
 
-      span {
-        display: none;
-      }
-    }
+    .controls-spacer { display: none; }
+    .search-field { width: 100%; }
+    .table-controls { width: 100%; justify-content: space-between; }
   }
 }
 

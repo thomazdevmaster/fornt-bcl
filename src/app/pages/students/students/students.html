@@ -2,15 +2,14 @@
 
 <app-shared-table [data]="data" [columnsConfig]="config.columns" [tableTitle]="config.title"
   [templates]="{ name: nameTmpl, actions: actionsTmpl }"
-  [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao carregar os dados.' : 'Nenhum músico cadastrado.'" [canAdd]="true"
-  [searchPlaceholder]="'Buscar músicos...'"
-  [hideableColumns]="['name', 'email', 'phone', 'professionalTitle']"
+  [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao buscar alunos.' : 'Nenhum aluno cadastrado.'" [canAdd]="true"
+  [searchPlaceholder]="'Buscar por alunos, responsáveis, email ou telefone'"
   (add)="onAdd()"></app-shared-table>
 
 } @else {
 <div class="loading-spinner">
   <mat-spinner strokeWidth="3" diameter="50"></mat-spinner>
-  <p>Carregando talentos...</p>
+  <p>Carregando promessas...</p>
 </div>
 }
 

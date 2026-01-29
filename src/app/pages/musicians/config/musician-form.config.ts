@@ -2,6 +2,7 @@ import { Validators } from '@angular/forms';
 import { Musician } from '../model/musician';
 import { IFormFieldConfig } from '../../../shared/components/dialogs/form/IFormDialogData';
 import { IDetailField } from '../../../shared/components/dialogs/details/IDetailsDialogData';
+import { MyDateValidators } from 'app/shared/validators/date-validator';
 
 /**
  * Configuração dos campos do formulário de músicos
@@ -61,6 +62,15 @@ export const MUSICIAN_FORM_FIELDS = (musician?: Musician): IFormFieldConfig[] =>
       { value: '3', label: '3ª' },
       { value: '4', label: '4ª' }
     ]
+  },
+  {
+    fieldName: 'birthDate',
+    label: 'Data de nascimento',
+    type: 'date',
+    value: musician?.birthDate || new Date(),
+    required: false,
+    validators: [MyDateValidators.pastDate()],
+    placeholder: "Informe sua data de nascimento"
   }
 ];
 
@@ -73,5 +83,13 @@ export const getMusicianDetailFields = (musician: Musician): IDetailField[] => [
   { label: 'Email', value: musician.email },
   { label: 'Telefone', value: musician.phone || '—' },
   { label: 'Função', value: musician.professionalTitle || '—' },
-  { label: 'Voz', value: musician.voz || '—' }
+  { label: 'Voz', value: musician.voz || '—' },
+  { label: 'Data de nascimento', value: musician.birthDate || '—' },
+  { label: 'Perfis', value: musician.profileIds?.join(', ') || '—'},
+  { label: 'Instrumento atual', value: musician.currentInstrumentId || '—' },
+  { label: 'Espécie do instrumento atual', value: musician.currentInstrumentSpecieId || '—' },
+  { label: 'Espécies dos instrumentos tocados', value: musician.playedInstrumentsSpeciesIds?.join(', ') || '—' },
+  { label: 'Criado em', value: musician.createdAt ? musician.createdAt.toLocaleDateString() : '—' },
+  { label: 'Atualizado em', value: musician.updatedAt ? musician.updatedAt.toLocaleDateString() : '—' }
 ];
+

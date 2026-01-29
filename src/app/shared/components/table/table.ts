@@ -37,10 +37,12 @@ export class SharedTableComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() mobileCardView = true;
   @Input() hideableColumns: string[] = [];
 
+
   // Configuração de Sort e Search (usados apenas se columnsConfig não está preenchido)
   @Input() sortableColumns: string[] = [];
   @Input() sortFieldMapping: { [key: string]: string } = {};
   @Input() searchableColumns: string[] = [];
+  @Input() searchPlaceholder: string = 'Buscar...';
 
   @Output() add = new EventEmitter<void>();
   @Output() selectionChange = new EventEmitter<any[]>();

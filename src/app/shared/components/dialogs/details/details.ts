@@ -20,7 +20,7 @@ export class DetailsDialogComponent {
     this.dialogRef.close();
   }
 
-  edit() {
-    this.dialogRef.close({ action: 'edit' });
+  edit(item: any) {
+    this.dialogRef.close({ action: 'edit', item });
   }
 }

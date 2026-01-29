@@ -300,6 +300,51 @@
       "professionalTitle": "",
       "voz": "1",
       "id": 21
+    },
+    {
+      "firstName": "fulano",
+      "lastName": "de tal",
+      "email": "a@b.com",
+      "phone": "",
+      "professionalTitle": "",
+      "voz": "2",
+      "birthDate": "2016-02-02T02:00:00.000Z",
+      "id": 22
+    }
+  ],
+  "students": [
+    {
+      "firstName": "fulano",
+      "lastName": "de tal",
+      "email": "a@b.com",
+      "phone": "",
+      "birthDate": "2026-01-06T03:00:00.000Z",
+      "enrollmentDate": "2026-01-29T13:54:44.133Z",
+      "responsibleName": "",
+      "responsiblePhone": "",
+      "id": 1
+    },
+    {
+      "firstName": "sfdsdds",
+      "lastName": "sdfgsdfg",
+      "email": "dfsgsfdg@asd",
+      "phone": "",
+      "birthDate": "2000-06-01T03:00:00.000Z",
+      "enrollmentDate": "2020-02-06T03:00:00.000Z",
+      "responsibleName": "",
+      "responsiblePhone": "",
+      "id": 2
+    },
+    {
+      "firstName": "asss",
+      "lastName": "asdfe",
+      "email": "a@b.com",
+      "phone": "35998989898",
+      "birthDate": "2016-06-15T03:00:00.000Z",
+      "enrollmentDate": "2026-01-29T14:05:56.223Z",
+      "responsibleName": "fulano",
+      "responsiblePhone": "35998989898",
+      "id": 3
     }
   ]
 }

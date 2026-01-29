@@ -5,6 +5,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 import { HTTP_INTERCEPTOR_PROVIDERS } from './core/interceptors/http-error.interceptor';
 import { GlobalErrorHandler } from './core/error-handler/global-error.handler';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 /**
  * Configuração global da aplicação
@@ -28,5 +29,12 @@ export const appConfig: ApplicationConfig = {
       provide: ErrorHandler,
       useClass: GlobalErrorHandler,
     },
+    {
+    provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+    useValue: {
+      subscriptSizing: 'dynamic',
+      appearance: 'outline'
+    }
+  }
   ],
 };

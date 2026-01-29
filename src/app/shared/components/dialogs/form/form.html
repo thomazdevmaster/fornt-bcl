@@ -22,9 +22,15 @@
             </textarea>
           }
           @case ('date') {
-            <input matInput
-              type="date"
-              [formControlName]="field.fieldName">
+             <ng-container>
+              <input matInput [matDatepicker]="picker" [formControlName]="field.fieldName">
+              <mat-hint>DD/MM/YYYY</mat-hint>
+
+              <mat-datepicker-toggle matIconSuffix [for]="picker">
+                <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+              </mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </ng-container>
           }
           @default {
             <input matInput
@@ -49,6 +55,9 @@
           }
           @if (control.hasError('maxLength')) {
             <mat-error>Máximo de caracteres excedido</mat-error>
+          }
+          @if (control.hasError('futureDate')) {
+            <mat-error>A data deve ser anterior a hoje.</mat-error>
           }
         }
       </mat-form-field>

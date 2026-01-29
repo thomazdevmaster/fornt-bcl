@@ -4,13 +4,13 @@ import { TableColumn } from '../../../shared/components/table/models/table-colum
  * Configuração das colunas da tabela de músicos
  * Reutilizável em qualquer componente que liste músicos
  */
-export const MUSICIAN_COLUMNS: TableColumn[] = [
+export const STUDENT_COLUMNS: TableColumn[] = [
   { columnName: 'id', columnLabel: '#', sortable: true, findable: false },
   { columnName: 'name', columnLabel: 'Nome', sortable: true, findable: true, sortField: 'firstName' },
   { columnName: 'email', columnLabel: 'E-mail', sortable: true, findable: true },
   { columnName: 'phone', columnLabel: 'Telefone', sortable: false, findable: true },
-  { columnName: 'professionalTitle', columnLabel: 'Função', sortable: true, findable: true },
-  { columnName: 'voz', columnLabel: 'Voz', sortable: true, findable: true },
-  { columnName: 'currentInstrumentId', columnLabel: 'Instrumento Atual', sortable: false, findable: false },
+  { columnName: 'enrollmentDate', columnLabel: 'Data matrícula', sortable: true, findable: false },
+  { columnName: 'responsibleName', columnLabel: 'Responsável', sortable: true, findable: true },
+  { columnName: 'responsiblePhone', columnLabel: 'Telefone do Responsável', sortable: false, findable: true },
   { columnName: 'actions', columnLabel: 'Ações', sortable: false, findable: false }
 ];

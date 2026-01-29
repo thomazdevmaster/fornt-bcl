@@ -42,6 +42,7 @@ body {
    ------------------------------------------------------- */
 html {
   color-scheme: light dark;
+  @include mat.form-field-density(-3);
 }
 
 /* -------------------------------------------------------
@@ -599,5 +600,11 @@ button, [role="button"] {
     padding: var(--spacing-sm) var(--spacing-md) !important;
     font-size: 12px;
   }
+}
+
+.mat-mdc-form-field-infix {
+  min-height: 40px !important; // Altura que definimos para o botão de adicionar
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
 }
 

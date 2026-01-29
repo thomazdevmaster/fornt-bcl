@@ -2,40 +2,41 @@
   <div class="title-table-row">
     <span class="table-title-text">{{ tableTitle }}</span>
 
-    <div class="header-spacer"></div>
+    <div class="controls-spacer"></div>
 
-    @if (enableSearch) {
-      <mat-form-field class="search-field" appearance="outline">
-        <mat-label>🔍 Buscar...</mat-label>
-        <input matInput [formControl]="searchControl" placeholder="Digite para filtrar...">
-        @if (searchControl.value) {
-          <button mat-icon-button matSuffix (click)="clearSearch()" aria-label="Limpar busca" title="Limpar busca">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
-    }
+    <div class="table-controls">
+      @if (enableSearch) {
+        <mat-form-field class="search-field" appearance="outline" subscriptSizing="dynamic">
+          <input matInput [formControl]="searchControl" placeholder="🔍 {{ searchPlaceholder }}">
+          @if (searchControl.value) {
+            <button mat-icon-button matSuffix (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+      }
 
-    @if (enableSelection && hideableColumns.length > 0) {
-      <button mat-icon-button [matMenuTriggerFor]="columnsMenu" aria-label="Configurar colunas">
-        <mat-icon>view_column</mat-icon>
-      </button>
-      <mat-menu #columnsMenu="matMenu">
+      @if (enableSelection && hideableColumns.length > 0) {
+        <button mat-icon-button [matMenuTriggerFor]="columnsMenu" class="icon-control">
+          <mat-icon>view_column</mat-icon>
+        </button>
+        <mat-menu #columnsMenu="matMenu">
         @for (col of hideableColumns; track col) {
-          <button mat-menu-item (click)="toggleColumn(col)">
-            <mat-checkbox [checked]="displayedColumns.includes(col)" (click)="$event.stopPropagation()"></mat-checkbox>
-            <span>{{ labels[col] || col }}</span>
-          </button>
+        <button mat-menu-item (click)="toggleColumn(col)">
+          <mat-checkbox [checked]="displayedColumns.includes(col)" (click)="$event.stopPropagation()"></mat-checkbox>
+          <span>{{ labels[col] || col }}</span>
+        </button>
         }
       </mat-menu>
-    }
+        }
 
-    @if (canAdd) {
-      <button mat-raised-button color="accent" (click)="onAdd()" class="add-button">
-        <mat-icon>add</mat-icon>
-        <span>Adicionar</span>
-      </button>
-    }
+      @if (canAdd) {
+        <button mat-flat-button (click)="onAdd()" class="add-button">
+          <mat-icon>add</mat-icon>
+          <span>Adicionar</span>
+        </button>
+      }
+    </div>
   </div>
 </div>
 
@@ -46,31 +47,31 @@
 
       <!-- Selection Column -->
       @if (enableSelection) {
-        <ng-container matColumnDef="select">
-          <th mat-header-cell *matHeaderCellDef>
-            <mat-checkbox [checked]="isAllSelected()" (change)="toggleSelectAll($event)"></mat-checkbox>
-          </th>
-          <td mat-cell *matCellDef="let element">
-            <mat-checkbox [checked]="isRowSelected(element)" (change)="toggleSelectRow(element, $event)"></mat-checkbox>
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox [checked]="isAllSelected()" (change)="toggleSelectAll($event)"></mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <mat-checkbox [checked]="isRowSelected(element)" (change)="toggleSelectRow(element, $event)"></mat-checkbox>
+        </td>
+      </ng-container>
       }
 
       <!-- Data Columns -->
       @for (col of columns; track col) {
-        <ng-container [matColumnDef]="col">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!isSortable(col)">
-            {{ labels[col] || col }}
-          </th>
-          <td mat-cell *matCellDef="let element" [class.selected]="isRowSelected(element)">
-            @if (templates && templates[col]) {
-              <ng-container [ngTemplateOutlet]="templates[col]" [ngTemplateOutletContext]="{ $implicit: element }">
-              </ng-container>
-            } @else {
-              {{ element[col] }}
-            }
-          </td>
-        </ng-container>
+      <ng-container [matColumnDef]="col">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!isSortable(col)">
+          {{ labels[col] || col }}
+        </th>
+        <td mat-cell *matCellDef="let element" [class.selected]="isRowSelected(element)">
+          @if (templates && templates[col]) {
+          <ng-container [ngTemplateOutlet]="templates[col]" [ngTemplateOutletContext]="{ $implicit: element }">
+          </ng-container>
+          } @else {
+          {{ element[col] }}
+          }
+        </td>
+      </ng-container>
       }
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -91,8 +92,8 @@
     </table>
 
     @if (enablePagination && dataSource.data.length > 0) {
-      <mat-paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons aria-label="Selecionar página">
-      </mat-paginator>
+    <mat-paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons aria-label="Selecionar página">
+    </mat-paginator>
     }
   </div>
 </div>
@@ -100,54 +101,55 @@
 <!-- Mobile Card View -->
 <div class="mobile-view">
   @if (dataSource.data.length > 0) {
-    <div class="cards-container">
-      @for (item of dataSource.data; track item) {
-        <mat-card class="data-card" [class.selected-card]="isRowSelected(item)">
-          <mat-card-header>
-            <div class="card-header-content">
-              @if (enableSelection) {
-                <mat-checkbox [checked]="isRowSelected(item)" (change)="toggleSelectRow(item, $event)" class="card-checkbox"></mat-checkbox>
-              }
-              <div>
-                @if (templates && templates[columns[0]]) {
-                  <ng-container [ngTemplateOutlet]="templates[columns[0]]" [ngTemplateOutletContext]="{ $implicit: item }">
-                  </ng-container>
-                } @else {
-                  <mat-card-title>{{ item[columns[0]] }}</mat-card-title>
-                }
-              </div>
-            </div>
-          </mat-card-header>
-
-          <mat-card-content>
-            @for (col of columns.slice(1, -1); track col) {
-              <div class="card-field">
-                <span class="field-label">{{ labels[col] || col }}:</span>
-                <span class="field-value">
-                  @if (templates && templates[col]) {
-                    <ng-container [ngTemplateOutlet]="templates[col]" [ngTemplateOutletContext]="{ $implicit: item }">
-                    </ng-container>
-                  } @else {
-                    {{ item[col] }}
-                  }
-                </span>
-              </div>
+  <div class="cards-container">
+    @for (item of dataSource.data; track item) {
+    <mat-card class="data-card" [class.selected-card]="isRowSelected(item)">
+      <mat-card-header>
+        <div class="card-header-content">
+          @if (enableSelection) {
+          <mat-checkbox [checked]="isRowSelected(item)" (change)="toggleSelectRow(item, $event)"
+            class="card-checkbox"></mat-checkbox>
+          }
+          <div>
+            @if (templates && templates[columns[0]]) {
+            <ng-container [ngTemplateOutlet]="templates[columns[0]]" [ngTemplateOutletContext]="{ $implicit: item }">
+            </ng-container>
+            } @else {
+            <mat-card-title>{{ item[columns[0]] }}</mat-card-title>
             }
-          </mat-card-content>
+          </div>
+        </div>
+      </mat-card-header>
 
-          <mat-card-actions>
-            @if (templates && templates['actions']) {
-              <ng-container [ngTemplateOutlet]="templates['actions']" [ngTemplateOutletContext]="{ $implicit: item }">
-              </ng-container>
+      <mat-card-content>
+        @for (col of columns.slice(1, -1); track col) {
+        <div class="card-field">
+          <span class="field-label">{{ labels[col] || col }}:</span>
+          <span class="field-value">
+            @if (templates && templates[col]) {
+            <ng-container [ngTemplateOutlet]="templates[col]" [ngTemplateOutletContext]="{ $implicit: item }">
+            </ng-container>
+            } @else {
+            {{ item[col] }}
             }
-          </mat-card-actions>
-        </mat-card>
-      }
-    </div>
+          </span>
+        </div>
+        }
+      </mat-card-content>
+
+      <mat-card-actions>
+        @if (templates && templates['actions']) {
+        <ng-container [ngTemplateOutlet]="templates['actions']" [ngTemplateOutletContext]="{ $implicit: item }">
+        </ng-container>
+        }
+      </mat-card-actions>
+    </mat-card>
+    }
+  </div>
   } @else {
-    <div class="empty-state-wrapper">
-      <mat-icon>person_search</mat-icon>
-      <p>{{ emptyMessage }}</p>
-    </div>
+  <div class="empty-state-wrapper">
+    <mat-icon>person_search</mat-icon>
+    <p>{{ emptyMessage }}</p>
+  </div>
   }
 </div>

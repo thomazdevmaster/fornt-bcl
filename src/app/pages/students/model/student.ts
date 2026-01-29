@@ -5,14 +5,12 @@ import { PersonModel } from 'app/shared/models/person.model';
  * Interface que representa um músico no sistema
  * Estende ICrudEntity para ter id, createdAt e updatedAt
  */
-export class Musician extends PersonModel {
-  voz?: string;
-  professionalTitle?: string;
-  currentInstrumentId?: number;
-  currentInstrumentSpecieId?: number;
-  playedInstrumentsSpeciesIds?: number[];
+export class Student extends PersonModel {
+  enrollmentDate?: Date;
+  responsibleName?: string;
+  responsiblePhone?: string;
 
-  constructor(data?: Partial<Musician>) {
+  constructor(data?: Partial<Student>) {
     super(data);
   }
 }
@@ -21,10 +19,10 @@ export class Musician extends PersonModel {
  * Type para criar novo músico (sem ID e timestamps)
  * Usa CreateEntity genérico
  */
-export type Create = CreateEntity<Musician>;
+export type Create = CreateEntity<Student>;
 
 /**
  * Type para atualizar músico (campos parciais)
  * Usa UpdateEntity genérico
  */
-export type Update = UpdateEntity<Musician>;
+export type Update = UpdateEntity<Student>;
