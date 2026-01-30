@@ -1,0 +1,29 @@
+@if (data$ | async; as data) {
+
+<app-shared-table [data]="data" [columnsConfig]="config.columns" [tableTitle]="config.title"
+  [templates]="{ name: nameTmpl, actions: actionsTmpl }"
+  [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao buscar músicas.' : 'Nenhum apresentação cadastrado.'" [canAdd]="true"
+  [searchPlaceholder]="'Buscar por músicas, responsáveis, email ou telefone'"
+  (add)="onAdd()"></app-shared-table>
+
+} @else {
+<div class="loading-spinner">
+  <mat-spinner strokeWidth="3" diameter="50"></mat-spinner>
+  <p>Carregando espetáculos...</p>
+</div>
+}
+
+<ng-template #nameTmpl let-element>
+  {{ element.firstName }} {{ element.lastName }}
+</ng-template>
+
+<ng-template #actionsTmpl let-element>
+  <div class="action-buttons">
+    <button mat-icon-button (click)="onView(element)" title="Visualizar">
+      <mat-icon>visibility</mat-icon>
+    </button>
+    <button mat-icon-button color="warn" (click)="onDelete(element)" title="Excluir">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</ng-template>

@@ -346,5 +346,22 @@
       "responsiblePhone": "35998989898",
       "id": 3
     }
-  ]
+  ],
+  "presentations": [
+    {
+      "title": "teste",
+      "description": "apresentação realizada",
+      "date": "2026-02-02T03:00:00.000Z",
+      "location": "Luminárias",
+      "responsibleName": "ninguem",
+      "responsiblePhone": "",
+      "responsibleEmail": "",
+      "midiaUrl": "",
+      "id": 1
+    }
+  ],
+  "songs": [],
+  "gallerys": [],
+  "patrimonys": [],
+  "instruments": []
 }

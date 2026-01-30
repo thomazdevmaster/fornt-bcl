@@ -29,8 +29,10 @@ export class Header implements OnInit {
       { icon: 'spatial_audio_off', label: 'Músicos', route: '/musicians' },
       { icon: 'school', label: 'Alunos', route: '/students' },
       { icon: 'cast_for_education', label: 'Apresentações', route: '/presentations' },
-      { icon: 'library_music', label: 'Repertório', route: '/repertoire' },
-      { icon: 'photo_library', label: 'Galeria', route: '/gallery' }
+      { icon: 'library_music', label: 'Repertório', route: '/songs' },
+      { icon: 'photo_library', label: 'Galeria', route: '/gallery' },
+      { icon: 'inventory_2', label: 'Patrimônio', route: '/patrimony' },
+      { icon: 'music_note', label: 'Instrumentos', route: '/instruments' },
     ]
   }
 

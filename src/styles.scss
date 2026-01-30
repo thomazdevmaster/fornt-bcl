@@ -12,6 +12,32 @@
 /* -------------------------------------------------------
    1) Reset/Globais basicos + Tipografia Moderna
    ------------------------------------------------------- */
+@include mat.form-field-overrides((
+  // Define a altura total do container (os 40px que você quer)
+  container-height: 28px,
+
+  // Ajusta o tamanho da fonte do texto digitado (o equivalente ao font-size)
+  container-text-size: 14px,
+
+  // Ajusta o tamanho da label (quando pequena/flutuante) para não encavalar
+  outlined-label-text-size: 12px,
+  outlined-label-text-populated-size: 12px,
+
+  // Reduz o padding vertical interno para o texto não ficar "esmagado"
+  container-vertical-padding: 6px,
+
+  // Grossura da borda (opcional, para um look mais clean)
+  outlined-outline-width: 1px,
+  outlined-focus-outline-width: 2px
+));
+
+// Aplica densidade máxima globalmente para ajudar no achatamento
+.mat-mdc-form-field {
+  @include mat.form-field-density(-3);
+}
+
+
+
 *, *::before, *::after { box-sizing: border-box; }
 html, body {
   height: 100%;

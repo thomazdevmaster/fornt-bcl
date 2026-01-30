@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "dev": "json-server --watch serverjson/server.json --port 3000 && ng serve"
+    "server": "json-server --watch serverjson/server.json --port 3000",
+    "dev": "concurrently -n \"JSON,NG\" -c \"bgBlue,bgGreen\" \"npm run server\" \"npm run start\""
   },
   "prettier": {
     "printWidth": 100,
