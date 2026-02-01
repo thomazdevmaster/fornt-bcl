@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -6,6 +10,74 @@
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+
+  @media (max-width: 959px) {
+    padding: 20px;
+    gap: 20px;
+  }
+
+  @media (max-width: 599px) {
+    padding: 16px;
+    gap: 16px;
+  }
+}
+.app-container {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-x: hidden !important;
+}
+
+.app-sidenav {
+  width: 280px;
+  border: none;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+
+  .sidenav-header {
+    padding: 32px 16px;
+    background: var(--header-background);
+    color: var(--header-text);
+    display: flex;
+    justify-content: center;
+
+    .logo-text {
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -1px;
+    }
+  }
+
+  .active-side {
+    color: var(--mat-sys-primary) !important;
+    background: rgba(var(--mat-sys-primary-rgb, 0, 0, 0), 0.08);
+    mat-icon {
+      color: var(--mat-sys-primary);
+    }
+  }
+}
+
+// Seu container de conteúdo
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0; // Padding controlado pelo .container interno
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 959px) {
     padding: 20px;
