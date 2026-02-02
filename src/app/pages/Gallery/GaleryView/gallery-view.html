@@ -1,55 +1,78 @@
-<div class="gallery-container">
-  <header class="gallery-header">
-    <h1>Nossa Galeria</h1>
-    <p>Momentos e registros da Banda Carmelitana</p>
+<div class="blog-container">
+  <header class="blog-hero">
+    <div class="hero-content">
+      <h1>Diário da Banda</h1>
+      <p>Nossos momentos, ensaios e apresentações</p>
+    </div>
   </header>
 
   @if (loading) {
-    <div class="loader">
-      <mat-spinner diameter="50"></mat-spinner>
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
     </div>
   } @else {
-    <mat-accordion multi="true">
+    <main class="feed-list">
       @for (album of albums; track album.name) {
-        <mat-expansion-panel class="album-panel" [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <strong>{{ album.name }}</strong>
-            </mat-panel-title>
-            <mat-panel-description>
-              {{ album.items.length }} itens registrados
-            </mat-panel-description>
-          </mat-expansion-panel-header>
+        <article class="blog-post mat-elevation-z2">
 
-          <div class="album-content">
-            @if (album.description) {
-              <p class="album-info-text">{{ album.description }}</p>
-            }
-
-            <div class="media-grid">
-              @for (item of album.items; track item.id) {
-                <mat-card class="media-card" (click)="openMedia(item.url)">
-                  <div class="media-preview">
-                    @if (item.type === 'video') {
-                      <div class="video-overlay">
-                        <mat-icon>play_circle_outline</mat-icon>
-                      </div>
-                      <img src="assets/images/video-placeholder.jpg" [alt]="item.title">
-                    } @else {
-                      <img [src]="item.url" [alt]="item.title">
-                    }
-                  </div>
-
-                  <mat-card-content>
-                    <h3>{{ item.title }}</h3>
-                    <p>{{ item.date | date:'dd/MM/yyyy' }}</p>
-                  </mat-card-content>
-                </mat-card>
-              }
+          <div class="post-header">
+            <div class="header-text">
+              <h2>{{ album.name }}</h2>
+              <span class="date-badge">
+                <mat-icon>event</mat-icon>
+                {{ getLatestDate(album.items) | date:'dd MMM yyyy' }}
+              </span>
             </div>
+            @if (album.description) {
+              <p class="post-description">{{ album.description }}</p>
+            }
           </div>
-        </mat-expansion-panel>
+
+          <div class="carousel-wrapper">
+            <button mat-mini-fab color="primary" class="nav-btn prev"
+                    (click)="scroll(carouselRef, -1)"
+                    aria-label="Anterior">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <div class="carousel-track" #carouselRef>
+              @for (item of album.items; track item.id) {
+                <div class="carousel-card" (click)="openAlbumPage(album)">
+                  <div class="media-content">
+                    @if (item.type === 'video') {
+                      <div class="play-overlay"><mat-icon>play_arrow</mat-icon></div>
+                    }
+                    <img [src]="item.type === 'video' ? 'assets/images/video-placeholder.jpg' : item.url"
+                         [alt]="item.title" loading="lazy">
+                  </div>
+                  <div class="card-caption">
+                    <span>{{ item.title }}</span>
+                  </div>
+                </div>
+              }
+
+              <div class="carousel-card see-more-card" (click)="openAlbumPage(album)">
+                <div class="see-more-content">
+                  <span>Ver Álbum</span>
+                </div>
+              </div>
+            </div>
+
+            <button mat-mini-fab color="primary" class="nav-btn next"
+                    (click)="scroll(carouselRef, 1)"
+                    aria-label="Próximo">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+
+          <div class="post-footer">
+            <button mat-stroked-button color="primary" (click)="openAlbumPage(album)">
+              Abrir Galeria Completa
+            </button>
+          </div>
+
+        </article>
       }
-    </mat-accordion>
+    </main>
   }
 </div>

@@ -7,12 +7,6 @@
         <mat-label>{{ field.label }}</mat-label>
 
         @switch (field.type) {
-          @case ('date') {
-            <input matInput [matDatepicker]="picker" [formControlName]="field.fieldName">
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          }
-
           @case ('select') {
             @if (field.allowCustomValue) {
               <input type="text" matInput [formControlName]="field.fieldName" [matAutocomplete]="auto">
@@ -34,6 +28,14 @@
             <textarea matInput [formControlName]="field.fieldName" rows="4"></textarea>
           }
 
+          @case ('date') {
+            <ng-container>
+              <input matInput [matDatepicker]="picker" [formControlName]="field.fieldName">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </ng-container>
+          }
+
           @default {
             <input matInput [type]="field.type" [formControlName]="field.fieldName">
           }
@@ -41,7 +43,7 @@
 
         @if (getControl(field.fieldName); as control) {
           @if (control.invalid && control.touched) {
-            <mat-error>Campo inválido</mat-error>
+            <mat-error>{{ field.label }} é obrigatório ou inválido</mat-error>
           }
         }
       </mat-form-field>

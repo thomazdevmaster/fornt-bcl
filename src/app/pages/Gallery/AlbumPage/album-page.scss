@@ -1,0 +1,63 @@
+.page-container {
+  background: #fff;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+.album-hero {
+  background: #f8f9fa;
+  padding: 40px 20px;
+  margin-bottom: 40px;
+  position: relative;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+
+  .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+  }
+
+  h1 { font-size: 2.5rem; margin-bottom: 10px; color: #202124; }
+  .hero-desc { font-size: 1.1rem; color: #5f6368; max-width: 600px; margin: 0 auto 16px; }
+  .meta-info { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #1a73e8; font-weight: 600; }
+}
+
+.photos-feed {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 60px; // Espaço grande entre posts de fotos
+}
+
+.photo-card {
+  background: #fff;
+
+  .media-wrapper {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+
+    img, video {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 80vh; // Não deixa a imagem ocupar mais que a tela
+      object-fit: contain;
+      background: #000;
+    }
+  }
+
+  .photo-details {
+    padding: 0 10px;
+    border-left: 4px solid #1a73e8; // Detalhe visual de blog
+
+    h3 { font-size: 1.4rem; margin: 0 0 8px; color: #202124; }
+    p { font-size: 1rem; color: #444; line-height: 1.6; margin-bottom: 8px; }
+    .date-badge { font-size: 0.8rem; color: #999; }
+  }
+}

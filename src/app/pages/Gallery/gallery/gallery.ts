@@ -16,7 +16,7 @@ import { GALLERY_FORM_FIELDS, getGalleryDetailFields } from '../config/gallery-f
 import { GALLERY_COLUMNS } from '../config/gallery-columns.config';
 import { GalleryService } from '../services/gallery.service';
 import { GalleryBatchComponent } from '../GalleryBatch/gallery-batch';
-import { AlbumDetailComponent } from '../Album/album-detail';
+import { AlbumDetailComponent } from '../AlbumDetail/album-detail';
 
 @Component({
   selector: 'app-gallerys',

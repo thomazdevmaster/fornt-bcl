@@ -1,0 +1,36 @@
+<div class="page-container">
+  <header class="album-hero">
+    <button mat-icon-button (click)="close()" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="hero-content">
+      <h1>{{ data.category }}</h1>
+      @if (data.description) {
+        <p class="hero-desc">{{ data.description }}</p>
+      }
+      <span class="meta-info">{{ data.items.length }} fotos registradas</span>
+    </div>
+  </header>
+
+  <div class="photos-feed">
+    @for (item of data.items; track item.id) {
+      <div class="photo-card">
+        <div class="media-wrapper">
+          @if (item.type === 'video') {
+            <video [src]="item.url" controls></video>
+          } @else {
+            <img [src]="item.url" [alt]="item.title" loading="lazy">
+          }
+        </div>
+
+        <div class="photo-details">
+          <h3>{{ item.title }}</h3>
+          @if (item.description) {
+            <p>{{ item.description }}</p>
+          }
+          <span class="date-badge">{{ item.date | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    }
+  </div>
+</div>
