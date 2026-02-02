@@ -5,12 +5,12 @@
 
   <span class="logo" routerLink="'/'">Banda Carmelitana</span>
 
-  <div class="nav-links">
-    @for (item of shortcuts; track item) {
-      <button mat-button [routerLink]="item.route">
-        <mat-icon>{{ item.icon }}</mat-icon>
-        <span>{{ item.label }}</span>
-      </button>
+  <nav class="nav-links">
+    @for (item of shortcuts; track item.route) {
+    <button mat-button [routerLink]="item.route" routerLinkActive="active-nav">
+      <mat-icon>{{ item.icon }}</mat-icon>
+      <span>{{ item.label }}</span>
+    </button>
     }
 
     <button mat-button [matMenuTriggerFor]="adminMenu">
@@ -36,34 +36,31 @@
     <button mat-menu-item (click)="setTheme('light')">
       <mat-icon>light_mode</mat-icon>
       <span>Tema claro</span>
-      <mat-icon class="check" *ngIf="theme === 'light'">check</mat-icon>
+      @if (theme === 'light') { <mat-icon class="check">check</mat-icon> }
     </button>
     <button mat-menu-item (click)="setTheme('dark')">
       <mat-icon>dark_mode</mat-icon>
       <span>Tema escuro</span>
-      <mat-icon class="check" *ngIf="theme === 'dark'">check</mat-icon>
+      @if (theme === 'dark') { <mat-icon class="check">check</mat-icon> }
     </button>
     <button mat-menu-item (click)="setTheme('system')">
       <mat-icon>settings_suggest</mat-icon>
       <span>Seguir o sistema</span>
-      <mat-icon class="check" *ngIf="theme === 'system'">check</mat-icon>
+      @if (theme === 'system') { <mat-icon class="check">check</mat-icon> }
     </button>
   </div>
 
   <mat-divider></mat-divider>
 
   <div class="menu-section">
-    <div class="menu-title">Cor primária</div>
-    <button mat-menu-item (click)="setPrimary('indigo')">
-      <mat-icon>palette</mat-icon>
-      <span>Indigo</span>
-      <mat-icon class="check" *ngIf="primary === 'indigo'">check</mat-icon>
+    <div class="menu-title">COR PRIMÁRIA</div>
+    @for (color of primaryOptions; track color) {
+    <button mat-menu-item (click)="setPrimary(color)">
+      <mat-icon [style.color]="color">palette</mat-icon>
+      <span style="text-transform: capitalize;">{{ color }}</span>
+      @if (primary === color) { <mat-icon class="check">check</mat-icon> }
     </button>
-    <button mat-menu-item (click)="setPrimary('blue')">
-      <mat-icon>palette</mat-icon>
-      <span>Azul</span>
-      <mat-icon class="check" *ngIf="primary === 'blue'">check</mat-icon>
-    </button>
+    }
   </div>
 </mat-menu>
 

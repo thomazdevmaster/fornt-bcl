@@ -3,60 +3,117 @@
   color: var(--header-text);
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 64px;
+  padding: 0 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
 
-  .mat-icon, .logo, .nav-links button, .actions button {
+  .mat-icon,
+  .logo,
+  .nav-links button,
+  .actions button {
     color: var(--header-text);
   }
 
+  // BOTÃO HAMBÚRGUER: Aparece apenas abaixo de 800px
+  .mobile-menu-btn {
+    display: none;
+    @media (max-width: 800px) {
+      display: inline-flex;
+    }
+  }
+
   .logo {
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
     cursor: pointer;
-    margin: 0 16px;
-    font-size: 1.1rem;
+    margin: 0 24px 0 12px;
+    font-size: 1.25rem;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
 
-    @media (max-width: 599px) {
-      font-size: 0.95rem;
+    @media (max-width: 800px) {
+      font-size: 1.1rem;
       margin: 0 8px;
     }
   }
 
+  // MENU HORIZONTAL: Sumir abaixo de 800px
   .nav-links {
     display: flex;
     gap: 8px;
     align-items: center;
+    height: 100%;
 
-    @media (max-width: 599px) {
+    @media (max-width: 800px) {
       display: none;
     }
 
     button {
-      display: flex;
-      gap: 4px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      opacity: 0.85;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        // Se houver texto, dá margem, se não, centraliza
+        @media (min-width: 1201px) {
+          margin-right: 4px;
+        }
+      }
+
+      &:hover {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.15);
+      }
 
       span {
-        @media (max-width: 959px) {
+        // QUEBRA 1: Esconde o texto entre 757px e 1200px (mantém só ícones)
+        @media (max-width: 1200px) {
           display: none;
         }
       }
     }
+
+    .active-nav {
+      background: rgba(255, 255, 255, 0.25) !important;
+      opacity: 1;
+    }
   }
 
-  .spacer { flex: 1 1 auto; }
-
+  .spacer {
+    flex: 1;
+  }
   .actions {
     display: flex;
-    gap: 8px;
-    align-items: center;
+    gap: 4px;
   }
+}
 
-  .menu-section { padding: .5rem 0; }
+.menu-section {
+  padding: 8px 0;
+  min-width: 200px;
   .menu-title {
-    font-size: .75rem;
-    opacity: .7;
-    padding: .25rem 1rem .5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #666;
+    padding: 8px 16px;
+    text-transform: uppercase;
+  }
+  .check {
+    margin-left: auto;
+    font-size: 18px;
+    color: var(--mat-sys-primary);
   }
   .check { margin-left: auto; }
 
