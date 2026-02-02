@@ -50,5 +50,9 @@ export const routes: Routes = [
     path: 'instruments',
     loadComponent: () =>
       import('./pages/Instruments/instruments/instrument').then((m) => m.InstrumentComponent),
+  },
+  {
+    path: '**',
+    redirectTo: 'home',
   }
 ];

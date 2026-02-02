@@ -26,17 +26,6 @@ export class Header implements OnInit {
   primary: PrimaryColor = 'indigo';
   readonly primaryOptions: PrimaryColor[] = ['indigo', 'blue'];
 
-  readonly shortcuts: Shortcut[] = [
-    // { icon: 'home', label: 'Início', route: '/home' },
-    { icon: 'spatial_audio_off', label: 'Músicos', route: '/musicians' },
-    { icon: 'school', label: 'Alunos', route: '/students' },
-    { icon: 'cast_for_education', label: 'Apresentações', route: '/presentations' },
-    { icon: 'library_music', label: 'Repertório', route: '/songs' },
-    { icon: 'photo_library', label: 'Galeria', route: '/gallery' },
-    { icon: 'inventory_2', label: 'Patrimônio', route: '/patrimony' },
-    { icon: 'music_note', label: 'Instrumentos', route: '/instruments' },
-  ];
-
   ngOnInit() {
     this.theme = this.themeService.getTheme();
     this.primary = this.themeService.getPrimary();
