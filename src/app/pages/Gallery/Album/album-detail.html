@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Álbum: {{ data.category }}</h2>
+
+<mat-dialog-content>
+  <div class="media-manage-grid">
+    @for (item of data.items; track item.id) {
+      <div class="media-manage-card">
+        <div class="preview">
+          @if (item.type === 'video') {
+            <mat-icon>videocam</mat-icon>
+          } @else {
+            <img [src]="item.url">
+          }
+        </div>
+        <div class="info">
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.description || 'Sem descrição' }}</p>
+          <small>{{ item.date | date:'dd/MM/yyyy' }}</small>
+        </div>
+        <button mat-icon-button color="warn" (click)="deleteItem(item)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions end>
+  <button mat-raised-button color="primary" (click)="close()">Fechar</button>
+</mat-dialog-actions>

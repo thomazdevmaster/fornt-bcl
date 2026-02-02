@@ -1,29 +1,26 @@
-@if (data$ | async; as data) {
+@if (albumsData$ | async; as data) {
 
-<app-shared-table [data]="data" [columnsConfig]="config.columns" [tableTitle]="config.title"
-  [templates]="{ name: nameTmpl, actions: actionsTmpl }"
-  [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao buscar mídiass.' : 'Nenhum apresentação cadastrado.'" [canAdd]="true"
-  [searchPlaceholder]="'Buscar por mídiass, responsáveis, email ou telefone'"
-  (add)="onAdd()"></app-shared-table>
+<app-shared-table
+  [data]="data"
+  [columnsConfig]="config.columns"
+  [tableTitle]="'Álbuns da Galeria'"
+  [templates]="{ actions: actionsTmpl }"
+  [emptyMessage]="hasError ? 'Erro ao carregar álbuns.' : 'Nenhum álbum encontrado.'"
+  [canAdd]="true"
+  [searchPlaceholder]="'Buscar por nome do álbum...'"
+  (add)="onAdd()">
+</app-shared-table>
 
 } @else {
-<div class="loading-spinner">
-  <mat-spinner strokeWidth="3" diameter="50"></mat-spinner>
-  <p>Carregando registros...</p>
-</div>
-}
-
-<ng-template #nameTmpl let-element>
-  {{ element.firstName }} {{ element.lastName }}
-</ng-template>
+  }
 
 <ng-template #actionsTmpl let-element>
   <div class="action-buttons">
-    <button mat-icon-button (click)="onView(element)" title="Visualizar">
-      <mat-icon>visibility</mat-icon>
+    <button mat-icon-button (click)="onView(element)" title="Ver Álbum">
+      <mat-icon>folder_special</mat-icon>
     </button>
-    <button mat-icon-button color="warn" (click)="onDelete(element)" title="Excluir">
-      <mat-icon>delete</mat-icon>
+    <button mat-icon-button color="warn" (click)="onDelete(element)" title="Excluir Álbum">
+      <mat-icon>delete_sweep</mat-icon>
     </button>
   </div>
 </ng-template>

@@ -3,114 +3,48 @@
 <mat-dialog-content>
   <form [formGroup]="form" class="form-container">
     @for (field of data.fields; track field.fieldName) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ field.label }}</mat-label>
 
-      @switch (field.type) {
+        @switch (field.type) {
+          @case ('date') {
+            <input matInput [matDatepicker]="picker" [formControlName]="field.fieldName">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          }
 
-        @case ('media-repeater') {
-          <div class="media-repeater-section">
-            <div class="section-header">
-              <label>{{ field.label }}</label>
-              <button mat-flat-button color="primary" type="button" (click)="addMediaRow(field.fieldName)">
-                <mat-icon>add</mat-icon> Adicionar Mídia
-              </button>
-            </div>
-
-            <div [formArrayName]="field.fieldName" class="media-grid">
-              @for (mediaGroup of getFormArray(field.fieldName).controls; track $index; let i = $index) {
-                <mat-card class="media-card" [formGroupName]="i">
-                  <div class="card-header">
-                    <span>Mídia #{{i + 1}}</span>
-                    <button mat-icon-button color="warn" (click)="removeMediaRow(field.fieldName, i)" type="button">
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </div>
-
-                  <div class="card-content">
-                    <div class="upload-zone">
-                      @if (mediaGroup.get('url')?.value) {
-                        <div class="preview-box">
-                          @if (mediaGroup.get('type')?.value === 'video') {
-                            <mat-icon class="preview-icon">videocam</mat-icon>
-                          } @else {
-                            <img [src]="mediaGroup.get('url')?.value" alt="Preview">
-                          }
-                        </div>
-                      }
-                      <input type="file" #fileInput style="display: none" (change)="onFileSelected($event, field.fieldName, i)">
-                      <button mat-stroked-button type="button" (click)="fileInput.click()">
-                        <mat-icon>upload</mat-icon> Arquivo
-                      </button>
-                    </div>
-
-                    <div class="inputs-zone">
-                      <mat-form-field appearance="outline">
-                        <mat-label>Título</mat-label>
-                        <input matInput formControlName="title">
-                      </mat-form-field>
-
-                      <mat-form-field appearance="outline">
-                        <mat-label>Link ou URL externa</mat-label>
-                        <input matInput formControlName="url">
-                      </mat-form-field>
-                    </div>
-                  </div>
-                </mat-card>
-              }
-            </div>
-          </div>
-        }
-
-        @case ('file') {
-          <div class="file-field">
-            <mat-label>{{field.label}}</mat-label>
-            <input type="file" #singleFile style="display: none" (change)="onFileSelected($event, field.fieldName)">
-            <button mat-stroked-button type="button" class="full-width" (click)="singleFile.click()">
-              <mat-icon>attach_file</mat-icon>
-              {{ getControl(field.fieldName)?.value ? 'Trocar Arquivo' : 'Selecionar ' + field.label }}
-            </button>
-            @if (getControl(field.fieldName)?.value) {
-              <small class="success-text">Arquivo carregado com sucesso.</small>
-            }
-          </div>
-        }
-
-        @default {
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>{{ field.label }}</mat-label>
-
-            @if (field.type === 'select') {
-              @if (field.allowCustomValue) {
-                <input type="text" matInput [formControlName]="field.fieldName" [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete">
-                  @for (opt of field.options; track opt.value) {
-                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-                  }
-                </mat-autocomplete>
-              } @else {
-                <mat-select [formControlName]="field.fieldName">
-                  @for (opt of field.options; track opt.value) {
-                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-                  }
-                </mat-select>
-              }
-            } @else if (field.type === 'textarea') {
-              <textarea matInput [formControlName]="field.fieldName" rows="3"></textarea>
-            } @else if (field.type === 'date') {
-              <input matInput [matDatepicker]="picker" [formControlName]="field.fieldName">
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
+          @case ('select') {
+            @if (field.allowCustomValue) {
+              <input type="text" matInput [formControlName]="field.fieldName" [matAutocomplete]="auto">
+              <mat-autocomplete #auto="matAutocomplete">
+                @for (opt of field.options; track opt.value) {
+                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                }
+              </mat-autocomplete>
             } @else {
-              <input matInput [type]="field.type" [formControlName]="field.fieldName">
+              <mat-select [formControlName]="field.fieldName">
+                @for (opt of field.options; track opt.value) {
+                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
             }
+          }
 
-            @if (getControl(field.fieldName); as control) {
-              @if (control.invalid && control.touched) {
-                <mat-error>{{ field.label }} é obrigatório ou inválido</mat-error>
-              }
-            }
-          </mat-form-field>
+          @case ('textarea') {
+            <textarea matInput [formControlName]="field.fieldName" rows="4"></textarea>
+          }
+
+          @default {
+            <input matInput [type]="field.type" [formControlName]="field.fieldName">
+          }
         }
-      }
+
+        @if (getControl(field.fieldName); as control) {
+          @if (control.invalid && control.touched) {
+            <mat-error>Campo inválido</mat-error>
+          }
+        }
+      </mat-form-field>
     }
   </form>
 </mat-dialog-content>

@@ -1,45 +1,51 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GalleryService } from '../services/gallery.service';
-import { Gallery, MediaType } from '../model/gallery';
+import { Gallery } from '../model/gallery';
 import { AppMaterialModule } from '../../../shared/app-material/app-material-module';
-import { Album } from 'app/shared/interfaces/iAlbum';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-gallery-view',
   standalone: true,
-  imports: [CommonModule, AppMaterialModule],
+  imports: [CommonModule, AppMaterialModule, MatExpansionModule],
   templateUrl: './gallery-view.html',
   styleUrl: './gallery-view.scss'
 })
 export class GalleryViewComponent implements OnInit {
   private galleryService = inject(GalleryService);
 
-  albums: Album[] = [];
+  albums: any[] = [];
   loading = true;
 
   ngOnInit() {
     this.galleryService.list().subscribe({
       next: (items) => {
-        this.albums = this.groupIntoAlbums(items);
+        const sortedItems = items.sort((a, b) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        this.albums = this.groupIntoAlbums(sortedItems);
         this.loading = false;
       },
       error: () => this.loading = false
     });
   }
 
-  private groupIntoAlbums(items: Gallery[]): Album[] {
+  private groupIntoAlbums(items: Gallery[]): any[] {
     const groups = items.reduce((acc, item) => {
       const albumName = item.category || 'Geral';
-      if (!acc[albumName]) acc[albumName] = [];
-      acc[albumName].push(item);
+      if (!acc[albumName]) {
+        acc[albumName] = {
+          name: albumName,
+          description: item.description || '', // Pega a descrição do registro
+          items: []
+        };
+      }
+      acc[albumName].items.push(item);
       return acc;
-    }, {} as { [key: string]: Gallery[] });
+    }, {} as { [key: string]: any });
 
-    return Object.keys(groups).map(name => ({
-      name,
-      items: groups[name]
-    }));
+    return Object.values(groups);
   }
 
   openMedia(url: string) {

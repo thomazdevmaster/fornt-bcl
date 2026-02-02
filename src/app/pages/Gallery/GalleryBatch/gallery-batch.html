@@ -1,0 +1,72 @@
+<div class="dialog-header">
+  <h2 mat-dialog-title>Upload de Mídias em Lote</h2>
+  <mat-icon class="close-icon" mat-dialog-close>close</mat-icon>
+</div>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <div class="album-config">
+      <mat-form-field appearance="outline">
+        <mat-label>Nome do Álbum</mat-label>
+        <input matInput formControlName="category" [matAutocomplete]="auto" placeholder="Ex: Festa de Natal">
+        <mat-autocomplete #auto="matAutocomplete">
+          @for (album of data.existingAlbums; track album) {
+            <mat-option [value]="album">{{ album }}</mat-option>
+          }
+        </mat-autocomplete>
+        @if (isNewAlbum && form.get('category')?.value) {
+          <mat-hint><strong>Novo álbum detectado</strong></mat-hint>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descrição Geral do Álbum</mat-label>
+        <textarea matInput formControlName="albumDescription" rows="1" placeholder="Uma breve descrição sobre estas fotos"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="drop-zone"
+         [class.dragging]="isDragging"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave()"
+         (drop)="onDrop($event)"
+         (click)="fileInput.click()">
+
+      <mat-icon color="primary">cloud_upload</mat-icon>
+      <p>Arraste fotos e vídeos ou <span>clique aqui</span></p>
+      <input type="file" #fileInput multiple hidden (change)="handleFiles($any($event).target.files)">
+    </div>
+
+    <div formArrayName="items" class="media-preview-grid">
+      @for (item of items.controls; track $index; let i = $index) {
+        <div [formGroupName]="i" class="media-item-card animate-in">
+          <div class="preview-box">
+            @if (item.get('type')?.value === 'video') {
+              <div class="video-placeholder">
+                <mat-icon>videocam</mat-icon>
+              </div>
+            } @else {
+              <img [src]="item.get('url')?.value">
+            }
+            <button class="remove-btn" (click)="removeItem(i)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+
+          <div class="item-inputs">
+            <input formControlName="title" placeholder="Título do arquivo">
+            <textarea formControlName="description" placeholder="Legenda individual (opcional)"></textarea>
+          </div>
+        </div>
+      }
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions end>
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" (click)="save()"
+          [disabled]="form.invalid || items.length === 0">
+    Salvar {{ items.length }} Itens
+  </button>
+</mat-dialog-actions>

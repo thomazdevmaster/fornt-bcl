@@ -9,32 +9,47 @@
       <mat-spinner diameter="50"></mat-spinner>
     </div>
   } @else {
-    @for (album of albums; track album.name) {
-      <section class="album-section">
-        <h2 class="album-title">{{ album.name }}</h2>
+    <mat-accordion multi="true">
+      @for (album of albums; track album.name) {
+        <mat-expansion-panel class="album-panel" [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>{{ album.name }}</strong>
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ album.items.length }} itens registrados
+            </mat-panel-description>
+          </mat-expansion-panel-header>
 
-        <div class="media-grid">
-          @for (item of album.items; track item.id) {
-            <mat-card class="media-card" (click)="openMedia(item.url)">
-              <div class="media-preview">
-                @if (item.type === 'video') {
-                  <div class="video-overlay">
-                    <mat-icon>play_circle_outline</mat-icon>
+          <div class="album-content">
+            @if (album.description) {
+              <p class="album-info-text">{{ album.description }}</p>
+            }
+
+            <div class="media-grid">
+              @for (item of album.items; track item.id) {
+                <mat-card class="media-card" (click)="openMedia(item.url)">
+                  <div class="media-preview">
+                    @if (item.type === 'video') {
+                      <div class="video-overlay">
+                        <mat-icon>play_circle_outline</mat-icon>
+                      </div>
+                      <img src="assets/images/video-placeholder.jpg" [alt]="item.title">
+                    } @else {
+                      <img [src]="item.url" [alt]="item.title">
+                    }
                   </div>
-                  <img src="assets/images/video-placeholder.jpg" [alt]="item.title">
-                } @else {
-                  <img [src]="item.url" [alt]="item.title">
-                }
-              </div>
 
-              <mat-card-content>
-                <h3>{{ item.title }}</h3>
-                <p>{{ item.date | date:'dd/MM/yyyy' }}</p>
-              </mat-card-content>
-            </mat-card>
-          }
-        </div>
-      </section>
-    }
+                  <mat-card-content>
+                    <h3>{{ item.title }}</h3>
+                    <p>{{ item.date | date:'dd/MM/yyyy' }}</p>
+                  </mat-card-content>
+                </mat-card>
+              }
+            </div>
+          </div>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
   }
 </div>

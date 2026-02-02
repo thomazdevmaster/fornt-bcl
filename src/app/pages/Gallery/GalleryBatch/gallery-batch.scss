@@ -1,0 +1,94 @@
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  h2 { margin: 0; }
+  .close-icon { cursor: pointer; opacity: 0.6; }
+}
+
+.album-config {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  margin-bottom: 24px;
+
+  &.dragging {
+    background: #e3f2fd;
+    border-color: #2196f3;
+  }
+
+  mat-icon { font-size: 48px; width: 48px; height: 48px; margin-bottom: 8px; }
+  span { color: #2196f3; text-decoration: underline; }
+}
+
+.media-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.media-item-card {
+  display: flex;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  position: relative;
+
+  .preview-box {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #f0f0f0;
+    position: relative;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+    .video-placeholder {
+      display: flex; align-items: center; justify-content: center; height: 100%;
+      mat-icon { opacity: 0.5; }
+    }
+
+    .remove-btn {
+      position: absolute; top: 0; right: 0; background: rgba(0,0,0,0.5);
+      color: white; border: none; padding: 2px; cursor: pointer;
+      mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    }
+  }
+
+  .item-inputs {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    input, textarea {
+      border: none; border-bottom: 1px solid transparent; width: 100%;
+      outline: none; font-size: 13px;
+      &:focus { border-bottom-color: #2196f3; }
+    }
+    textarea { resize: none; color: #666; font-size: 12px; height: 40px; }
+  }
+}
+
+.animate-in {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -17,5 +17,5 @@ export interface IFormFieldConfig {
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
-  allowCustomValue?: boolean; // Para selects que permitem novos valores
+  allowCustomValue?: boolean;
 }
