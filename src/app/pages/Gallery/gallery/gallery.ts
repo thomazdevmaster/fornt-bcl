@@ -9,15 +9,10 @@ import { BaseCrudListComponent } from '../../../shared/base-classes/base-crud-li
 import { ICrudListConfig } from '../../../shared/interfaces/icrud-config';
 
 import { Gallery } from '../model/gallery';
-import { GALLERY_FORM_FIELDS, getGalleryDetailFields } from '../config/gallery-form.config';
+import { GALLERY_BATCH_FORM, GALLERY_FORM_FIELDS, getGalleryDetailFields } from '../config/gallery-form.config';
 import { GALLERY_COLUMNS } from '../config/gallery-columns.config';
 import { GalleryService } from '../services/gallery.service';
 
-/**
- * Componente principal de gerenciamento de estudantes
- * Estende BaseCrudListComponent para reutilizar toda lógica de CRUD
- * Responsável apenas por configuração específica de estudantes
- */
 @Component({
   selector: 'app-gallerys',
   standalone: true,
@@ -26,9 +21,9 @@ import { GalleryService } from '../services/gallery.service';
   styleUrl: './gallery.scss',
 })
 export class GalleryComponent extends BaseCrudListComponent<Gallery> {
-  /**
-   * Configuração específica de músicos para a base class
-   */
+
+  existingAlbums: string[] = []
+
   override config: ICrudListConfig<Gallery> = {
     title: 'Mídiass',
     endpoint: 'gallerys.json',
@@ -44,6 +39,41 @@ export class GalleryComponent extends BaseCrudListComponent<Gallery> {
     snackBar: MatSnackBar
   ) {
     super(dialogsService, snackBar);
+
+    this.data$.subscribe(items => {
+      if (items) {
+        // Extrai categorias únicas e remove vazios
+        this.existingAlbums = [...new Set(items.map(i => i.category).filter((c): c is string => !!c))];
+      }
+    });
+  }
+
+  override onAdd() {
+    const dialogRef = this.dialogsService.openForm({
+      title: 'Adicionar Fotos ao Álbum',
+      fields: GALLERY_BATCH_FORM(this.existingAlbums),
+      submitText: 'Enviar Tudo'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.saveBatch(result);
+      }
+    });
+  }
+
+  private saveBatch(data: any) {
+    const album = data.category;
+    const items = data.mediaList;
+
+    // Para cada item da lista, salvamos individualmente (ou via endpoint de bulk)
+    items.forEach((item: any) => {
+      const finalItem = { ...item, category: album };
+      this.service.create(finalItem).subscribe();
+    });
+
+    this.snackBar.open(`${items.length} mídias adicionadas ao álbum ${album}`, 'OK');
+    this.refreshData();
   }
 }
 

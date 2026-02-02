@@ -10,11 +10,12 @@ export interface IFormDialogData {
 export interface IFormFieldConfig {
   fieldName: string;
   label: string;
-  type: 'text' | 'email' | 'number' | 'select' | 'textarea' | 'date';
+  type: 'text' | 'email' | 'number' | 'select' | 'textarea' | 'date' | 'autocomplete' | 'media-repeater' | 'file';
   value?: any;
   validators?: ValidatorFn[];
   options?: Array<{ value: string | number; label: string }>;
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
+  allowCustomValue?: boolean; // Para selects que permitem novos valores
 }

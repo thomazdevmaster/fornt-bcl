@@ -37,6 +37,11 @@ export const routes: Routes = [
       import('./pages/Gallery/gallery/gallery').then((m) => m.GalleryComponent),
   },
   {
+    path: 'gallery-view',
+    loadComponent: () =>
+      import('./pages/Gallery/GaleryView/gallery-view').then((m) => m.GalleryViewComponent),
+  },
+  {
     path: 'patrimony',
     loadComponent: () =>
       import('./pages/Patrimony/patrimony/patrimony').then((m) => m.PatrimonyComponent),

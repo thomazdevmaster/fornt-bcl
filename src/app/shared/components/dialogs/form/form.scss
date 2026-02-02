@@ -1,20 +1,79 @@
 .form-container {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  min-width: 400px;
+  max-width: 800px;
+  padding: 10px 0;
+}
+
+.full-width { width: 100%; }
+
+// Estilos do Repetidor
+.media-repeater-section {
+  margin-top: 10px;
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    label { font-weight: bold; color: var(--primary-color); }
+  }
+}
+
+.media-grid {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
-  padding: 16px 0;
 }
 
-.full-width {
-  width: 100%;
-}
+.media-card {
+  padding: 12px;
+  border: 1px solid rgba(0,0,0,0.1) !important;
+  box-shadow: none !important;
+  background: rgba(0,0,0,0.02);
 
-mat-form-field {
-  &:has(textarea) {
-    ::ng-deep {
-      .mat-mdc-text-field-wrapper {
-        padding-bottom: 0.5rem;
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
+  .card-content {
+    display: flex;
+    gap: 16px;
+
+    .upload-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+
+      .preview-box {
+        width: 80px;
+        height: 80px;
+        border-radius: 4px;
+        overflow: hidden;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img { width: 100%; height: 100%; object-fit: cover; }
+        .preview-icon { font-size: 40px; width: 40px; height: 40px; opacity: 0.5; }
       }
+    }
+
+    .inputs-zone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
   }
 }
+
+.success-text { color: #4caf50; display: block; margin-top: 4px; }

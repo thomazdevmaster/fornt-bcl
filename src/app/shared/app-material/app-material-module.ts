@@ -17,6 +17,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   exports: [
@@ -38,6 +39,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     MatSelectModule,
     MatSnackBarModule,
     MatDatepickerModule,
+    MatAutocompleteModule
   ]
 })
 export class AppMaterialModule { }

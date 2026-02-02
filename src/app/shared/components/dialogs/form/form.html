@@ -3,64 +3,114 @@
 <mat-dialog-content>
   <form [formGroup]="form" class="form-container">
     @for (field of data.fields; track field.fieldName) {
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>{{ field.label }}</mat-label>
 
-        @switch (field.type) {
-          @case ('select') {
-            <mat-select [formControlName]="field.fieldName">
-              @for (option of field.options; track option.value) {
-                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      @switch (field.type) {
+
+        @case ('media-repeater') {
+          <div class="media-repeater-section">
+            <div class="section-header">
+              <label>{{ field.label }}</label>
+              <button mat-flat-button color="primary" type="button" (click)="addMediaRow(field.fieldName)">
+                <mat-icon>add</mat-icon> Adicionar Mídia
+              </button>
+            </div>
+
+            <div [formArrayName]="field.fieldName" class="media-grid">
+              @for (mediaGroup of getFormArray(field.fieldName).controls; track $index; let i = $index) {
+                <mat-card class="media-card" [formGroupName]="i">
+                  <div class="card-header">
+                    <span>Mídia #{{i + 1}}</span>
+                    <button mat-icon-button color="warn" (click)="removeMediaRow(field.fieldName, i)" type="button">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+
+                  <div class="card-content">
+                    <div class="upload-zone">
+                      @if (mediaGroup.get('url')?.value) {
+                        <div class="preview-box">
+                          @if (mediaGroup.get('type')?.value === 'video') {
+                            <mat-icon class="preview-icon">videocam</mat-icon>
+                          } @else {
+                            <img [src]="mediaGroup.get('url')?.value" alt="Preview">
+                          }
+                        </div>
+                      }
+                      <input type="file" #fileInput style="display: none" (change)="onFileSelected($event, field.fieldName, i)">
+                      <button mat-stroked-button type="button" (click)="fileInput.click()">
+                        <mat-icon>upload</mat-icon> Arquivo
+                      </button>
+                    </div>
+
+                    <div class="inputs-zone">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Título</mat-label>
+                        <input matInput formControlName="title">
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline">
+                        <mat-label>Link ou URL externa</mat-label>
+                        <input matInput formControlName="url">
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </mat-card>
               }
-            </mat-select>
-          }
-          @case ('textarea') {
-            <textarea matInput
-              [formControlName]="field.fieldName"
-              [placeholder]="field.placeholder || ''"
-              rows="4">
-            </textarea>
-          }
-          @case ('date') {
-             <ng-container>
+            </div>
+          </div>
+        }
+
+        @case ('file') {
+          <div class="file-field">
+            <mat-label>{{field.label}}</mat-label>
+            <input type="file" #singleFile style="display: none" (change)="onFileSelected($event, field.fieldName)">
+            <button mat-stroked-button type="button" class="full-width" (click)="singleFile.click()">
+              <mat-icon>attach_file</mat-icon>
+              {{ getControl(field.fieldName)?.value ? 'Trocar Arquivo' : 'Selecionar ' + field.label }}
+            </button>
+            @if (getControl(field.fieldName)?.value) {
+              <small class="success-text">Arquivo carregado com sucesso.</small>
+            }
+          </div>
+        }
+
+        @default {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ field.label }}</mat-label>
+
+            @if (field.type === 'select') {
+              @if (field.allowCustomValue) {
+                <input type="text" matInput [formControlName]="field.fieldName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete">
+                  @for (opt of field.options; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-autocomplete>
+              } @else {
+                <mat-select [formControlName]="field.fieldName">
+                  @for (opt of field.options; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              }
+            } @else if (field.type === 'textarea') {
+              <textarea matInput [formControlName]="field.fieldName" rows="3"></textarea>
+            } @else if (field.type === 'date') {
               <input matInput [matDatepicker]="picker" [formControlName]="field.fieldName">
-              <mat-hint>DD/MM/YYYY</mat-hint>
-
-              <mat-datepicker-toggle matIconSuffix [for]="picker">
-                <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
-              </mat-datepicker-toggle>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
-            </ng-container>
-          }
-          @default {
-            <input matInput
-              [type]="field.type"
-              [formControlName]="field.fieldName"
-              [placeholder]="field.placeholder || ''">
-          }
-        }
+            } @else {
+              <input matInput [type]="field.type" [formControlName]="field.fieldName">
+            }
 
-        @if (getControl(field.fieldName); as control) {
-          @if (control.hasError('required')) {
-            <mat-error>{{ field.label }} é obrigatório</mat-error>
-          }
-          @if (control.hasError('email')) {
-            <mat-error>Email inválido</mat-error>
-          }
-          @if (control.hasError('pattern')) {
-            <mat-error>Formato inválido</mat-error>
-          }
-          @if (control.hasError('minLength')) {
-            <mat-error>Mínimo de caracteres não atingido</mat-error>
-          }
-          @if (control.hasError('maxLength')) {
-            <mat-error>Máximo de caracteres excedido</mat-error>
-          }
-          @if (control.hasError('futureDate')) {
-            <mat-error>A data deve ser anterior a hoje.</mat-error>
-          }
+            @if (getControl(field.fieldName); as control) {
+              @if (control.invalid && control.touched) {
+                <mat-error>{{ field.label }} é obrigatório ou inválido</mat-error>
+              }
+            }
+          </mat-form-field>
         }
-      </mat-form-field>
+      }
     }
   </form>
 </mat-dialog-content>

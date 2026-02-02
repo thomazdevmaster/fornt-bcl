@@ -17,7 +17,10 @@ export class Header implements OnInit {
   theme: ThemeChoice = 'system';
   primary: 'indigo' | 'blue' = 'indigo';
 
+  // Links que aparecem diretamente no Header
   shortcuts: Shortcut[] = [];
+  // Links que ficarão dentro do menu Admin
+  adminLinks: Shortcut[] = [];
 
   ngOnInit() {
 
@@ -26,14 +29,18 @@ export class Header implements OnInit {
 
     this.shortcuts = [
       { icon: 'home', label: 'Início', route: '/home' },
+      { icon: 'photo_library', label: 'Galeria', route: '/gallery-view' },
+    ];
+
+    this.adminLinks = [
       { icon: 'spatial_audio_off', label: 'Músicos', route: '/musicians' },
       { icon: 'school', label: 'Alunos', route: '/students' },
       { icon: 'cast_for_education', label: 'Apresentações', route: '/presentations' },
       { icon: 'library_music', label: 'Repertório', route: '/songs' },
-      { icon: 'photo_library', label: 'Galeria', route: '/gallery' },
       { icon: 'inventory_2', label: 'Patrimônio', route: '/patrimony' },
       { icon: 'music_note', label: 'Instrumentos', route: '/instruments' },
-    ]
+      { icon: 'photo_library', label: 'Galeria', route: '/gallery' },
+    ];
   }
 
 
