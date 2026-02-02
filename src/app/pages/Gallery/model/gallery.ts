@@ -23,5 +23,16 @@ export class Gallery implements ICrudEntity {
   }
 }
 
+export interface IGalleryBatch {
+  album: string;
+  items: {
+    url: string;
+    type: MediaType;
+    title: string;
+    description?: string;
+    date: Date;
+  }[];
+}
+
 export type CreateGallery = CreateEntity<Gallery>;
 export type UpdateGallery = UpdateEntity<Gallery>;

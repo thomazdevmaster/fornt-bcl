@@ -1,0 +1,40 @@
+<div class="gallery-container">
+  <header class="gallery-header">
+    <h1>Nossa Galeria</h1>
+    <p>Momentos e registros da Banda Carmelitana</p>
+  </header>
+
+  @if (loading) {
+    <div class="loader">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else {
+    @for (album of albums; track album.name) {
+      <section class="album-section">
+        <h2 class="album-title">{{ album.name }}</h2>
+
+        <div class="media-grid">
+          @for (item of album.items; track item.id) {
+            <mat-card class="media-card" (click)="openMedia(item.url)">
+              <div class="media-preview">
+                @if (item.type === 'video') {
+                  <div class="video-overlay">
+                    <mat-icon>play_circle_outline</mat-icon>
+                  </div>
+                  <img src="assets/images/video-placeholder.jpg" [alt]="item.title">
+                } @else {
+                  <img [src]="item.url" [alt]="item.title">
+                }
+              </div>
+
+              <mat-card-content>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.date | date:'dd/MM/yyyy' }}</p>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

@@ -115,4 +115,32 @@
     font-size: 18px;
     color: var(--mat-sys-primary);
   }
+  .check { margin-left: auto; }
+
+  .mobile-menu-btn {
+    display: none; // Escondido por padrão no Desktop
+
+    @media (max-width: 768px) {
+      display: inline-flex;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    @media (max-width: 768px) {
+      display: none; // Esconde os links e o Admin no Mobile
+    }
+  }
 }
+
+// Estilos para os títulos dentro do menu sanduíche
+  .menu-title {
+    font-size: 0.75rem;
+    font-weight: bold;
+    opacity: 0.6;
+    padding: 8px 16px;
+    text-transform: uppercase;
+  }

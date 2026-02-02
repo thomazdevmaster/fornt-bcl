@@ -1,9 +1,9 @@
 <mat-toolbar class="app-header">
-  <button mat-icon-button (click)="toggleMenu.emit()" aria-label="Menu" class="mobile-menu-btn">
+  <button mat-icon-button class="mobile-menu-btn" [matMenuTriggerFor]="mobileMenu">
     <mat-icon>menu</mat-icon>
   </button>
 
-  <span class="logo" routerLink="/">Banda Carmelitana</span>
+  <span class="logo" routerLink="'/'">Banda Carmelitana</span>
 
   <nav class="nav-links">
     @for (item of shortcuts; track item.route) {
@@ -12,7 +12,13 @@
       <span>{{ item.label }}</span>
     </button>
     }
-  </nav>
+
+    <button mat-button [matMenuTriggerFor]="adminMenu">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span>Admin</span>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+  </div>
 
   <span class="spacer"></span>
 
@@ -20,15 +26,13 @@
     <button mat-icon-button [matMenuTriggerFor]="settingsMenu" aria-label="Configurações">
       <mat-icon>settings</mat-icon>
     </button>
-    <button mat-icon-button aria-label="Compartilhar">
-      <mat-icon>share</mat-icon>
-    </button>
+    <button mat-icon-button><mat-icon>share</mat-icon></button>
   </div>
 </mat-toolbar>
 
-<mat-menu #settingsMenu="matMenu" xPosition="before" class="custom-menu">
+<mat-menu #settingsMenu="matMenu" xPosition="before" yPosition="below">
   <div class="menu-section">
-    <div class="menu-title">APARÊNCIA</div>
+    <div class="menu-title">Aparência</div>
     <button mat-menu-item (click)="setTheme('light')">
       <mat-icon>light_mode</mat-icon>
       <span>Tema claro</span>
@@ -45,7 +49,9 @@
       @if (theme === 'system') { <mat-icon class="check">check</mat-icon> }
     </button>
   </div>
+
   <mat-divider></mat-divider>
+
   <div class="menu-section">
     <div class="menu-title">COR PRIMÁRIA</div>
     @for (color of primaryOptions; track color) {
@@ -56,4 +62,30 @@
     </button>
     }
   </div>
+</mat-menu>
+
+<mat-menu #adminMenu="matMenu">
+  @for (link of adminLinks; track link) {
+    <button mat-menu-item [routerLink]="link.route">
+      <mat-icon>{{ link.icon }}</mat-icon>
+      <span>{{ link.label }}</span>
+    </button>
+  }
+</mat-menu>
+
+<mat-menu #mobileMenu="matMenu">
+  @for (item of shortcuts; track item) {
+    <button mat-menu-item [routerLink]="item.route">
+      <mat-icon>{{ item.icon }}</mat-icon>
+      <span>{{ item.label }}</span>
+    </button>
+  }
+  <mat-divider></mat-divider>
+  <div class="menu-title">Admin</div>
+  @for (link of adminLinks; track link) {
+    <button mat-menu-item [routerLink]="link.route">
+      <mat-icon>{{ link.icon }}</mat-icon>
+      <span>{{ link.label }}</span>
+    </button>
+  }
 </mat-menu>

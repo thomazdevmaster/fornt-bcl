@@ -10,6 +10,7 @@ export class PersonModel implements ICrudEntity {
   firstName: string = '';
   lastName: string = '';
   email: string = '';
+  imageProfileUrl: string = '';
   phone?: string;
   birthDate?: Date | string;
   profileIds?: number[];
