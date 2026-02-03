@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>Partituras por Instrumento: {{ data.songTitle }}</h2>
+
+<mat-dialog-content>
+  <div class="parts-container">
+    @for (part of parts; track $index) {
+      <div class="part-row mat-elevation-z1">
+        <mat-form-field appearance="outline">
+          <mat-label>Instrumento</mat-label>
+          <input matInput [(ngModel)]="part.instrument" placeholder="Ex: Trompete">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Voz</mat-label>
+          <input matInput [(ngModel)]="part.voice" placeholder="Ex: 1ª Voz">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>URL PDF (Partitura)</mat-label>
+          <input matInput [(ngModel)]="part.urlSheet">
+          <mat-icon matSuffix>picture_as_pdf</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>URL MIDI</mat-label>
+          <input matInput [(ngModel)]="part.urlMidi">
+          <mat-icon matSuffix>music_note</mat-icon>
+        </mat-form-field>
+
+        <button mat-icon-button color="warn" (click)="removePart($index)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    }
+
+    @if (parts.length === 0) {
+      <div class="empty-state">
+        <mat-icon>library_music</mat-icon>
+        <p>Nenhum instrumento configurado.</p>
+      </div>
+    }
+  </div>
+
+  <button mat-stroked-button color="primary" class="w-100 mt-3" (click)="addPart()">
+    <mat-icon>add</mat-icon> Adicionar Instrumento
+  </button>
+</mat-dialog-content>
+
+<mat-dialog-actions end>
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" (click)="save()">Salvar Alterações</button>
+</mat-dialog-actions>

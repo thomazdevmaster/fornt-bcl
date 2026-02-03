@@ -19,6 +19,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
     MatPaginatorModule,
     MatIconModule,
     MatToolbarModule,
+    MatTooltipModule,
     MatCardModule,
     MatDividerModule,
     MatGridListModule,

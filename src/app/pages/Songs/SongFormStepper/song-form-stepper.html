@@ -1,0 +1,147 @@
+<h2 mat-dialog-title>Cadastrar Nova Música</h2>
+<mat-dialog-content>
+  <mat-stepper #stepper>
+    <mat-step [stepControl]="basicForm">
+      <form [formGroup]="basicForm" class="step-container">
+        <ng-template matStepLabel>Informações Básicas</ng-template>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Título</mat-label>
+          <input matInput formControlName="title" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Autor</mat-label>
+          <input matInput formControlName="author" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Data de Criação</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="creationDate">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" matStepperNext>Próximo: Arquivos</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Arquivos e Partes</ng-template>
+      <div class="step-container">
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Link YouTube (Referência)</mat-label>
+          <input matInput [(ngModel)]="song.youtubeUrl" placeholder="https://youtube.com/...">
+          <mat-icon matSuffix>play_circle</mat-icon>
+        </mat-form-field>
+
+        <div class="section-header">
+          <h3>Arquivos Gerais (Banda Toda)</h3>
+        </div>
+
+        <div class="file-upload-grid">
+          <div class="file-card" [class.has-file]="song.fullSheetMusicUrl">
+            <mat-icon class="file-icon">description</mat-icon>
+            <div class="file-info">
+              <span class="label">Grade / PDF Geral</span>
+              <span class="filename">{{ getFileName(song.fullSheetMusicUrl) || 'Nenhum arquivo' }}</span>
+            </div>
+            <button mat-flat-button color="primary" (click)="filePdfGeral.click()">
+              {{ song.fullSheetMusicUrl ? 'Alterar' : 'Selecionar' }}
+            </button>
+            <input #filePdfGeral type="file" hidden (change)="onFileSelect($event, 'fullSheetMusicUrl')"
+              accept="application/pdf">
+          </div>
+
+          <div class="file-card" [class.has-file]="song.fullMidiUrl">
+            <mat-icon class="file-icon">audiotrack</mat-icon>
+            <div class="file-info">
+              <span class="label">Áudio / MIDI Geral</span>
+              <span class="filename">{{ getFileName(song.fullMidiUrl) || 'Nenhum arquivo' }}</span>
+            </div>
+            <button mat-flat-button color="accent" (click)="fileMidiGeral.click()">
+              {{ song.fullMidiUrl ? 'Alterar' : 'Selecionar' }}
+            </button>
+            <input #fileMidiGeral type="file" hidden (change)="onFileSelect($event, 'fullMidiUrl')"
+              accept=".mid,.midi,.mp3,.wav">
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h3>Partes Individuais</h3>
+          <button mat-stroked-button color="primary" (click)="addPart()">
+            <mat-icon>add</mat-icon> Adicionar Instrumento
+          </button>
+        </div>
+
+        @for (part of song.parts; track $index) {
+        <div class="part-row-card mat-elevation-z1">
+          <mat-form-field appearance="outline">
+            <mat-label>Instrumento</mat-label>
+            <mat-select [(ngModel)]="part.instrument">
+              @for (inst of instruments; track inst) {
+              <mat-option [value]="inst">{{ inst }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Voz</mat-label>
+            <mat-select [(ngModel)]="part.voice">
+              @for (v of ['1', '2', '3', '4', '0']; track v) {
+              @if(v!=='0') {
+              <mat-option [value]="v">{{ v }}ª Voz</mat-option>
+              } @else {
+              <mat-option [value]="v">Voz Única</mat-option>
+              }
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="mini-upload">
+            <button mat-icon-button [color]="part.urlSheet ? 'primary' : ''" (click)="partPdf.click()"
+              [matTooltip]="getFileName(part.urlSheet) || 'Upload PDF'">
+              <mat-icon>{{ part.urlSheet ? 'check_circle' : 'picture_as_pdf' }}</mat-icon>
+            </button>
+            <input #partPdf type="file" hidden (change)="onPartFileSelect($event, part, 'urlSheet')"
+              accept="application/pdf">
+            <span class="upload-label">PDF</span>
+          </div>
+
+          <div class="mini-upload">
+            <button mat-icon-button [color]="part.urlMidi ? 'accent' : ''" (click)="partMidi.click()"
+              [matTooltip]="getFileName(part.urlMidi) || 'Upload Áudio'">
+              <mat-icon>{{ part.urlMidi ? 'check_circle' : 'library_music' }}</mat-icon>
+            </button>
+            <input #partMidi type="file" hidden (change)="onPartFileSelect($event, part, 'urlMidi')"
+              accept=".mid,.midi,.mp3,.wav">
+            <span class="upload-label">Áudio</span>
+          </div>
+
+          <button mat-icon-button color="warn" (click)="removePart($index)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+        }
+      </div>
+
+      @if (isUploading) {
+      <div class="progress-container">
+        <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+        <span class="progress-text">Enviando arquivos: {{ uploadProgress }}%</span>
+      </div>
+      }
+
+      <div class="actions">
+        <button mat-button matStepperPrevious [disabled]="isUploading">Voltar</button>
+        <button mat-raised-button color="success" (click)="save()" [disabled]="!basicForm.valid || isUploading">
+          @if (isUploading) { <mat-icon><mat-spinner diameter="18"></mat-spinner></mat-icon> }
+          {{ isUploading ? 'Enviando...' : 'Finalizar e Salvar' }}
+        </button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</mat-dialog-content>

@@ -1,0 +1,28 @@
+<div class="viewer-layout">
+  <aside class="instrument-list">
+    <h3>Instrumentos</h3>
+    <button mat-button (click)="selectedPart = undefined">Geral (Banda)</button>
+    @for (part of song.parts; track part.instrument) {
+      <button mat-button (click)="selectedPart = part">
+        {{ part.instrument }} - {{ part.voice }}
+      </button>
+    }
+  </aside>
+
+  <main class="content">
+    <div class="player-section">
+      @if (selectedPart) {
+        <h4>Tocando: {{ selectedPart.instrument }}</h4>
+        <audio controls [src]="selectedPart.urlMidi" class="audio-player"></audio>
+      } @else {
+        <h4>Referência YouTube</h4>
+        <iframe width="100%" height="200" [src]="getEmbedYoutube(song.youtubeUrl!)"></iframe>
+      }
+    </div>
+
+    <div class="pdf-section">
+      <iframe [src]="getSafeUrl(selectedPart ? selectedPart.urlSheet : song.fullSheetMusicUrl!)"
+              width="100%" height="600px"></iframe>
+    </div>
+  </main>
+</div>

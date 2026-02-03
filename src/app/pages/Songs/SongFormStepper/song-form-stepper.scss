@@ -1,0 +1,135 @@
+.step-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 0;
+  min-height: 400px;
+}
+
+.full-width { width: 100%; }
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 24px 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f0f0;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #555;
+  }
+}
+
+.file-upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.file-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9f9f9;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  .file-icon { font-size: 32px; width: 32px; height: 32px; color: #999; }
+
+  .file-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .label { font-size: 0.75rem; color: #777; font-weight: bold; text-transform: uppercase; }
+    .filename { font-size: 0.85rem; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
+
+  &.has-file {
+    background: #eef2ff;
+    border: 1px solid #3f51b5;
+    .file-icon { color: #3f51b5; }
+  }
+}
+
+// Cards das Partes Individuais
+.part-row-card {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 0.6fr 0.6fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  background: white;
+  border-radius: 8px;
+  border-left: 4px solid #3f51b5;
+
+  mat-form-field { margin-bottom: -1.25em; } // Alinha o Material Select
+
+  .mini-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+
+    .upload-label { font-size: 10px; font-weight: bold; color: #999; }
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+button[color="success"] {
+  background-color: #2e7d32;
+  color: white;
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .file-upload-grid { grid-template-columns: 1fr; }
+
+  .part-row-card {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    .mini-upload { flex-direction: row; gap: 8px; grid-column: span 1; justify-content: flex-start; }
+    button[color="warn"] { grid-column: span 2; justify-self: flex-end; }
+  }
+}
+
+.progress-container {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  mat-progress-bar {
+    height: 8px;
+    border-radius: 4px;
+  }
+
+  .progress-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #3f51b5;
+  }
+}
+
+mat-spinner {
+  filter: brightness(0) invert(1);
+}

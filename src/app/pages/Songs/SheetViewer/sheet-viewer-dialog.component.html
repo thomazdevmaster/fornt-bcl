@@ -1,0 +1,29 @@
+<div class="sheet-container">
+  <header class="dialog-header">
+    <div class="info">
+      <mat-icon>library_music</mat-icon>
+      <div>
+        <h1>{{ data.title }}</h1>
+        <span>{{ data.voice }}</span>
+      </div>
+    </div>
+    <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+  </header>
+
+  <mat-dialog-content>
+    <iframe [src]="safePdfUrl" frameborder="0"></iframe>
+  </mat-dialog-content>
+
+  <footer class="player-footer" *ngIf="data.urlMidi">
+    <div class="player-controls">
+      <div class="audio-label">
+        <mat-icon>play_circle_filled</mat-icon>
+        <span>Acompanhamento</span>
+      </div>
+      <audio controls autoplay>
+        <source [src]="data.urlMidi" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+      </audio>
+    </div>
+  </footer>
+</div>

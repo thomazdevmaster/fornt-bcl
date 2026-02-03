@@ -1,9 +1,26 @@
-@if (data$ | async; as data) {
+@if (filteredData$ | async; as data) {
 
-<app-shared-table [data]="data" [columnsConfig]="config.columns" [tableTitle]="config.title"
-  [templates]="{ name: nameTmpl, actions: actionsTmpl }"
-  [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao buscar músicas.' : 'Nenhum apresentação cadastrado.'" [canAdd]="true"
-  [searchPlaceholder]="'Buscar por músicas, responsáveis, email ou telefone'"
+<div class="filter-header">
+  <span>Filtrar naipes:</span>
+  @for (name of allInstruments; track name) {
+  @let meta = getInstrumentMetadata(name);
+  <button mat-icon-button [class.filter-active]="selectedInstruments.includes(name)"
+    (click)="toggleInstrumentFilter(name)" [matTooltip]="name">
+    <img [src]="meta.path" class="filter-img">
+  </button>
+  }
+
+  @if (selectedInstruments.length > 0) {
+  <button mat-button color="warn" (click)="clearFilters()">
+    Limpar Filtros ({{ selectedInstruments.length }})
+  </button>
+  }
+</div>
+
+<app-shared-table [data]="(filteredSongs$ | async) || []" [columnsConfig]="config.columns" [tableTitle]="config.title"
+  [templates]="{ partsIcons: partsIcons, actions: actionsTmpl }"
+  [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao buscar músicas.' : 'Nenhum apresentação cadastrado.'"
+  [canAdd]="true" [searchPlaceholder]="'Buscar por músicas, responsáveis, email ou telefone'"
   (add)="onAdd()"></app-shared-table>
 
 } @else {
@@ -13,8 +30,54 @@
 </div>
 }
 
-<ng-template #nameTmpl let-element>
-  {{ element.firstName }} {{ element.lastName }}
+<ng-template #partsIcons let-element>
+  <div class="instrument-grid-container">
+    @for (name of allInstruments; track name) {
+    @let status = getInstrumentStatus(name, element.parts);
+
+    <div class="instrument-slot" [class.active]="status.active" [matMenuTriggerFor]="status.active ? quickView : null">
+
+      <img [src]="status.path" class="instrument-mini-img">
+
+      <mat-menu #quickView="matMenu" class="modern-menu">
+        <div class="menu-header">
+          <strong>{{ name }}</strong>
+          <mat-divider></mat-divider>
+        </div>
+
+        @let parts = getPartsByInstrument(name, element.parts);
+
+        @for (part of parts; track $index) {
+        <div class="part-option-row">
+          <span class="voice-name">{{ part.voice || 'Voz Única' }}</span>
+
+          <div class="action-icons">
+            @if (part.urlSheet) {
+            <button mat-flat-button color="primary" (click)="openSheetWithPlayer(part, name)"
+              matTooltip="Abrir Estudo Completo">
+              <mat-icon>menu_book</mat-icon>
+              Estudar
+            </button>
+            }
+
+            @if (part.urlMidi) {
+            <button mat-icon-button (click)="playMidi(part.urlMidi)" matTooltip="Ouvir MIDI">
+              <mat-icon [color]="currentAudioUrl === part.urlMidi ? 'warn' : 'accent'">
+                {{ currentAudioUrl === part.urlMidi ? 'stop_circle' : 'play_circle' }}
+              </mat-icon>
+            </button>
+            }
+          </div>
+        </div>
+
+        @if (!$last) { <mat-divider></mat-divider> }
+        } @empty {
+        <div class="part-option-row">Nenhuma voz encontrada</div>
+        }
+      </mat-menu>
+    </div>
+    }
+  </div>
 </ng-template>
 
 <ng-template #actionsTmpl let-element>
@@ -27,3 +90,17 @@
     </button>
   </div>
 </ng-template>
+
+@if (currentAudioUrl) {
+<div class="audio-player-container">
+  <div class="player-content">
+    <span class="player-label">Ouvindo Referência:</span>
+    <audio controls autoplay [src]="currentAudioUrl">
+      Seu navegador não suporta o elemento de áudio.
+    </audio>
+    <button mat-icon-button (click)="closePlayer()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+}

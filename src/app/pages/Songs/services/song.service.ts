@@ -3,21 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { BaseCrudService } from '../../../shared/base-classes/base-crud.service';
 import { EnvironmentService } from '../../../core/services/environment.service';
 import { Song } from '../model/song';
+import { Observable } from 'rxjs';
 
-/**
- * Serviço de dados para gerenciar músicos
- * Estende BaseCrudService para reutilizar lógica de CRUD
- * Responsável apenas por comunicação HTTP com o backend
- *
- * Usa EnvironmentService para obter a URL completa da API (apiUrl + endpoint)
- */
 @Injectable({
   providedIn: 'root',
 })
 export class SongService extends BaseCrudService<Song> {
-  private readonly endpointPath = 'songs';
 
-  // Override da propriedade endpoint para retornar URL completa
   protected override get endpoint(): string {
     return `${this.envConfig.getApiUrl()}/songs`;
   }
@@ -26,15 +18,55 @@ export class SongService extends BaseCrudService<Song> {
     super(httpClient);
   }
 
-  // Métodos úteis para acessar configurações de ambiente
-  getApiUrl(): string {
-    return this.envConfig.getApiUrl();
+  override create(song: Song): Observable<any> {
+    const formData = this.convertToFormData(song);
+
+    return this.httpClient.post(this.endpoint, formData, {
+      reportProgress: true,
+      observe: 'events'
+    });
   }
 
-  isProduction(): boolean {
-    return this.envConfig.isProduction();
+  override update(id: string | number, song: Song): Observable<Song> {
+    const formData = this.convertToFormData(song);
+    return this.httpClient.put<Song>(`${this.endpoint}/${id}`, formData);
   }
 
-  // Adicione métodos específicos de Song aqui (se houver)
-  // Ex: getSongsByVoice(voice: string) { ... }
+  private convertToFormData(song: any): FormData {
+    const formData = new FormData();
+
+    // 1. Dados básicos (Title, Author, etc)
+    formData.append('title', song.title);
+    formData.append('author', song.author);
+    if (song.creationDate) {
+      formData.append('creationDate', new Date(song.creationDate).toISOString());
+    }
+    formData.append('youtubeUrl', song.youtubeUrl || '');
+
+    // 2. Arquivos Gerais (Banda toda)
+    if (song.fullSheetMusicUrl instanceof File) {
+      formData.append('fullSheetMusic', song.fullSheetMusicUrl);
+    }
+    if (song.fullMidiUrl instanceof File) {
+      formData.append('fullMidi', song.fullMidiUrl);
+    }
+
+    // 3. Partes Individuais (Instrumentos)
+    if (song.parts && Array.isArray(song.parts)) {
+      song.parts.forEach((part: any, index: number) => {
+        formData.append(`parts[${index}][instrument]`, part.instrument);
+        formData.append(`parts[${index}][voice]`, part.voice);
+
+        // Upload dos arquivos de cada parte usando chaves únicas para o backend
+        if (part.urlSheet instanceof File) {
+          formData.append(`partSheet_${index}`, part.urlSheet);
+        }
+        if (part.urlMidi instanceof File) {
+          formData.append(`partMidi_${index}`, part.urlMidi);
+        }
+      });
+    }
+
+    return formData;
+  }
 }
