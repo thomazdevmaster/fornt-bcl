@@ -4,7 +4,7 @@
  */
 export const environment = {
   production: true,
-  apiUrl: 'https://simple-api-rosy.vercel.app/',
+  apiUrl: 'https://simple-api-rosy.vercel.app',
   apiTimeout: 30000,
   logLevel: 'error' as const,
   enableMocking: false,
