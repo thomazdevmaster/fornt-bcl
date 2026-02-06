@@ -4,27 +4,44 @@
 }
 
 .blog-hero {
-  background: white;
-  padding: 40px 20px;
-  text-align: center;
-  margin-bottom: 30px;
-  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, var(--mat-primary) 0%, var(--mat-primary) 100%);
+  border-radius: 16px;
+  margin-bottom: 16px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
 
-  h1 { font-size: 2.5rem; color: #333; margin: 0; font-weight: 300; letter-spacing: -1px; }
-  p { color: #666; margin-top: 8px; font-size: 1.1rem; }
+  .hero-content {
+    width: 100%;
+    padding: 0 12px;
+
+    .hero-title {
+      color: white;
+      white-space: nowrap;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .hero-description {
+      font-size: 1em;
+      color: white;
+      opacity: 0.8;
+      margin: 4px 0 0 0;
+    }
+  }
 }
 
 .feed-list {
-  max-width: 1000px;
+  max-width: 1600px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
   display: flex;
   flex-direction: column;
   gap: 40px;
 }
 
 .blog-post {
-  background: rgba(76, 107, 128, 0.562);
+  background: rgba(150, 184, 207, 0.562);
   border-radius: 20px;
   padding: 24px 0;
   width: 100%;
@@ -44,7 +61,7 @@
     align-items: flex-start;
     margin-bottom: 12px;
 
-    h2 { margin: 0; font-size: 1.5rem; color: #202124; }
+    h2 { margin: 0; font-size: 1.5rem; color: var(--mat-primary); }
 
     .date-badge {
       display: flex;
@@ -60,7 +77,7 @@
   }
 
   .post-description {
-    color: #444;
+    color: var(--mat-primary);
     line-height: 1.5;
     margin: 0;
   }
@@ -145,7 +162,7 @@
 }
 
 .see-more-card {
-  background: #3f51b5; // Cor primária (exemplo)
+  background: var(--mat-primary);
   color: white;
   display: flex;
   align-items: center;
@@ -164,6 +181,13 @@
 .post-footer {
   text-align: right;
   padding-top: 8px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
 }
 
 // Mobile Adjustments
