@@ -4,75 +4,90 @@
       <h1 class="hero-title">Registros Carmelitana</h1>
       <p class="hero-description">Nossos momentos, ensaios e apresentações</p>
     </div>
+    <button mat-flat-button (click)="createAlbum()" class="add-button" matTooltip="Criar Novo Álbum">
+      <mat-icon>add</mat-icon>
+      <span>Adicionar</span>
+    </button>
   </header>
 
   @if (loading) {
-    <div class="loading-container">
-      <mat-spinner diameter="40"></mat-spinner>
-    </div>
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
   } @else {
-    <main class="feed-list">
-      @for (album of albums; track album.name) {
-        <article class="blog-post mat-elevation-z2">
-
-          <div class="post-header">
-            <div class="header-text">
-              <h2>{{ album.name }}</h2>
-              <span class="date-badge">
-                <mat-icon>event</mat-icon>
-                {{ getLatestDate(album.items) | date:'dd MMM yyyy' }}
-              </span>
-            </div>
-            @if (album.description) {
-              <p class="post-description">{{ album.description }}</p>
-            }
-          </div>
-
-          <div class="carousel-wrapper">
-            <button mat-mini-fab color="primary" class="nav-btn prev"
-                    (click)="scroll(carouselRef, -1)"
-                    aria-label="Anterior">
-              <mat-icon>chevron_left</mat-icon>
+  <main class="feed-list">
+    @for (album of albums; track album.name) {
+    <article class="blog-post mat-elevation-z2">
+      <div class="post-header">
+        <div class="header-text">
+          <h2>{{ album.name }}</h2>
+          <span class="date-badge">
+            <mat-icon>event</mat-icon>
+            {{ getLatestDate(album.items) | date:'dd MMM yyyy' }}
+          </span>
+          <div class="header-actions">
+            <button mat-icon-button [matMenuTriggerFor]="albumMenu">
+              <mat-icon>more_vert</mat-icon>
             </button>
+            <mat-menu #albumMenu="matMenu">
+              <button mat-menu-item (click)="editAlbum(album)">
+                <mat-icon>edit</mat-icon><span>Editar Nome/Descrição</span>
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item color="warn" (click)="deleteAlbum(album)">
+                <mat-icon color="warn">delete</mat-icon><span class="text-warn">Excluir Álbum</span>
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+        @if (album.description) {
+        <p class="post-description">{{ album.description }}</p>
+        }
+      </div>
 
-            <div class="carousel-track" #carouselRef>
-              @for (item of album.items; track item.id) {
-                <div class="carousel-card" (click)="openAlbumPage(album)">
-                  <div class="media-content">
-                    @if (item.type === 'video') {
-                      <div class="play-overlay"><mat-icon>play_arrow</mat-icon></div>
-                    }
-                    <img [src]="item.type === 'video' ? 'assets/images/video-placeholder.jpg' : item.url"
-                         [alt]="item.title" loading="lazy">
-                  </div>
-                  <div class="card-caption">
-                    <span>{{ item.title }}</span>
-                  </div>
-                </div>
+      <div class="carousel-wrapper">
+        <button mat-mini-fab color="primary" class="nav-btn prev" (click)="scroll(carouselRef, -1)"
+          aria-label="Anterior">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <div class="carousel-track" #carouselRef>
+          @for (item of album.items; track item.id) {
+          <div class="carousel-card" (click)="openAlbumPage(album)">
+            <div class="media-content">
+              @if (item.type === 'video') {
+              <div class="play-overlay"><mat-icon>play_arrow</mat-icon></div>
               }
-
-              <div class="carousel-card see-more-card" (click)="openAlbumPage(album)">
-                <div class="see-more-content">
-                  <span>Ver Álbum</span>
-                </div>
-              </div>
+              <img [src]="item.type === 'video' ? 'assets/images/video-placeholder.jpg' : item.url" [alt]="item.title"
+                loading="lazy">
             </div>
-
-            <button mat-mini-fab color="primary" class="nav-btn next"
-                    (click)="scroll(carouselRef, 1)"
-                    aria-label="Próximo">
-              <mat-icon>chevron_right</mat-icon>
-            </button>
+            <div class="card-caption">
+              <span>{{ item.title }}</span>
+            </div>
           </div>
+          }
 
-          <div class="post-footer">
-            <button mat-stroked-button color="primary" (click)="openAlbumPage(album)">
-              Abrir Galeria Completa
-            </button>
+          <div class="carousel-card see-more-card" (click)="openAlbumPage(album)">
+            <div class="see-more-content">
+              <span>Ver Álbum</span>
+            </div>
           </div>
+        </div>
 
-        </article>
-      }
-    </main>
+        <button mat-mini-fab color="primary" class="nav-btn next" (click)="scroll(carouselRef, 1)" aria-label="Próximo">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+
+      <div class="post-footer">
+        <button mat-flat-button color="primary" (click)="openAlbumPage(album)">
+          <mat-icon>collections</mat-icon>
+          Abrir Galeria Completa
+        </button>
+      </div>
+
+    </article>
+    }
+  </main>
   }
 </div>

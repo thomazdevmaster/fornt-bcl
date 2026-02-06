@@ -14,6 +14,7 @@ import { Gallery } from '../model/gallery';
   styleUrl: './gallery-view.scss'
 })
 export class GalleryViewComponent implements OnInit {
+
   private service = inject(GalleryService);
   private dialog = inject(MatDialog);
 
@@ -69,5 +70,22 @@ export class GalleryViewComponent implements OnInit {
       panelClass: 'full-screen-modal',
       data: album
     });
+  }
+
+  createAlbum() {
+    // Lógica para abrir modal de novo álbum
+    console.log("Criar novo álbum");
+  }
+
+  editAlbum(album: any) {
+    // Lógica para editar álbum existente
+    console.log("Editando:", album.name);
+  }
+
+  deleteAlbum(album: any) {
+    // Lógica de exclusão
+    if (confirm(`Deseja realmente apagar o álbum ${album.name}?`)) {
+      console.log("Deletando...");
+    }
   }
 }

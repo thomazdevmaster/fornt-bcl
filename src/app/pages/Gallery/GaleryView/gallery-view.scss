@@ -4,6 +4,12 @@
 }
 
 .blog-hero {
+
+  .add-album-btn {
+    right: 32px;
+    z-index: 10;
+  }
+
   background: linear-gradient(135deg, var(--mat-primary) 0%, var(--mat-primary) 100%);
   border-radius: 16px;
   margin-bottom: 16px;
@@ -41,11 +47,28 @@
 }
 
 .blog-post {
-  background: rgba(150, 184, 207, 0.562);
+  position: relative;
   border-radius: 20px;
   padding: 24px 0;
   width: 100%;
   overflow: hidden;
+  background: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('assets/bg.jpg');
+    background-size: cover;
+    background-position: center;
+
+    opacity: 0.3;
+
+    z-index: -1;
+  }
 }
 
 .post-header, .post-footer {
@@ -71,7 +94,7 @@
       color: #5f6368;
       background: #f1f3f4;
       padding: 4px 8px;
-      border-radius: 4px;
+      border-radius: 10px;
       mat-icon { font-size: 16px; width: 16px; height: 16px; }
     }
   }
