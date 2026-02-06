@@ -1,36 +1,83 @@
 <div class="page-container">
   <header class="album-hero">
-    <button mat-icon-button (click)="close()" class="back-btn">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <div class="hero-content">
-      <h1>{{ data.category }}</h1>
+    <div class="header-row top-row">
+      <div class="side-action">
+        <button mat-icon-button (click)="close()" class="back-btn" matTooltip="Voltar">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+
+      <div class="center-content">
+        <h1>{{ data.category }}</h1>
+        <span class="meta-badge">{{ data.items.length }} registros</span>
+      </div>
+
+      <div class="side-action align-right">
+        <button mat-flat-button color="primary" (click)="openAddPhotosDialog()">
+          <mat-icon>add_a_photo</mat-icon>
+          Adicionar
+        </button>
+      </div>
+    </div>
+
+    <div class="header-row info-row">
       @if (data.description) {
-        <p class="hero-desc">{{ data.description }}</p>
+        <p class="album-description">"{{ data.description }}"</p>
       }
-      <span class="meta-info">{{ data.items.length }} fotos registradas</span>
+      <div class="album-meta">
+        <span><mat-icon>calendar_today</mat-icon> Criado em: 10/02/2026</span>
+        <span class="separator">•</span>
+        <span><mat-icon>person</mat-icon> Por: Maestro Carmelitana</span>
+      </div>
     </div>
   </header>
 
-  <div class="photos-feed">
-    @for (item of data.items; track item.id) {
-      <div class="photo-card">
-        <div class="media-wrapper">
-          @if (item.type === 'video') {
-            <video [src]="item.url" controls></video>
-          } @else {
-            <img [src]="item.url" [alt]="item.title" loading="lazy">
-          }
-        </div>
+  <main class="content-wrapper">
+    <div class="photos-grid">
+      @for (item of data.items; track item.id || $index; let i = $index) {
+        <mat-card class="photo-card-v2">
 
-        <div class="photo-details">
-          <h3>{{ item.title }}</h3>
-          @if (item.description) {
-            <p>{{ item.description }}</p>
-          }
-          <span class="date-badge">{{ item.date | date:'dd/MM/yyyy' }}</span>
-        </div>
-      </div>
-    }
-  </div>
+          <div class="card-header">
+            <h3>{{ item.title }}</h3>
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="editPhoto(item)">
+                <mat-icon>edit</mat-icon><span>Editar</span>
+              </button>
+              <button mat-menu-item (click)="downloadPhoto(item)">
+                <mat-icon>download</mat-icon><span>Baixar</span>
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item color="warn" (click)="deletePhoto(item)">
+                <mat-icon color="warn">delete</mat-icon><span class="text-warn">Excluir</span>
+              </button>
+            </mat-menu>
+          </div>
+
+          <div class="media-container" (click)="openFullScreen(i)" style="cursor: zoom-in;">
+            @if (item.type === 'video') {
+              <video [src]="item.url"></video>
+              <div class="video-overlay">
+                <mat-icon>play_circle_outline</mat-icon>
+              </div>
+            } @else {
+              <img [src]="item.url" [alt]="item.title" loading="lazy">
+            }
+          </div>
+
+          <mat-card-content>
+            <p class="item-desc">{{ item.description || 'Sem descrição.' }}</p>
+            <div class="item-footer">
+              <span class="upload-info">
+                Enviado por <strong>Admin</strong> em {{ item.date | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+          </mat-card-content>
+
+        </mat-card>
+      }
+    </div>
+  </main>
 </div>

@@ -1,0 +1,30 @@
+<div class="viewer-container">
+  <button mat-fab class="close-btn" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+
+  @if (currentIndex > 0) {
+    <button mat-icon-button class="nav-btn prev" (click)="prev()">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+  }
+
+  <div class="media-wrapper">
+    @if (currentItem.type === 'video') {
+      <video #videoPlayer [src]="currentItem.url" controls autoplay></video>
+    } @else {
+      <img [src]="currentItem.url" [alt]="currentItem.title">
+    }
+  </div>
+
+  @if (currentIndex < data.items.length - 1) {
+    <button mat-icon-button class="nav-btn next" (click)="next()">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  }
+
+  <div class="caption">
+    <h3>{{ currentItem.title }}</h3>
+    <span>{{ currentIndex + 1 }} / {{ data.items.length }}</span>
+  </div>
+</div>
