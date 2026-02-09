@@ -33,6 +33,7 @@ export class Header implements OnInit {
     this.shortcuts = [
       { icon: 'home', label: 'Início', route: '/home' },
       { icon: 'photo_library', label: 'Galeria', route: '/gallery-view' },
+      { icon: 'menu_book', label: 'Estudo', route: '/study' },
     ];
 
     this.adminLinks = [

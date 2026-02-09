@@ -63,6 +63,18 @@ body {
 }
 
 /* -------------------------------------------------------
+   MusicXML Player (Study Page)
+   ------------------------------------------------------- */
+.score-container .player-sheet {
+  overflow: visible;
+}
+
+.score-container .player-cursor {
+  background: var(--mat-primary);
+  opacity: 0.25;
+}
+
+/* -------------------------------------------------------
    2) Suporte a light/dark mode
    ------------------------------------------------------- */
 html {

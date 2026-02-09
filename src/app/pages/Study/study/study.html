@@ -1,0 +1,123 @@
+<div class="study-page">
+  <div class="study-header">
+    <div class="title-block">
+      <h1>Estudo</h1>
+      <p>Partitura sincronizada com reprodução. Ajuste velocidade e loops por compasso.</p>
+    </div>
+
+    <div class="load-block">
+      <mat-form-field appearance="outline">
+        <mat-label>ID da partitura</mat-label>
+        <input matInput [formControl]="idControl" placeholder="Ex: 123" />
+      </mat-form-field>
+      <button mat-flat-button color="primary" (click)="loadStudy(idControl.value || '')" [disabled]="!idControl.value">
+        Carregar
+      </button>
+      <button mat-stroked-button (click)="loadFallbackAssets()" type="button">
+        Usar exemplo local
+      </button>
+    </div>
+  </div>
+
+  <div class="study-layout">
+    <section class="score-panel">
+      <div class="panel-header">
+        <span>Partitura</span>
+        <div class="status">
+          @if (loading) {
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Carregando...</span>
+          }
+          @if (!loading && error) {
+            <span class="error-text">{{ error }}</span>
+          }
+          @if (!loading && !error) {
+            <span class="ok-text">{{ xmlLoaded ? 'Partitura OK' : 'Partitura pendente' }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="score-container" #osmdContainer>
+        @if (loading || !xmlLoaded) {
+          <div class="loading-overlay">
+            <div class="music-loader">
+              <span class="note">♪</span>
+              <span class="note">♫</span>
+              <span class="note">♩</span>
+              <span class="note">♪</span>
+            </div>
+            <div class="loading-text">Carregando partitura...</div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <aside class="player-panel">
+      <div class="panel-header">
+        <span>Player</span>
+      </div>
+
+      <div class="controls">
+        @if (loading || !midiLoaded) {
+          <div class="player-loading">
+            <div class="music-loader">
+              <span class="note">♪</span>
+              <span class="note">♫</span>
+              <span class="note">♩</span>
+            </div>
+            <div class="loading-text">Preparando audio...</div>
+          </div>
+        }
+        <div class="control-row">
+          <button mat-icon-button color="primary" (click)="play()" [disabled]="loading || !playerReady">
+            <mat-icon>play_arrow</mat-icon>
+          </button>
+          <button mat-icon-button (click)="pause()" [disabled]="loading || !playerReady">
+            <mat-icon>pause</mat-icon>
+          </button>
+          <button mat-icon-button (click)="stop()" [disabled]="loading || !playerReady">
+            <mat-icon>stop</mat-icon>
+          </button>
+        </div>
+
+        <div class="control-row tempo-row">
+          <span>Velocidade</span>
+          <mat-slider min="0.5" max="2" step="0.1" [disabled]="!playerReady">
+            <input matSliderThumb [(ngModel)]="tempo" (ngModelChange)="setTempo($event)" />
+          </mat-slider>
+          <span>{{ tempo | number: '1.1-1' }}x</span>
+        </div>
+
+        <div class="control-row loop-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Loop In (compasso)</mat-label>
+            <input matInput type="number" [(ngModel)]="loopStartMeasure" (ngModelChange)="applyLoop()" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Loop Out (compasso)</mat-label>
+            <input matInput type="number" [(ngModel)]="loopEndMeasure" (ngModelChange)="applyLoop()" />
+          </mat-form-field>
+          <button mat-flat-button color="primary" (click)="toggleLoop()" [disabled]="!playerReady">
+            {{ loopEnabled ? 'Desativar Loop' : 'Ativar Loop' }}
+          </button>
+        </div>
+
+        <div class="loop-info">
+          <span>In: {{ loopStartMeasure ?? '-' }}</span>
+          <span>Out: {{ loopEndMeasure ?? '-' }}</span>
+        </div>
+
+        @if (!playerReady) {
+          <div class="player-warning">
+            Player indisponível. {{ playerError || 'Instale as dependências e recarregue.' }}
+          </div>
+        }
+        @if (playerReady) {
+          <div class="player-ok">
+            {{ midiLoaded ? 'Player OK (MIDI carregado)' : 'Player OK (sem MIDI)' }}
+          </div>
+        }
+      </div>
+    </aside>
+  </div>
+</div>

@@ -42,6 +42,16 @@ export const routes: Routes = [
       import('./pages/Gallery/GaleryView/gallery-view').then((m) => m.GalleryViewComponent),
   },
   {
+    path: 'study',
+    loadComponent: () =>
+      import('./pages/Study/study/study').then((m) => m.StudyComponent),
+  },
+  {
+    path: 'study/:id',
+    loadComponent: () =>
+      import('./pages/Study/study/study').then((m) => m.StudyComponent),
+  },
+  {
     path: 'patrimony',
     loadComponent: () =>
       import('./pages/Patrimony/patrimony/patrimony').then((m) => m.PatrimonyComponent),

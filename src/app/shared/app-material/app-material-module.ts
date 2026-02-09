@@ -20,6 +20,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSliderModule } from '@angular/material/slider';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatSnackBarModule,
     MatDatepickerModule,
     MatAutocompleteModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatSliderModule
   ]
 })
 export class AppMaterialModule { }
