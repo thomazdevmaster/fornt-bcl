@@ -26,7 +26,7 @@
             {{ getLatestDate(album.items) | date:'dd MMM yyyy' }}
           </span>
           <div class="header-actions">
-            <button mat-icon-button [matMenuTriggerFor]="albumMenu">
+            <button mat-icon-button [matMenuTriggerFor]="albumMenu" matTooltip="Opções">
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #albumMenu="matMenu">
@@ -74,13 +74,13 @@
           </div>
         </div>
 
-        <button mat-mini-fab color="primary" class="nav-btn next" (click)="scroll(carouselRef, 1)" aria-label="Próximo">
+        <button mat-mini-fab class="nav-btn next" (click)="scroll(carouselRef, 1)" aria-label="Próximo">
           <mat-icon>chevron_right</mat-icon>
         </button>
       </div>
 
       <div class="post-footer">
-        <button mat-flat-button color="primary" (click)="openAlbumPage(album)">
+        <button mat-flat-button (click)="openAlbumPage(album)" matTooltip="Abrir Galeria Completa">
           <mat-icon>collections</mat-icon>
           Abrir Galeria Completa
         </button>

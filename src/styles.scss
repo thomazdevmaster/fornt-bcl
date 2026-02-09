@@ -77,6 +77,11 @@ html {
 :root {
   --mat-focus-indicator-color: color-mix(in srgb, currentColor 30%, transparent);
 
+  @include mat.menu-overrides((
+    container-shape: 12px,
+    divider-color: red,
+  ));
+
   /* Design System - Spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -264,15 +269,19 @@ button,
   border-radius: var(--radius-md) !important;
   font-weight: 600;
   text-transform: uppercase;
+  background-color: var(--button-primary-background) !important;
+  color: var(--button-primary-color) !important;
   letter-spacing: 0.5px;
   transition: all var(--transition-normal) var(--easing-ease-out);
   box-shadow: var(--shadow-sm);
+
+
 
   &:not([color="primary"]):not([color="accent"]):not([color="warn"]) {
     color: var(--mat-on-surface);
 
     &:hover {
-      background-color: var(--button-hover-background);
+      background-color: var(--button-primary-hover-background) !important;
       box-shadow: var(--shadow-md);
       transform: translateY(-2px);
     }
@@ -296,6 +305,45 @@ button,
   }
 }
 
+.mat-calendar-body-cell{
+  background-color: var(--card-background) !important;
+  color: var(--color-text-primary) !important;
+
+  &:active, &:hover {
+    background-color: var(--button-primary-hover-background) !important;
+    color: var(--color-text-primary) !important;
+  }
+}
+
+.mat-mdc-menu-content{
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    background-color: var(--card-background);
+
+    .mat-mdc-menu-item {
+      border-radius: var(--radius-md);
+      background-color: transparent !important;
+      color: var(--mat-primary) !important;
+
+      &[color="warn"] {
+        color: var(--mat-error) !important;
+      }
+      &[color="accent"] {
+        color: var(--mat-secondary) !important;
+      }
+
+    }
+  }
+
+.mat-menu-item {
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-normal) var(--easing-ease-out);
+
+  &:hover {
+    background-color: var(--button-primary-hover-background);
+  }
+}
+
 /* Tabelas Modernas */
 .table-wrapper {
   background-color: var(--card-background);
@@ -305,7 +353,6 @@ button,
   transition: all var(--transition-normal) var(--easing-ease-out);
 
   .title-table-row {
-    background: var(--gradient-primary-secondary);
     color: var(--color-text-primary);
     font-size: 16px;
     font-weight: 600;
@@ -313,10 +360,11 @@ button,
   }
 
   table {
-    background-color: var(--card-background);
+    background-color: var(--table-background);
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    border-radius: inherit;
 
     thead {
       position: sticky;
@@ -326,8 +374,8 @@ button,
 
     th {
       /* Gradiente moderno no header */
-      background: linear-gradient(135deg, var(--mat-primary) 0%, var(--mat-primary) 100%);
-      color: white;
+      background: var(--gradient-welcome);
+      color: var(--color-text-primary);
       padding: var(--spacing-md) var(--spacing-lg);
       font-weight: 700;
       font-size: 11px;
@@ -358,12 +406,15 @@ button,
         height: 14px;
         margin-right: var(--spacing-xs);
         opacity: 0.9;
+        vertical-align: middle;
+        color: #3207f1;
       }
     }
 
     tbody tr {
       border-bottom: 1px solid var(--table-border);
       transition: all var(--transition-fast) var(--easing-ease-out);
+      background-color: var(--card-background);
 
       &:hover {
         background-color: var(--table-row-hover);
@@ -447,7 +498,6 @@ button,
   font-size: 20px;
   font-weight: bold;
   justify-content: center;
-  background: var(--gradient-primary-secondary);
   color: var(--color-text-primary);
 }
 

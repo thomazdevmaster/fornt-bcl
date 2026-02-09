@@ -53,7 +53,7 @@ import { EnvironmentService } from 'app/core/services/environment.service';
   styles: [`
     .config-display {
       padding: 20px;
-      background: #f5f5f5;
+      background: var(--color-surface);
       border-radius: 8px;
       margin: 20px 0;
     }
@@ -61,7 +61,7 @@ import { EnvironmentService } from 'app/core/services/environment.service';
     section {
       margin: 20px 0;
       padding-bottom: 20px;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--color-primary);
     }
 
     section:last-child {
@@ -69,12 +69,12 @@ import { EnvironmentService } from 'app/core/services/environment.service';
     }
 
     h3 {
-      color: #333;
+      color: var(--color-text-primary);
       margin-top: 0;
     }
 
     code {
-      background: #e0e0e0;
+      background: var(--input-background);
       padding: 2px 6px;
       border-radius: 3px;
       font-family: monospace;
@@ -88,9 +88,9 @@ import { EnvironmentService } from 'app/core/services/environment.service';
     li {
       padding: 8px;
       margin: 5px 0;
-      background: white;
+      background: var(--color-surface);
       border-radius: 4px;
-      border-left: 4px solid #ddd;
+      border-left: 4px solid var(--color-border);
     }
 
     .enabled {

@@ -57,7 +57,7 @@ img, video {
   color: white;
   text-align: center;
   width: 100%;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+  background: var(--gradient-caption);
 }
 
 .nav-btn {

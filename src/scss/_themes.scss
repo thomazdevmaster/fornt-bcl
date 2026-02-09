@@ -43,8 +43,8 @@ $dark-tertiary-palette: mat.$violet-palette;
   // Cores primárias (Azure Light)
   --mat-primary: #2187da;
   --mat-on-primary: #ffffff;
-  --mat-primary-container: #dae8f8;
-  --mat-on-primary-container: #001940;
+  --mat-primary-container: #56a8d7;
+  --mat-on-primary-container: #1f3050;
 
   // Cores secundárias
   --mat-secondary: #625b71;
@@ -94,11 +94,16 @@ $dark-tertiary-palette: mat.$violet-palette;
   --card-text: #1a1c1e;
   --table-header-background: #f5f7fa;
   --table-header-text: #1a1c1e;
+  --table-row-background: #f3f4f8;
+  --table-row-text: #494849;
   --table-row-hover: #f5f7fa;
   --table-border: #e0e0e0;
   --input-background: #ffffff;
   --input-border: #cac7d0;
-  --button-hover-background: rgba(33, 135, 218, 0.08);
+
+  --button-primary-background: #56a8d7;
+  --button-primary-color: #eee9f5;
+  --button-primary-hover-background: #2d5d70;
 }
 
 /**
@@ -106,7 +111,7 @@ $dark-tertiary-palette: mat.$violet-palette;
  */
 @mixin dark-theme-colors {
   // Cores de superfície
-  --mat-surface: #1a1c1e;
+  --mat-surface: #181c20;
   --mat-surface-dim: #11131c;
   --mat-surface-bright: #36343b;
   --mat-surface-container: #21232b;
@@ -115,12 +120,12 @@ $dark-tertiary-palette: mat.$violet-palette;
   --mat-surface-container-highest: #373940;
 
   // Cores de texto
-  --mat-on-surface: #e6e1e6;
+  --mat-on-surface: #f8f8f8;
   --mat-on-surface-variant: #cac7d0;
 
   // Cores primárias (Magenta Dark)
-  --mat-primary: #b885d9;
-  --mat-on-primary: #371b5c;
+  --mat-primary: #859bd9;
+  --mat-on-primary: #52337a;
   --mat-primary-container: #502074;
   --mat-on-primary-container: #e6d9f6;
 
@@ -159,7 +164,7 @@ $dark-tertiary-palette: mat.$violet-palette;
   --mat-outline-variant: #49454e;
 
   // Cores de background personalizadas
-  --color-primary: #b885d9;
+  --color-primary: #55566b;
   --color-text-primary: #ffffff;
   --color-background: #1a1c1e;
   --color-surface: #21232b;
@@ -171,12 +176,19 @@ $dark-tertiary-palette: mat.$violet-palette;
   --card-background: #21232b;
   --card-text: #e6e1e6;
   --table-header-background: #2b2d36;
+  --table-row-background: #94969c;
   --table-header-text: #e6e1e6;
+  --table-row-text: #bdb9bd;
   --table-row-hover: #2b2d36;
   --table-border: #49454e;
   --input-background: #21232b;
   --input-border: #49454e;
   --button-hover-background: rgba(184, 133, 217, 0.12);
+
+  // buttons
+  --button-primary-background: #a278c7;
+  --button-primary-color: #eee9f5;
+  --button-primary-hover-background: #7c5a9e;
 }
 
 /**
@@ -197,12 +209,12 @@ $dark-tertiary-palette: mat.$violet-palette;
  */
 @mixin dark-theme-gradients {
   --gradient-primary-secondary: linear-gradient(135deg, #b885d9, #9c6db5);
-  --gradient-success: linear-gradient(135deg, #66bb6a, #43a047);
+  --gradient-success: linear-gradient(135deg, #072474, #3988bd);
   --gradient-warning: linear-gradient(135deg, #ffb74d, #ffa726);
   --gradient-error: linear-gradient(135deg, #f2b8b5, #ef5350);
   --gradient-info: linear-gradient(135deg, #4fc3f7, #0288d1);
   --gradient-card: linear-gradient(135deg, #2b2d36, #1a1c1e);
-  --gradient-welcome: linear-gradient(135deg, #1b5e20, #6a1b9a);
+  --gradient-welcome: linear-gradient(135deg, #1f1b5e, #533963);
 }
 
 // ==========================================
@@ -265,46 +277,4 @@ html.dark {
       density: 0,
     ));
   }
-}
-
-// ==========================================
-// 5) VARIANTES DE CORES ALTERNATIVAS
-// ==========================================
-
-/**
- * Tema com primária em Azul (combinável com .light/.dark)
- */
-html.primary-blue {
-  --color-primary: #1e88e5;
-  --mat-primary: #1e88e5;
-  --mat-on-primary: #ffffff;
-  --mat-primary-container: #d1e7ff;
-  --mat-on-primary-container: #001d3c;
-}
-
-html.dark.primary-blue {
-  --color-primary: #9cccff;
-  --mat-primary: #9cccff;
-  --mat-on-primary: #003c7f;
-  --mat-primary-container: #0052cc;
-  --mat-on-primary-container: #cce5ff;
-}
-
-/**
- * Tema com primária em Púrpura
- */
-html.primary-purple {
-  --color-primary: #7c4dff;
-  --mat-primary: #7c4dff;
-  --mat-on-primary: #ffffff;
-  --mat-primary-container: #eaddff;
-  --mat-on-primary-container: #21005d;
-}
-
-html.dark.primary-purple {
-  --color-primary: #d9bbff;
-  --mat-primary: #d9bbff;
-  --mat-on-primary: #3a0061;
-  --mat-primary-container: #5a00a3;
-  --mat-on-primary-container: #eaddff;
 }

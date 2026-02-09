@@ -5,12 +5,11 @@
 
 .blog-hero {
 
-  .add-album-btn {
+  .add-button {
     right: 32px;
-    z-index: 10;
   }
 
-  background: linear-gradient(135deg, var(--mat-primary) 0%, var(--mat-primary) 100%);
+  background: var(--gradient-welcome);
   border-radius: 16px;
   margin-bottom: 16px;
   min-height: 80px;
@@ -174,9 +173,9 @@
   .card-caption {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    background: var(--mat-primary-container);
     padding: 20px 12px 12px;
-    color: white;
+    color: var(--mat-on-primary-container);
     font-size: 0.9rem;
     white-space: nowrap;
     overflow: hidden;

@@ -12,12 +12,12 @@
 }
 
 .detail-label {
-  font-weight: 600;
+  font-weight: 500;
   min-width: 100px;
-  color: #666;
+  color: var(--color-text-primary);
 }
 
 .detail-value {
   flex: 1;
-  color: #333;
+  color: var(--color-text-primary);
 }
