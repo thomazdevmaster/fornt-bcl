@@ -4,33 +4,28 @@
 }
 
 .blog-hero {
-
-  .add-button {
-    right: 32px;
-  }
-
-  background: var(--gradient-welcome);
+  background: var(--card-background);
   border-radius: 16px;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 16px;
   min-height: 80px;
   display: flex;
   align-items: center;
+  padding: 12px 16px;
 
   .hero-content {
     width: 100%;
-    padding: 0 12px;
 
     .hero-title {
-      color: white;
-      white-space: nowrap;
+      color: var(--mat-on-surface);
       margin: 0;
       line-height: 1.2;
     }
 
     .hero-description {
       font-size: 1em;
-      color: white;
-      opacity: 0.8;
+      color: var(--mat-on-surface-variant);
       margin: 4px 0 0 0;
     }
   }
@@ -48,30 +43,16 @@
 .blog-post {
   position: relative;
   border-radius: 20px;
-  padding: 24px 0;
+  padding: 20px 0;
   width: 100%;
   overflow: hidden;
-  background: none;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('assets/bg.jpg');
-    background-size: cover;
-    background-position: center;
-
-    opacity: 0.3;
-
-    z-index: -1;
-  }
+  background: var(--card-background);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .post-header, .post-footer {
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
 .post-header {
@@ -82,16 +63,18 @@
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
 
-    h2 { margin: 0; font-size: 1.5rem; color: var(--mat-primary); }
+    h2 { margin: 0; font-size: 1.5rem; color: var(--mat-on-surface); }
 
     .date-badge {
       display: flex;
       align-items: center;
       gap: 4px;
       font-size: 0.85rem;
-      color: #5f6368;
-      background: #f1f3f4;
+      color: var(--mat-on-surface-variant);
+      background: var(--mat-surface-container);
       padding: 4px 8px;
       border-radius: 10px;
       mat-icon { font-size: 16px; width: 16px; height: 16px; }
@@ -99,7 +82,7 @@
   }
 
   .post-description {
-    color: var(--mat-primary);
+    color: var(--mat-on-surface-variant);
     line-height: 1.5;
     margin: 0;
   }
@@ -109,7 +92,7 @@
 
 .carousel-wrapper {
   position: relative;
-  margin: 20px 0;
+  margin: 16px 0 8px;
 
   // Botões de Navegação (FABs)
   .nav-btn {
@@ -118,7 +101,11 @@
     transform: translateY(-50%);
     z-index: 10;
     opacity: 0; // Escondido por padrão
-    transition: opacity 0.3s, transform 0.2s;
+    transition: opacity 0.2s var(--easing-ease-out), transform 0.2s var(--easing-ease-out);
+    background: var(--card-background);
+    color: var(--mat-on-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
 
     &.prev { left: 16px; }
     &.next { right: 16px; }
@@ -134,7 +121,7 @@
   overflow-x: auto;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory; // O efeito magnético
-  padding: 10px 24px; // Espaço para sombra e alinhamento
+  padding: 10px 20px; // Espaço para sombra e alinhamento
 
   // Esconder Scrollbar
   &::-webkit-scrollbar { display: none; }
@@ -149,9 +136,10 @@
   position: relative;
   cursor: pointer;
   scroll-snap-align: center; // Centraliza ao parar de rolar
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
   transition: transform 0.2s;
-  background: #eee;
+  background: var(--mat-surface-container);
+  border: 1px solid var(--color-border);
 
   &:hover {
     transform: scale(1.02);
@@ -165,17 +153,17 @@
     .play-overlay {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.3);
-      mat-icon { color: white; transform: scale(1.5); }
+      background: color-mix(in srgb, var(--mat-on-surface) 30%, transparent);
+      mat-icon { color: var(--mat-on-surface); transform: scale(1.5); }
     }
   }
 
   .card-caption {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    background: var(--mat-primary-container);
+    background: var(--mat-surface-container-high);
     padding: 20px 12px 12px;
-    color: var(--mat-on-primary-container);
+    color: var(--mat-on-surface);
     font-size: 0.9rem;
     white-space: nowrap;
     overflow: hidden;
@@ -184,8 +172,9 @@
 }
 
 .see-more-card {
-  background: var(--mat-primary);
-  color: white;
+  background: var(--mat-surface-container);
+  color: var(--mat-on-surface);
+  border: 1px dashed var(--mat-outline-variant);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -195,14 +184,12 @@
     text-align: center;
     display: flex;
     flex-direction: column;
-
-    .count { font-size: 1.8rem; font-weight: bold; }
   }
 }
 
 .post-footer {
   text-align: right;
-  padding-top: 8px;
+  padding-top: 12px;
 }
 
 .loading-container {
@@ -214,6 +201,22 @@
 
 // Mobile Adjustments
 @media (max-width: 600px) {
+  .blog-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 12px;
+
+    .add-button {
+      align-self: stretch;
+      width: 100%;
+    }
+
+    .hero-content {
+      padding: 0;
+    }
+  }
+
   .carousel-card { flex: 0 0 85vw; height: 220px; } // Card quase tela cheia no mobile
   .nav-btn { display: none; } // Remove setas no mobile (usa dedo)
 }

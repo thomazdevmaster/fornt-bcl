@@ -21,6 +21,7 @@ export class DialogsService {
   openForm(data: IFormDialogData, width: string = '500px'): MatDialogRef<FormDialogComponent> {
     return this.dialog.open(FormDialogComponent, {
       width,
+      maxWidth: '95vw',
       data,
       disableClose: false
     });
@@ -34,6 +35,7 @@ export class DialogsService {
   openDetails(data: IDetailsDialogData, width: string = '500px'): MatDialogRef<DetailsDialogComponent> {
     return this.dialog.open(DetailsDialogComponent, {
       width,
+      maxWidth: '95vw',
       data,
       disableClose: false
     });
@@ -47,6 +49,7 @@ export class DialogsService {
   openDeleteConfirm(data: IDeleteConfirmData, width: string = '400px'): MatDialogRef<DeleteConfirmComponent> {
     return this.dialog.open(DeleteConfirmComponent, {
       width,
+      maxWidth: '95vw',
       data,
       disableClose: false
     });

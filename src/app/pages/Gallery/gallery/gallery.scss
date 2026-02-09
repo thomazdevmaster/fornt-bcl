@@ -2,21 +2,3 @@ mat-icon {
   vertical-align: middle;
   color: var(--mat-primary);
 }
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 200px;
-}
-
-.form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 16px 0;
-}
-
-.full-width {
-  width: 100%;
-}

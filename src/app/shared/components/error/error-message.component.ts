@@ -38,38 +38,38 @@ import { takeUntil } from 'rxjs/operators';
         border-left: 4px solid;
 
         &.alert-error {
-          background-color: #ffebee;
-          border-left-color: #f44336;
+          background-color: color-mix(in srgb, var(--mat-error) 12%, transparent);
+          border-left-color: var(--mat-error);
 
           mat-icon {
-            color: #f44336;
+            color: var(--mat-error);
           }
         }
 
         &.alert-warn {
-          background-color: #fff3e0;
-          border-left-color: #ff9800;
+          background-color: color-mix(in srgb, var(--mat-warning) 12%, transparent);
+          border-left-color: var(--mat-warning);
 
           mat-icon {
-            color: #ff9800;
+            color: var(--mat-warning);
           }
         }
 
         &.alert-info {
-          background-color: #e3f2fd;
-          border-left-color: #2196f3;
+          background-color: color-mix(in srgb, var(--mat-info) 12%, transparent);
+          border-left-color: var(--mat-info);
 
           mat-icon {
-            color: #2196f3;
+            color: var(--mat-info);
           }
         }
 
         &.alert-success {
-          background-color: #e8f5e9;
-          border-left-color: #4caf50;
+          background-color: color-mix(in srgb, var(--mat-success) 12%, transparent);
+          border-left-color: var(--mat-success);
 
           mat-icon {
-            color: #4caf50;
+            color: var(--mat-success);
           }
         }
 
@@ -136,9 +136,9 @@ export class ErrorMessageComponent {
       .validation-errors {
         margin: 16px 0;
         padding: 12px;
-        background-color: #ffebee;
+        background-color: color-mix(in srgb, var(--mat-error) 12%, transparent);
         border-radius: 4px;
-        border-left: 4px solid #f44336;
+        border-left: 4px solid var(--mat-error);
 
         .error-item {
           display: flex;
@@ -147,7 +147,7 @@ export class ErrorMessageComponent {
           padding: 4px 0;
 
           mat-icon {
-            color: #f44336;
+            color: var(--mat-error);
             flex-shrink: 0;
           }
 
@@ -190,7 +190,7 @@ export class ValidationErrorsComponent {
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: color-mix(in srgb, var(--mat-on-surface) 50%, transparent);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -201,14 +201,14 @@ export class ValidationErrorsComponent {
           flex-direction: column;
           align-items: center;
           gap: 16px;
-          background-color: white;
+          background-color: var(--card-background);
           padding: 32px;
           border-radius: 8px;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
           p {
             margin: 0;
-            color: #999;
+            color: var(--mat-on-surface-variant);
             font-size: 14px;
           }
         }

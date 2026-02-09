@@ -2,22 +2,22 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #333;
+  background: var(--mat-surface);
 
   .dialog-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background: #1a1a1a;
-    color: white;
+    background: var(--mat-surface-container);
+    color: var(--mat-on-surface);
 
     .info {
       display: flex;
       align-items: center;
       gap: 12px;
       h1 { margin: 0; font-size: 1.2rem; }
-      span { color: #aaa; font-size: 0.9rem; }
+      span { color: var(--mat-on-surface-variant); font-size: 0.9rem; }
     }
   }
 
@@ -30,14 +30,14 @@
     iframe {
       width: 100%;
       height: 100%;
-      background: #525659;
+      background: var(--mat-surface-dim);
     }
   }
 
   .player-footer {
     padding: 15px;
-    background: #222;
-    border-top: 1px solid #444;
+    background: var(--mat-surface-container);
+    border-top: 1px solid var(--mat-outline-variant);
 
     .player-controls {
       display: flex;
@@ -49,7 +49,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #3f51b5;
+        color: var(--mat-primary);
         font-weight: 500;
       }
 
@@ -60,6 +60,35 @@
         // Filtro para tornar o player nativo mais escuro (combina com o tema)
         filter: invert(100%) hue-rotate(180deg) brightness(1.5);
       }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .sheet-container {
+    .dialog-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+
+    .dialog-header .info {
+      width: 100%;
+      flex-wrap: wrap;
+
+      h1 {
+        font-size: 1rem;
+      }
+    }
+
+    .player-footer .player-controls {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    mat-dialog-content iframe {
+      height: 60vh;
     }
   }
 }

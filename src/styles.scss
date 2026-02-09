@@ -5,7 +5,6 @@
    =============================== */
 
 @use '@angular/material' as mat;
-@use 'scss/breakpoints' as *;
 @use './scss/themes' as *;
 @use './scss/musical-background' as *;
 
@@ -163,14 +162,6 @@ a {
 }
 
 /* -------------------------------------------------------
-   6) Utilitários e Acessibilidade
-   ------------------------------------------------------- */
-.high-contrast-focus :is(a, button, [role="button"], [tabindex]) {
-  outline: 3px solid var(--mat-primary);
-  outline-offset: 2px;
-}
-
-/* -------------------------------------------------------
    7) Overrides para componentes específicos
    ------------------------------------------------------- */
 
@@ -180,7 +171,7 @@ a {
   color: var(--header-text);
   box-shadow: var(--shadow-lg);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid color-mix(in srgb, var(--mat-on-surface) 6%, transparent);
   transition: box-shadow var(--transition-normal) var(--easing-ease-out);
 
   &:hover {
@@ -219,7 +210,7 @@ mat-card {
   color: var(--card-text);
   border-radius: var(--radius-lg) !important;
   box-shadow: var(--shadow-md);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid color-mix(in srgb, var(--mat-on-surface) 4%, transparent);
   transition: all var(--transition-normal) var(--easing-ease-out);
   overflow: hidden;
 
@@ -387,7 +378,7 @@ button,
       /* Efeito glassmorphism */
       background-color: var(--mat-primary);
       backdrop-filter: blur(10px);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--mat-on-primary) 10%, transparent);
 
       /* Primeira coluna arredondada à esquerda */
       &:first-child {
@@ -407,7 +398,7 @@ button,
         margin-right: var(--spacing-xs);
         opacity: 0.9;
         vertical-align: middle;
-        color: #3207f1;
+        color: var(--mat-primary);
       }
     }
 
@@ -487,13 +478,6 @@ button,
   }
 }
 
-.compact-forms {
-  @include mat.form-field-density(-2);
-  @include mat.select-density(-2);
-  @include mat.input-density(-2);
-  @include mat.button-density(-1);
-}
-
 .title-table-row {
   font-size: 20px;
   font-weight: bold;
@@ -517,40 +501,6 @@ button,
   }
 }
 
-/* Slide In Animation */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Scale Animation */
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Pulse Animation */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
 /* Componentes com Animação de Entrada */
 mat-card, .card {
   animation: fadeIn 0.5s var(--easing-ease-out) forwards;
@@ -561,18 +511,18 @@ button, [role="button"] {
   overflow: hidden;
 
   /* Efeito ripple customizado */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--mat-on-surface) 30%, transparent);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
 
   &:active::after {
     animation: ripple 0.6s ease-out;
@@ -587,11 +537,6 @@ button, [role="button"] {
   }
 }
 
-/* Loading State */
-.loading {
-  animation: pulse 1.5s var(--transition-normal) infinite;
-}
-
 /* Focus Visible Moderno */
 :focus-visible {
   outline: 2px solid var(--mat-primary);
@@ -601,34 +546,7 @@ button, [role="button"] {
 }
 
 /* -------------------------------------------------------
-   9) Utility Classes Modernas
-   ------------------------------------------------------- */
-
-.shadow-sm { box-shadow: var(--shadow-sm); }
-.shadow-md { box-shadow: var(--shadow-md); }
-.shadow-lg { box-shadow: var(--shadow-lg); }
-.shadow-xl { box-shadow: var(--shadow-xl); }
-
-.rounded-sm { border-radius: var(--radius-sm); }
-.rounded-md { border-radius: var(--radius-md); }
-.rounded-lg { border-radius: var(--radius-lg); }
-.rounded-xl { border-radius: var(--radius-xl); }
-
-.transition-all { transition: all var(--transition-normal) var(--easing-ease-out); }
-.transition-fast { transition: all var(--transition-fast) var(--easing-ease-out); }
-.transition-slow { transition: all var(--transition-slow) var(--easing-ease-out); }
-
-.hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
-.hover-scale:hover {
-  transform: scale(1.05);
-}
-
-/* -------------------------------------------------------
-   10) Responsive Design Moderno
+   9) Responsive Design Moderno
    ------------------------------------------------------- */
 
 @media (max-width: 959px) {
@@ -698,5 +616,5 @@ button, [role="button"] {
 }
 
 .black-backdrop {
-  background-color: rgba(0, 0, 0, 1) !important; // Fundo totalmente opaco
+  background-color: var(--mat-surface-dim) !important; // Fundo totalmente opaco
 }

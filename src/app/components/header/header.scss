@@ -74,7 +74,7 @@
 
       &:hover {
         opacity: 1;
-        background: rgba(255, 255, 255, 0.15);
+        background: color-mix(in srgb, var(--header-text) 15%, transparent);
       }
 
       span {
@@ -86,7 +86,7 @@
     }
 
     .active-nav {
-      background: rgba(255, 255, 255, 0.25) !important;
+      background: color-mix(in srgb, var(--header-text) 25%, transparent) !important;
       opacity: 1;
     }
   }
@@ -100,13 +100,26 @@
   }
 }
 
+@media (max-width: 600px) {
+  .app-header {
+    height: auto;
+    padding: 8px 12px;
+    gap: 8px;
+
+    .logo {
+      font-size: 1rem;
+      margin: 0 6px;
+    }
+  }
+}
+
 .menu-section {
   padding: 8px 0;
   min-width: 200px;
   .menu-title {
     font-size: 0.7rem;
     font-weight: 700;
-    color: #666;
+    color: var(--mat-on-surface-variant);
     padding: 8px 16px;
     text-transform: uppercase;
   }
@@ -114,25 +127,6 @@
     margin-left: auto;
     font-size: 18px;
     color: var(--mat-sys-primary);
-  }
-  .check { margin-left: auto; }
-
-  .mobile-menu-btn {
-    display: none; // Escondido por padrão no Desktop
-
-    @media (max-width: 768px) {
-      display: inline-flex;
-    }
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-
-    @media (max-width: 768px) {
-      display: none; // Esconde os links e o Admin no Mobile
-    }
   }
 }
 

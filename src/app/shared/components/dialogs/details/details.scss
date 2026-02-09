@@ -21,3 +21,14 @@
   flex: 1;
   color: var(--color-text-primary);
 }
+
+@media (max-width: 600px) {
+  .detail-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .detail-label {
+    min-width: 0;
+  }
+}

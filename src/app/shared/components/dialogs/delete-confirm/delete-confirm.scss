@@ -1,5 +1,5 @@
 .warning-icon {
-  color: #ff9800;
+  color: var(--mat-warning);
   margin-right: 8px;
   vertical-align: middle;
 }
@@ -9,7 +9,7 @@ p {
 }
 
 .warning-text {
-  color: #ff9800;
+  color: var(--mat-warning);
   font-size: 0.9rem;
   font-weight: 500;
 }
