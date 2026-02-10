@@ -104,6 +104,8 @@ $dark-tertiary-palette: mat.$violet-palette;
   --button-primary-background: #56a8d7;
   --button-primary-color: #eee9f5;
   --button-primary-hover-background: #2d5d70;
+  --button-disabled-background: rgba(184, 133, 217, 0.12);
+  --button-disabled-color: rgba(184, 133, 217, 0.38);
 }
 
 /**
@@ -184,6 +186,8 @@ $dark-tertiary-palette: mat.$violet-palette;
   --input-background: #21232b;
   --input-border: #49454e;
   --button-hover-background: rgba(184, 133, 217, 0.12);
+  --button-disabled-background: rgba(184, 133, 217, 0.12);
+  --button-disabled-color: rgba(184, 133, 217, 0.38);
 
   // buttons
   --button-primary-background: #a278c7;

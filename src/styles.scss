@@ -305,6 +305,12 @@ button,
     &:active {
       transform: translateY(0);
     }
+
+    &:disabled {
+      background-color: var(--button-disabled-background) !important;
+      color: var(--button-disabled-color) !important;
+      box-shadow: none;
+    }
   }
 }
 

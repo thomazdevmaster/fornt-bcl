@@ -6,66 +6,55 @@
     </div>
 
     <div class="load-block">
-      <mat-form-field appearance="outline">
+      <!-- <mat-form-field appearance="outline">
         <mat-label>ID da partitura</mat-label>
         <input matInput [formControl]="idControl" placeholder="Ex: 123" />
-      </mat-form-field>
-      <button mat-flat-button color="primary" (click)="loadStudy(idControl.value || '')" [disabled]="!idControl.value">
-        Carregar
-      </button>
-      <button mat-stroked-button (click)="loadFallbackAssets()" type="button">
-        Usar exemplo local
-      </button>
+      </mat-form-field> -->
+      @if (idControl.value) {
+        <button mat-flat-button color="primary" (click)="loadStudy(idControl.value || '')">
+          Carregar
+        </button>
+      }
+      @if (xmlLoaded) {
+        <button mat-stroked-button type="button" (click)="backToExamples()">
+          Voltar aos exemplos
+        </button>
+      }
     </div>
   </div>
 
   <div class="study-layout">
-    <section class="score-panel">
+    @if (xmlLoaded) {
+    <aside class="player-panel" [class.is-expanded]="playerExpanded" [class.is-collapsed]="!playerExpanded">
       <div class="panel-header">
-        <span>Partitura</span>
-        <div class="status">
-          @if (loading) {
-            <mat-spinner diameter="20"></mat-spinner>
-            <span>Carregando...</span>
-          }
-          @if (!loading && error) {
-            <span class="error-text">{{ error }}</span>
-          }
-          @if (!loading && !error) {
-            <span class="ok-text">{{ xmlLoaded ? 'Partitura OK' : 'Partitura pendente' }}</span>
-          }
+        <div class="player-compact-controls">
+          <button mat-icon-button color="primary" (click)="play()" [disabled]="loading || !playerReady">
+            <mat-icon>play_arrow</mat-icon>
+          </button>
+          <button mat-icon-button (click)="pause()" [disabled]="loading || !playerReady">
+            <mat-icon>pause</mat-icon>
+          </button>
+          <button mat-icon-button (click)="stop()" [disabled]="loading || !playerReady">
+            <mat-icon>stop</mat-icon>
+          </button>
         </div>
-      </div>
-
-      <div class="score-container" #osmdContainer>
-        @if (loading || !xmlLoaded) {
-          <div class="loading-overlay">
-            <div class="music-loader">
-              <span class="note">♪</span>
-              <span class="note">♫</span>
-              <span class="note">♩</span>
-              <span class="note">♪</span>
-            </div>
-            <div class="loading-text">Carregando partitura...</div>
-          </div>
-        }
-      </div>
-    </section>
-
-    <aside class="player-panel">
-      <div class="panel-header">
-        <span>Player</span>
+        <button mat-stroked-button type="button" class="player-toggle" (click)="togglePlayerExpanded()">
+          {{ playerExpanded ? 'Recolher' : 'Expandir' }}
+        </button>
       </div>
 
       <div class="controls">
-        @if (loading || !midiLoaded) {
-          <div class="player-loading">
+        @if (playerLoading || midiLoading) {
+          <div class="player-loading" [class.is-player]="playerLoading" [class.is-midi]="midiLoading">
             <div class="music-loader">
               <span class="note">♪</span>
               <span class="note">♫</span>
               <span class="note">♩</span>
+              <span class="note">♪</span>
             </div>
-            <div class="loading-text">Preparando audio...</div>
+            <div class="loading-text">
+              {{ playerLoading ? 'Preparando player...' : 'Preparando áudio...' }}
+            </div>
           </div>
         }
         <div class="control-row">
@@ -81,11 +70,33 @@
         </div>
 
         <div class="control-row tempo-row">
-          <span>Velocidade</span>
-          <mat-slider min="0.5" max="2" step="0.1" [disabled]="!playerReady">
-            <input matSliderThumb [(ngModel)]="tempo" (ngModelChange)="setTempo($event)" />
+          <span class="hide-mobile">Andamento</span>
+          <mat-slider [min]="bpmMin" [max]="bpmMax" step="1" [disabled]="!playerReady">
+            <input matSliderThumb [(ngModel)]="bpm" (ngModelChange)="setTempo($event)" />
           </mat-slider>
-          <span>{{ tempo | number: '1.1-1' }}x</span>
+          <span class="hide-mobile">{{ bpm | number: '1.0-0' }} BPM</span>
+        </div>
+
+        <div class="control-row metronome-row">
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="toggleMetronome()"
+            [disabled]="loading || !xmlLoaded"
+          >
+            {{ metronomeEnabled ? 'Metrônomo ligado' : 'Metrônomo desligado' }}
+          </button>
+          <span class="bpm-info hide-mobile">{{ timeSignature }} · Base {{ baseBpm | number: '1.0-0' }} BPM</span>
+        </div>
+        <div class="control-row metronome-volume">
+          <span class="hide-mobile">Volume</span>
+          <mat-slider min="0" max="1" step="0.05" [disabled]="!metronomeEnabled || !xmlLoaded">
+            <input
+              matSliderThumb
+              [(ngModel)]="metronomeVolume"
+              (ngModelChange)="setMetronomeVolume($event)"
+            />
+          </mat-slider>
         </div>
 
         <div class="control-row loop-row">
@@ -118,6 +129,204 @@
           </div>
         }
       </div>
+
+      @if (availableInstruments.length > 1 && xmlLoaded) {
+        <div class="instrument-card">
+          <div class="panel-header">
+            <span>Instrumentos</span>
+            <button mat-icon-button (click)="instrumentCardCollapsed = !instrumentCardCollapsed">
+              <mat-icon>{{ instrumentCardCollapsed ? 'expand_more' : 'expand_less' }}</mat-icon>
+            </button>
+          </div>
+          @if (!instrumentCardCollapsed) {
+            <div class="instrument-selector instrument-scroll">
+              @if (selectionMatchesApplied && !showInstrumentSelection) {
+                <div class="instrument-summary-panel">
+                  <div class="instrument-summary-title">
+                    Instrumentos selecionados ({{ selectedInstrumentIds.length }} / {{ availableInstruments.length }})
+                  </div>
+                  <div class="instrument-summary-grid">
+                    @for (instrument of availableInstruments; track instrument.id) {
+                      @if (isInstrumentSelected(instrument.id)) {
+                        <div class="instrument-summary-item">
+                          <img [src]="instrument.iconPath" [alt]="instrument.title" class="instrument-icon" />
+                          <span>{{ instrument.name }}</span>
+                        </div>
+                      }
+                    }
+                  </div>
+                  <button mat-stroked-button type="button" (click)="openInstrumentSelection()" [disabled]="loading">
+                    Alterar instrumentos
+                  </button>
+                </div>
+              } @else {
+                <div class="instrument-toolbar">
+                  <div class="instrument-summary">
+                    {{ selectedInstrumentIds.length }} / {{ availableInstruments.length }} selecionados
+                  </div>
+                  <div class="instrument-actions">
+                    @if (!selectionMatchesApplied) {
+                      <button
+                        mat-flat-button
+                        color="primary"
+                        type="button"
+                        (click)="applySelectedInstruments()"
+                        [disabled]="loading || !xmlLoaded"
+                      >
+                        Gerar com selecionados
+                      </button>
+                      <button
+                        mat-stroked-button
+                        type="button"
+                        (click)="cancelInstrumentSelection()"
+                        [disabled]="loading"
+                      >
+                        Cancelar
+                      </button>
+                    }
+                    <button
+                      mat-stroked-button
+                      type="button"
+                      (click)="selectAllInstruments()"
+                      [disabled]="loading || !xmlLoaded || allInstrumentsSelected"
+                    >
+                      Selecionar todos
+                    </button>
+                    <button
+                      mat-stroked-button
+                      type="button"
+                      (click)="restoreAppliedInstruments()"
+                      [disabled]="loading || !xmlLoaded || selectionMatchesApplied"
+                    >
+                      Restaurar
+                    </button>
+                  </div>
+                </div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Buscar instrumento</mat-label>
+                  <input matInput [formControl]="instrumentFilterControl" placeholder="Ex: sax, trompete" />
+                </mat-form-field>
+                <div class="instrument-list" [class.is-loading]="loading">
+                  @if (filteredInstruments.length === 0) {
+                    <div class="instrument-empty">Nenhum instrumento encontrado.</div>
+                  }
+                  @for (instrument of filteredInstruments; track instrument.id) {
+                    <div class="instrument-item">
+                      <mat-checkbox
+                        [checked]="isInstrumentSelected(instrument.id)"
+                        (change)="toggleInstrument(instrument.id, $event.checked)"
+                        [disabled]="loading || !xmlLoaded"
+                      >
+                        <span class="instrument-option">
+                          <img [src]="instrument.iconPath" [alt]="instrument.title" class="instrument-icon" />
+                          <span>{{ instrument.name }}</span>
+                        </span>
+                      </mat-checkbox>
+                      <button
+                        mat-button
+                        type="button"
+                        class="only-one"
+                        (click)="selectOnlyInstrument(instrument.id)"
+                        [disabled]="loading || !xmlLoaded"
+                      >
+                        Somente este
+                      </button>
+                    </div>
+                  }
+                </div>
+                <div class="instrument-hint">
+                  @if (loading) {
+                    Aplicando seleção...
+                  } @else {
+                    Selecione quais instrumentos visualizar e ouvir ({{ selectedInstrumentSummary }}).
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
     </aside>
+    }
+
+    <section class="score-panel" [class.fullscreen]="fullscreenScore">
+      <div class="panel-header">
+        <span>Partitura</span>
+        <span class="score-name">{{ currentScoreName }}</span>
+        <div class="status">
+          @if (loading) {
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Carregando...</span>
+          }
+          @if (!loading && error) {
+            <span class="error-text">{{ error }}</span>
+          }
+          @if (!loading && !error) {
+            <span class="ok-text">{{ xmlLoaded ? 'Partitura OK' : 'Partitura pendente' }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="score-container" #osmdContainer>
+        @if (loading || !xmlLoaded) {
+          <div class="loading-overlay">
+            <div class="staff-skeleton">
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+            </div>
+            <div class="music-loader">
+              <span class="note">♪</span>
+              <span class="note">♫</span>
+              <span class="note">♩</span>
+              <span class="note">♪</span>
+            </div>
+            <div class="loading-text">
+              @if (loading) {
+                Carregando partitura...
+              } @else {
+                Selecione uma partitura de exemplo ou busque pelo ID.
+              }
+            </div>
+            @if (!loading && !xmlLoaded) {
+              <div class="example-buttons">
+                @for (example of exampleOptions; track example.id) {
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    (click)="selectExampleFromEmptyState(example.id)"
+                    [class.is-active]="selectedExampleId === example.id"
+                  >
+                    {{ example.label }}
+                  </button>
+                }
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="button"
+                  (click)="loadFallbackAssets(exampleControl.value || 'score.xml')"
+                >
+                  Usar exemplo local
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+      @if (xmlLoaded) {
+        <div class="score-actions">
+          <button mat-stroked-button type="button" (click)="toggleFullscreenScore()">
+            {{ fullscreenScore ? 'Sair da tela cheia' : 'Tela cheia' }}
+          </button>
+        </div>
+      }
+    </section>
   </div>
 </div>

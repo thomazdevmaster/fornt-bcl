@@ -4,11 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:debug": "ng serve --configuration=development --host 0.0.0.0 --port 4200",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "server": "json-server --watch serverjson/server.json --port 3000",
-    "dev": "concurrently -n \"JSON,NG\" -c \"bgBlue,bgGreen\" \"npm run server\" \"npm run start\""
+    "dev": "concurrently -n \"JSON,NG\" -c \"bgBlue,bgGreen\" \"npm run server\" \"npm run start:debug\""
   },
   "prettier": {
     "printWidth": 100,
