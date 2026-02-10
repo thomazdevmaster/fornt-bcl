@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AppMaterialModule } from '../../../shared/app-material/app-material-module';
 import { MatSliderModule } from '@angular/material/slider';
@@ -9,7 +9,8 @@ import { Subscription, firstValueFrom } from 'rxjs';
 import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
 import { Player, VerovioConverter, VerovioRenderer } from 'musicxml-player';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { DEFAULT_INSTRUMENT_METADATA, resolveInstrumentMetadata } from '../../Instruments/Helpers/instrument-helper';
+import { extractInstrumentsFromXml, extractTempoInfoFromXml, filterXmlByPartIds } from './study.utils';
+import { StudyPlayerController } from './study.player-controller';
 
 @Component({
   selector: 'app-study',
@@ -17,6 +18,7 @@ import { DEFAULT_INSTRUMENT_METADATA, resolveInstrumentMetadata } from '../../In
   imports: [CommonModule, RouterModule, AppMaterialModule, MatSliderModule, ReactiveFormsModule, FormsModule],
   templateUrl: './study.html',
   styleUrl: './study.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StudyComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
@@ -36,15 +38,34 @@ export class StudyComponent implements OnInit, OnDestroy {
     { id: 'vila.musicxml', label: 'Vila do sossego' }
   ];
   selectedExampleId: string | null = null;
-  currentScoreName = 'Nenhuma selecionada';
-  loading = false;
-  error: string | null = null;
-  playerReady = false;
-  xmlLoaded = false;
-  midiLoaded = false;
-  midiLoading = false;
-  playerLoading = false;
-  playerError: string | null = null;
+  private currentScoreNameSig = signal('Nenhuma selecionada');
+  get currentScoreName() { return this.currentScoreNameSig(); }
+  set currentScoreName(value: string) { this.currentScoreNameSig.set(value); }
+  private loadingSig = signal(false);
+  private errorSig = signal<string | null>(null);
+  private playerReadySig = signal(false);
+  private xmlLoadedSig = signal(false);
+  private midiLoadedSig = signal(false);
+  private midiLoadingSig = signal(false);
+  private playerLoadingSig = signal(false);
+  private playerErrorSig = signal<string | null>(null);
+
+  get loading() { return this.loadingSig(); }
+  set loading(value: boolean) { this.loadingSig.set(value); }
+  get error() { return this.errorSig(); }
+  set error(value: string | null) { this.errorSig.set(value); }
+  get playerReady() { return this.playerReadySig(); }
+  set playerReady(value: boolean) { this.playerReadySig.set(value); }
+  get xmlLoaded() { return this.xmlLoadedSig(); }
+  set xmlLoaded(value: boolean) { this.xmlLoadedSig.set(value); }
+  get midiLoaded() { return this.midiLoadedSig(); }
+  set midiLoaded(value: boolean) { this.midiLoadedSig.set(value); }
+  get midiLoading() { return this.midiLoadingSig(); }
+  set midiLoading(value: boolean) { this.midiLoadingSig.set(value); }
+  get playerLoading() { return this.playerLoadingSig(); }
+  set playerLoading(value: boolean) { this.playerLoadingSig.set(value); }
+  get playerError() { return this.playerErrorSig(); }
+  set playerError(value: string | null) { this.playerErrorSig.set(value); }
   private loopTimer: number | null = null;
   private loopStartTs: number | null = null;
   private loopEndTs: number | null = null;
@@ -60,13 +81,28 @@ export class StudyComponent implements OnInit, OnDestroy {
   loopEnabled = false;
   loopStartMeasure: number | null = null;
   loopEndMeasure: number | null = null;
-  availableInstruments: { id: string; name: string; iconPath: string; title: string }[] = [];
-  selectedInstrumentIds: string[] = [];
+  private availableInstrumentsSig = signal<{ id: string; name: string; iconPath: string; title: string }[]>([]);
+  private selectedInstrumentIdsSig = signal<string[]>([]);
+  get availableInstruments() { return this.availableInstrumentsSig(); }
+  set availableInstruments(value: { id: string; name: string; iconPath: string; title: string }[]) {
+    this.availableInstrumentsSig.set(value);
+  }
+  get selectedInstrumentIds() { return this.selectedInstrumentIdsSig(); }
+  set selectedInstrumentIds(value: string[]) { this.selectedInstrumentIdsSig.set(value); }
   private lastAppliedInstrumentIds: string[] = [];
-  showInstrumentSelection = true;
-  instrumentCardCollapsed = false;
-  playerExpanded = false;
-  fullscreenScore = false;
+  private showInstrumentSelectionSig = signal(true);
+  private instrumentCardCollapsedSig = signal(false);
+  private playerExpandedSig = signal(false);
+  private fullscreenScoreSig = signal(false);
+
+  get showInstrumentSelection() { return this.showInstrumentSelectionSig(); }
+  set showInstrumentSelection(value: boolean) { this.showInstrumentSelectionSig.set(value); }
+  get instrumentCardCollapsed() { return this.instrumentCardCollapsedSig(); }
+  set instrumentCardCollapsed(value: boolean) { this.instrumentCardCollapsedSig.set(value); }
+  get playerExpanded() { return this.playerExpandedSig(); }
+  set playerExpanded(value: boolean) { this.playerExpandedSig.set(value); }
+  get fullscreenScore() { return this.fullscreenScoreSig(); }
+  set fullscreenScore(value: boolean) { this.fullscreenScoreSig.set(value); }
   private sourceXml: string | null = null;
   private currentScoreId = 'local';
   private xmlCache = new Map<string, string>();
@@ -82,14 +118,12 @@ export class StudyComponent implements OnInit, OnDestroy {
   baseBpm = 100;
   private workletPatched = false;
   private scrollPatched = false;
-  metronomeEnabled = false;
-  metronomeVolume = 0.5;
-  private metronomeTimer: number | null = null;
-  private metronomeSyncTimer: number | null = null;
-  private audioContext: AudioContext | null = null;
-  private metronomeBeat = 0;
-  private metronomeLastBeatIndex: number | null = null;
-  private metronomeLastMeasureIndex: number | null = null;
+  private playerController = new StudyPlayerController();
+
+  get metronomeEnabled() { return this.playerController.metronomeEnabled; }
+  set metronomeEnabled(value: boolean) { this.playerController.metronomeEnabled = value; }
+  get metronomeVolume() { return this.playerController.metronomeVolume; }
+  set metronomeVolume(value: number) { this.playerController.metronomeVolume = value; }
 
   ngOnInit() {
     this.routeSub = this.route.paramMap.subscribe((params) => {
@@ -144,7 +178,7 @@ export class StudyComponent implements OnInit, OnDestroy {
 
   private async prepareStudy(xml: string, id: string) {
     this.sourceXml = xml;
-    const tempoInfo = this.extractTempoInfoFromXml(xml);
+    const tempoInfo = extractTempoInfoFromXml(xml);
     this.baseBpm = tempoInfo?.bpm ?? 100;
     this.timeSignature = tempoInfo?.timeSignature ?? '4/4';
     this.beatsPerMeasure = tempoInfo?.beatsPerMeasure ?? 4;
@@ -153,7 +187,7 @@ export class StudyComponent implements OnInit, OnDestroy {
     this.tempo = this.bpm / this.baseBpm;
     this.updateBpmRange();
     if (this.metronomeEnabled) this.restartMetronome();
-    this.availableInstruments = this.extractInstruments(xml);
+    this.availableInstruments = extractInstrumentsFromXml(xml);
     const availableIds = new Set(this.availableInstruments.map((instrument) => instrument.id));
     const stored = this.readStoredSelection(id).filter((instrumentId) => availableIds.has(instrumentId));
     this.selectedInstrumentIds =
@@ -194,6 +228,7 @@ export class StudyComponent implements OnInit, OnDestroy {
         velocity: this.tempo,
         repeat: this.loopEnabled ? -1 : 1,
       });
+      this.playerController.player = this.player;
       this.playerReady = true;
       this.xmlLoaded = true;
       this.applyTempo();
@@ -345,126 +380,19 @@ export class StudyComponent implements OnInit, OnDestroy {
   }
 
   private startMetronome() {
-    if (this.metronomeTimer) return;
-    this.ensureAudioContext();
-    const interval = this.getMetronomeIntervalMs();
-    this.metronomeBeat = 0;
-    this.clickMetronome(true);
-    this.metronomeTimer = window.setInterval(() => this.clickMetronome(), interval);
+    this.playerController.startMetronome(this.bpm, this.beatsPerMeasure);
   }
 
   private startMetronomeSync() {
-    if (this.metronomeSyncTimer) return;
-    this.ensureAudioContext();
-    this.metronomeLastBeatIndex = null;
-    this.metronomeLastMeasureIndex = null;
-    this.metronomeSyncTimer = window.setInterval(() => {
-      if (!this.player) return;
-      const posMs = this.getPlayerPositionMs();
-      if (posMs == null) return;
-      const beatInfo = this.getBeatIndexFromTimemap(posMs);
-      if (!beatInfo) return;
-      if (this.metronomeLastBeatIndex === beatInfo.globalBeat) return;
-      const accent = beatInfo.beatInMeasure === 0;
-      this.clickMetronome(accent);
-      this.metronomeLastBeatIndex = beatInfo.globalBeat;
-      this.metronomeLastMeasureIndex = beatInfo.measureIndex;
-    }, 30);
+    this.playerController.startMetronomeSync(this.bpm, this.beatsPerMeasure);
   }
 
   private stopMetronome() {
-    if (this.metronomeTimer) {
-      window.clearInterval(this.metronomeTimer);
-      this.metronomeTimer = null;
-    }
-    if (this.metronomeSyncTimer) {
-      window.clearInterval(this.metronomeSyncTimer);
-      this.metronomeSyncTimer = null;
-    }
-    this.metronomeBeat = 0;
-    this.metronomeLastBeatIndex = null;
-    this.metronomeLastMeasureIndex = null;
+    this.playerController.stopMetronome();
   }
 
   private restartMetronome() {
-    if (!this.metronomeEnabled) return;
-    this.stopMetronome();
-    if (this.isPlaying) this.startMetronomeSync();
-    else this.startMetronome();
-  }
-
-  private getMetronomeIntervalMs(): number {
-    const bpm = Math.max(30, this.bpm);
-    return Math.round(60000 / bpm);
-  }
-
-  private getPlayerPositionMs(): number | null {
-    const pos = (this.player as any)?.position;
-    if (pos == null || Number.isNaN(pos)) return null;
-    const timemap = (this.player as any)?._options?.converter?.timemap;
-    if (!Array.isArray(timemap) || timemap.length === 0) {
-      return pos > 1000 ? pos : pos * 1000;
-    }
-    const last = timemap[timemap.length - 1];
-    const lastTs = last?.timestamp ?? 0;
-    const isMs = lastTs > 1000 || pos > 1000;
-    return isMs ? pos : pos * 1000;
-  }
-
-  private getBeatIndexFromTimemap(posMs: number): {
-    globalBeat: number;
-    beatInMeasure: number;
-    measureIndex: number;
-  } | null {
-    const timemap = (this.player as any)?._options?.converter?.timemap;
-    if (!Array.isArray(timemap) || timemap.length === 0) return null;
-    const beatsPerMeasure = Math.max(1, this.beatsPerMeasure);
-
-    let index = this.metronomeLastMeasureIndex ?? 0;
-    if (index >= timemap.length) index = 0;
-
-    const pos = posMs;
-    const forward =
-      index < timemap.length - 1 &&
-      pos >= (timemap[index + 1]?.timestamp ?? Infinity);
-    const backward = pos < (timemap[index]?.timestamp ?? 0);
-
-    if (forward || backward) {
-      index = 0;
-      for (let i = 0; i < timemap.length - 1; i++) {
-        const start = timemap[i]?.timestamp ?? 0;
-        const nextStart = timemap[i + 1]?.timestamp ?? Infinity;
-        if (pos >= start && pos < nextStart) {
-          index = i;
-          break;
-        }
-        if (pos < start) {
-          index = Math.max(0, i - 1);
-          break;
-        }
-      }
-    }
-
-    const current = timemap[index];
-    if (!current) return null;
-    const measureStart = current.timestamp ?? 0;
-    let measureDuration = current.duration ?? 0;
-    if (!measureDuration || measureDuration <= 0) {
-      const next = timemap[index + 1];
-      if (next?.timestamp != null) {
-        const nextTs = next.timestamp;
-        measureDuration = Math.max(0, nextTs - measureStart);
-      }
-    }
-    if (!measureDuration || measureDuration <= 0) return null;
-
-    const beatDuration = measureDuration / beatsPerMeasure;
-    const beatInMeasure = Math.min(
-      beatsPerMeasure - 1,
-      Math.max(0, Math.floor((pos - measureStart) / beatDuration))
-    );
-    const globalBeat = index * beatsPerMeasure + beatInMeasure;
-    return { globalBeat, beatInMeasure, measureIndex: index };
+    this.playerController.restartMetronome(this.isPlaying, this.bpm, this.beatsPerMeasure);
   }
 
   private updateBpmRange() {
@@ -473,36 +401,6 @@ export class StudyComponent implements OnInit, OnDestroy {
     const max = Math.max(min + 10, Math.round(base * 2));
     this.bpmMin = min;
     this.bpmMax = max;
-  }
-
-  private ensureAudioContext() {
-    if (this.audioContext) return;
-    const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-    this.audioContext = new AudioCtx();
-  }
-
-  private clickMetronome(forceAccent = false) {
-    if (!this.audioContext) return;
-    if (this.audioContext.state === 'suspended') {
-      void this.audioContext.resume();
-    }
-    const ctx = this.audioContext;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    const isAccent = forceAccent || this.metronomeBeat === 0;
-    osc.frequency.value = isAccent ? 1400 : 1000;
-    const baseVol = Math.max(0, Math.min(1, this.metronomeVolume));
-    const vol = isAccent ? Math.min(1, baseVol * 1.4) : baseVol;
-    gain.gain.setValueAtTime(vol, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.08);
-    this.metronomeBeat = (this.metronomeBeat + 1) % Math.max(1, this.beatsPerMeasure);
   }
 
   private applyTempo() {
@@ -555,6 +453,7 @@ export class StudyComponent implements OnInit, OnDestroy {
   private destroyPlayer() {
     if (this.player?.stop) this.player.stop();
     this.player = null;
+    this.playerController.player = null;
     this.isPlaying = false;
     this.playerReady = false;
     this.stopMetronome();
@@ -811,7 +710,7 @@ export class StudyComponent implements OnInit, OnDestroy {
         selectedIds.length > 0 &&
         selectedIds.length < this.availableInstruments.length;
       const xmlToUse = shouldFilter
-        ? this.filterXmlByPartIds(this.sourceXml, selectedIds)
+        ? filterXmlByPartIds(this.sourceXml, selectedIds)
         : this.sourceXml;
       await this.renderXml(xmlToUse);
       await this.waitNextFrame();
@@ -964,95 +863,5 @@ export class StudyComponent implements OnInit, OnDestroy {
     }
   }
 
-  private extractInstruments(xml: string): { id: string; name: string; iconPath: string; title: string }[] {
-    if (typeof window === 'undefined') return [];
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xml, 'application/xml');
-    const parserError = doc.querySelector('parsererror');
-    if (parserError) return [];
-    const scoreParts = Array.from(doc.querySelectorAll('part-list > score-part'));
-    return scoreParts
-      .map((part) => {
-        const id = part.getAttribute('id') || '';
-        const partName = part.querySelector('part-name')?.textContent?.trim() || '';
-        const instrumentName =
-          part.querySelector('score-instrument > instrument-name')?.textContent?.trim() || '';
-        const partAbbrev = part.querySelector('part-abbreviation')?.textContent?.trim() || '';
-        const instrumentAbbrev =
-          part.querySelector('score-instrument > instrument-abbreviation')?.textContent?.trim() || '';
-        const candidates = [partName, instrumentName, partAbbrev, instrumentAbbrev].filter(Boolean);
-        const meta = this.resolveInstrumentMeta(candidates);
-        const fallbackName = candidates[0] || 'Instrumento';
-        return {
-          id,
-          name: meta?.name || fallbackName,
-          iconPath: meta?.iconPath || DEFAULT_INSTRUMENT_METADATA.iconPath,
-          title: meta?.title || fallbackName,
-        };
-      })
-      .filter((part) => part.id);
-  }
-
-  private resolveInstrumentMeta(names: string[]) {
-    for (const name of names) {
-      const meta = resolveInstrumentMetadata(name);
-      if (meta) return meta;
-    }
-    return null;
-  }
-
-  private extractTempoInfoFromXml(xml: string): {
-    bpm: number | null;
-    timeSignature: string | null;
-    beatsPerMeasure: number | null;
-    beatUnit: number | null;
-  } | null {
-    if (typeof window === 'undefined') return null;
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xml, 'application/xml');
-    const parserError = doc.querySelector('parsererror');
-    if (parserError) return null;
-    let bpm: number | null = null;
-    const soundTempo = doc.querySelector('sound[tempo]')?.getAttribute('tempo');
-    if (soundTempo) {
-      const parsed = Number(soundTempo);
-      if (!Number.isNaN(parsed) && parsed > 0) bpm = parsed;
-    }
-    const metronome = doc.querySelector('metronome > per-minute')?.textContent?.trim();
-    if (metronome) {
-      const parsed = Number(metronome);
-      if (!Number.isNaN(parsed) && parsed > 0) bpm = parsed;
-    }
-    const beats = doc.querySelector('time > beats')?.textContent?.trim();
-    const beatType = doc.querySelector('time > beat-type')?.textContent?.trim();
-    const beatsPerMeasure = beats ? Number(beats) : null;
-    const beatUnit = beatType ? Number(beatType) : null;
-    const timeSignature =
-      beatsPerMeasure && beatUnit ? `${beatsPerMeasure}/${beatUnit}` : null;
-    return { bpm, timeSignature, beatsPerMeasure, beatUnit };
-  }
-
-  private filterXmlByPartIds(xml: string, selectedIds: string[]): string {
-    if (typeof window === 'undefined') return xml;
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xml, 'application/xml');
-    const parserError = doc.querySelector('parsererror');
-    if (parserError) return xml;
-    const selected = new Set(selectedIds);
-    const scoreParts = Array.from(doc.querySelectorAll('part-list > score-part'));
-    scoreParts.forEach((part) => {
-      const id = part.getAttribute('id') || '';
-      if (id && !selected.has(id)) {
-        part.remove();
-      }
-    });
-    const parts = Array.from(doc.querySelectorAll('part'));
-    parts.forEach((part) => {
-      const id = part.getAttribute('id') || '';
-      if (id && !selected.has(id)) {
-        part.remove();
-      }
-    });
-    return new XMLSerializer().serializeToString(doc);
-  }
+  // XML parsing helpers moved to study.utils.ts
 }
