@@ -1,0 +1,40 @@
+<div class="study-header">
+  <div class="title-block">
+    <h1>Estudo</h1>
+    <p>Espaço para estudar e se tornar cada vez mais habilidoso em tocar música.</p>
+  </div>
+
+  <div class="load-block">
+    <!-- <mat-form-field appearance="outline">
+      <mat-label>ID da partitura</mat-label>
+      <input matInput [formControl]="idControl" placeholder="Ex: 123" />
+    </mat-form-field> -->
+    @if (state.idControl.value) {
+      <button mat-flat-button color="primary" (click)="handleLoad()">
+        Carregar
+      </button>
+    }
+    @if (state.xmlLoaded) {
+      <button mat-stroked-button type="button" (click)="backToExamples.emit()">
+        Voltar aos exemplos
+      </button>
+    }
+  </div>
+</div>
+@if (state.showInitialContent) {
+  <div class="initial-content">
+    <app-music-loader text="Selecione uma partitura de exemplo." size="lg"></app-music-loader>
+    <div class="example-buttons">
+      @for (example of state.initialContent.exampleOptions; track example.id) {
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="selectExample.emit(example.id)"
+          [class.is-active]="state.initialContent.selectedExampleId === example.id"
+        >
+          {{ example.label }}
+        </button>
+      }
+    </div>
+  </div>
+}

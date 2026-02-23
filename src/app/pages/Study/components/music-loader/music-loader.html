@@ -1,0 +1,11 @@
+<div class="music-loader" [class.is-lg]="size === 'lg'">
+  <span class="note">♪</span>
+  <span class="note">♫</span>
+  <span class="note">♩</span>
+  <span class="note">♪</span>
+</div>
+@if (text) {
+  <div class="loading-text" [class.is-lg]="size === 'lg'">
+    {{ text }}
+  </div>
+}

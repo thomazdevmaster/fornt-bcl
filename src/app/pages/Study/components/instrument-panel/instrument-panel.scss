@@ -1,0 +1,165 @@
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--mat-surface-container);
+  color: var(--mat-on-surface);
+  font-weight: 600;
+}
+
+.instrument-card {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border);
+}
+
+.instrument-scroll {
+  max-height: 360px;
+  overflow: auto;
+  padding: 12px 16px;
+}
+
+.instrument-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .instrument-hint {
+    font-size: 0.8rem;
+    color: var(--mat-on-surface-variant);
+  }
+}
+
+.instrument-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.instrument-summary {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--mat-on-surface);
+}
+
+.instrument-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.instrument-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.instrument-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.instrument-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--mat-surface);
+  max-height: 240px;
+  overflow: auto;
+}
+
+.instrument-list.is-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.instrument-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 8px;
+}
+
+.instrument-item:hover {
+  background: var(--mat-surface-container);
+}
+
+.instrument-summary-panel {
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--mat-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.instrument-summary-title {
+  font-weight: 600;
+  color: var(--mat-on-surface);
+}
+
+.instrument-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.instrument-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--mat-on-surface-variant);
+  background: var(--mat-surface-container);
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.instrument-summary-item .instrument-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.instrument-empty {
+  padding: 8px;
+  color: var(--mat-on-surface-variant);
+  font-size: 0.85rem;
+}
+
+.only-one {
+  font-size: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .instrument-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .instrument-summary-item {
+    padding: 6px 8px;
+  }
+
+  .instrument-summary-item .instrument-icon,
+  .instrument-option .instrument-icon {
+    display: none;
+  }
+
+  .instrument-item {
+    padding: 6px 4px;
+  }
+}

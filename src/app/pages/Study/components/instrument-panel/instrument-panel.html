@@ -1,0 +1,116 @@
+@if (state.availableInstruments.length > 1 && xmlLoaded) {
+  <div class="instrument-card">
+    <div class="panel-header">
+      <span>Instrumentos</span>
+      <button mat-icon-button (click)="toggleCollapse()">
+        <mat-icon>{{ state.instrumentCardCollapsed ? 'expand_more' : 'expand_less' }}</mat-icon>
+      </button>
+    </div>
+    @if (!state.instrumentCardCollapsed) {
+      <div class="instrument-selector instrument-scroll">
+        @if (state.selectionMatchesApplied && !state.showInstrumentSelection) {
+          <div class="instrument-summary-panel">
+            <div class="instrument-summary-title">
+              Instrumentos selecionados ({{ state.selectedInstrumentIds.length }} / {{ state.availableInstruments.length }})
+            </div>
+            <div class="instrument-summary-grid">
+              @for (instrument of state.availableInstruments; track instrument.id) {
+                @if (isInstrumentSelected(instrument.id)) {
+                  <div class="instrument-summary-item">
+                    <img [src]="instrument.iconPath" [alt]="instrument.title" class="instrument-icon" />
+                    <span>{{ instrument.name }}</span>
+                  </div>
+                }
+              }
+            </div>
+            <button mat-stroked-button type="button" (click)="openInstrumentSelection.emit()" [disabled]="loading">
+              Alterar instrumentos
+            </button>
+          </div>
+        } @else {
+          <div class="instrument-toolbar">
+            <div class="instrument-summary">
+              {{ state.selectedInstrumentIds.length }} / {{ state.availableInstruments.length }} selecionados
+            </div>
+            <div class="instrument-actions">
+              @if (!state.selectionMatchesApplied) {
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="button"
+                  (click)="applySelectedInstruments.emit()"
+                  [disabled]="loading || !xmlLoaded"
+                >
+                  Gerar com selecionados
+                </button>
+                <button
+                  mat-stroked-button
+                  type="button"
+                  (click)="cancelInstrumentSelection.emit()"
+                  [disabled]="loading"
+                >
+                  Cancelar
+                </button>
+              }
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="selectAllInstruments.emit()"
+                [disabled]="loading || !xmlLoaded || state.allInstrumentsSelected"
+              >
+                Selecionar todos
+              </button>
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="restoreAppliedInstruments.emit()"
+                [disabled]="loading || !xmlLoaded || state.selectionMatchesApplied"
+              >
+                Restaurar
+              </button>
+            </div>
+          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Buscar instrumento</mat-label>
+            <input matInput [formControl]="state.instrumentFilterControl" placeholder="Ex: sax, trompete" />
+          </mat-form-field>
+          <div class="instrument-list" [class.is-loading]="loading">
+            @if (state.filteredInstruments.length === 0) {
+              <div class="instrument-empty">Nenhum instrumento encontrado.</div>
+            }
+            @for (instrument of state.filteredInstruments; track instrument.id) {
+              <div class="instrument-item">
+                <mat-checkbox
+                  [checked]="isInstrumentSelected(instrument.id)"
+                  (change)="toggleInstrument.emit({ id: instrument.id, checked: $event.checked })"
+                  [disabled]="loading || !xmlLoaded"
+                >
+                  <span class="instrument-option">
+                    <img [src]="instrument.iconPath" [alt]="instrument.title" class="instrument-icon" />
+                    <span>{{ instrument.name }}</span>
+                  </span>
+                </mat-checkbox>
+                <button
+                  mat-button
+                  type="button"
+                  class="only-one"
+                  (click)="selectOnlyInstrument.emit(instrument.id)"
+                  [disabled]="loading || !xmlLoaded"
+                >
+                  Somente este
+                </button>
+              </div>
+            }
+          </div>
+          <div class="instrument-hint">
+            @if (loading) {
+              Aplicando seleção...
+            } @else {
+              Selecione quais instrumentos visualizar e ouvir ({{ state.selectedInstrumentSummary }}).
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

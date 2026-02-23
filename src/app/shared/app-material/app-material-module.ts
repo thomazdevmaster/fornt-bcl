@@ -21,6 +21,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatSidenavModule } from '@angular/material/sidenav';
+
 
 
 @NgModule({
@@ -46,7 +48,8 @@ import { MatSliderModule } from '@angular/material/slider';
     MatDatepickerModule,
     MatAutocompleteModule,
     MatExpansionModule,
-    MatSliderModule
+    MatSliderModule,
+    MatSidenavModule
   ]
 })
 export class AppMaterialModule { }

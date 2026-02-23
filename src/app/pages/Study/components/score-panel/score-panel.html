@@ -1,0 +1,45 @@
+<section class="score-panel" [class.fullscreen]="state.fullscreenScore">
+  <div class="panel-header">
+    <span>Partitura</span>
+    <span class="score-name">{{ state.currentScoreName }}</span>
+    <div class="status">
+      @if (state.scoreLoading) {
+        <mat-spinner diameter="20"></mat-spinner>
+        <span>Carregando partitura...</span>
+      }
+      @if (!state.scoreLoading && state.error) {
+        <span class="error-text">{{ state.error }}</span>
+      }
+      @if (!state.scoreLoading && !state.error) {
+        <span class="ok-text">{{ state.xmlLoaded ? 'Partitura OK' : 'Partitura pendente' }}</span>
+      }
+    </div>
+  </div>
+
+  <div class="score-container" #osmdContainer>
+    @if (state.scoreLoading) {
+      <div class="loading-overlay">
+        <div class="staff-skeleton">
+          <div class="staff-line"></div>
+          <div class="staff-line"></div>
+          <div class="staff-line"></div>
+          <div class="staff-line"></div>
+          <div class="staff-line"></div>
+          <div class="staff-line"></div>
+          <div class="staff-line"></div>
+          <div class="staff-line"></div>
+          <div class="staff-line"></div>
+          <div class="staff-line"></div>
+        </div>
+        <app-music-loader text="Carregando partitura..." size="lg"></app-music-loader>
+      </div>
+    }
+  </div>
+  @if (state.xmlLoaded) {
+    <div class="score-actions">
+      <button mat-stroked-button type="button" (click)="toggleFullscreen.emit()">
+        {{ state.fullscreenScore ? 'Sair da tela cheia' : 'Tela cheia' }}
+      </button>
+    </div>
+  }
+</section>
