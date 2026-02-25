@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
 import { Player, VerovioConverter, VerovioRenderer } from 'musicxml-player';
 import { StudyService } from './study.service';
+import { SongService } from '../../Songs/services/song.service';
 import { extractTempoInfoFromXml, filterXmlByPartIds } from '../study/study.utils';
 import { StudyPlayerController } from '../study/study.player-controller';
 import { STUDY_EXAMPLES } from '../study/study.config';
@@ -16,7 +17,8 @@ export class StudyFacadeService {
   constructor(
     private readonly studyService: StudyService,
     private readonly snackBar: MatSnackBar,
-    private readonly instrumentService: StudyInstrumentService
+    private readonly instrumentService: StudyInstrumentService,
+    private readonly songService: SongService
   ) {}
 
   private scoreContainerRef: ElementRef<HTMLDivElement> | null = null;
@@ -28,6 +30,8 @@ export class StudyFacadeService {
   readonly exampleOptions = STUDY_EXAMPLES;
 
   private selectedExampleIdSig = signal<string | null>(null);
+  private songOptionsSig = signal<ReadonlyArray<{ id: string; label: string }>>([]);
+  private selectedSongIdSig = signal<string | null>(null);
   private currentScoreNameSig = signal('Nenhuma selecionada');
   private loadingSig = signal(false);
   private errorSig = signal<string | null>(null);
@@ -48,8 +52,10 @@ export class StudyFacadeService {
   private loopEndMeasureSig = signal<number | null>(null);
   private metronomeEnabledSig = signal(false);
   private metronomeVolumeSig = signal(0.5);
+  private audioVolumeSig = signal(1);
   private playerExpandedSig = signal(false);
   private fullscreenScoreSig = signal(false);
+  private isMobileSig = signal(false);
 
   get selectedExampleId() { return this.selectedExampleIdSig(); }
   set selectedExampleId(value: string | null) { this.selectedExampleIdSig.set(value); }
@@ -105,10 +111,18 @@ export class StudyFacadeService {
     this.metronomeVolumeSig.set(value);
     this.playerController.metronomeVolume = value;
   }
+  get audioVolume() { return this.audioVolumeSig(); }
+  set audioVolume(value: number) {
+    this.audioVolumeSig.set(Math.max(0, Math.min(1, value)));
+    this.applyAudioVolume();
+  }
 
   private loopTimer: number | null = null;
   private loopStartTs: number | null = null;
   private loopEndTs: number | null = null;
+  private cursorSyncTimer: number | null = null;
+  private lastOsmdCursorMeasure = -1;
+  private lastOsmdCursorBeat = -1;
   tempo = 1.0;
   isPlaying = false;
   beatsPerMeasure = 4;
@@ -139,6 +153,8 @@ export class StudyFacadeService {
       initialContent: {
         selectedExampleId: this.selectedExampleId,
         exampleOptions: this.exampleOptions,
+        songOptions: this.songOptionsSig(),
+        selectedSongId: this.selectedSongIdSig(),
       },
     },
     player: this.playerPanelState,
@@ -149,6 +165,7 @@ export class StudyFacadeService {
       xmlLoaded: this.xmlLoaded,
       fullscreenScore: this.fullscreenScore,
     },
+    isMobile: this.isMobileSig(),
   }));
 
   private get instrumentPanelState(): InstrumentPanelState {
@@ -182,6 +199,7 @@ export class StudyFacadeService {
       baseBpm: this.baseBpm,
       metronomeEnabled: this.metronomeEnabled,
       metronomeVolume: this.metronomeVolume,
+      audioVolume: this.audioVolume,
       loopEnabled: this.loopEnabled,
       loopStartMeasure: this.loopStartMeasure,
       loopEndMeasure: this.loopEndMeasure,
@@ -203,6 +221,26 @@ export class StudyFacadeService {
     } else {
       window.setTimeout(run, 0);
     }
+  }
+
+  loadSongOptions() {
+    this.songService.list().subscribe({
+      next: (songs) => {
+        const options = (songs || []).map((s) => ({
+          id: String(s.id),
+          label: s.title || `Partitura ${s.id}`,
+        }));
+        this.songOptionsSig.set(options);
+      },
+      error: () => this.songOptionsSig.set([]),
+    });
+  }
+
+  selectSongFromList(id: string) {
+    if (!id) return;
+    this.selectedSongIdSig.set(id);
+    this.idControl.setValue(id);
+    void this.loadStudy(id);
   }
 
   async loadStudy(id: string) {
@@ -284,6 +322,7 @@ export class StudyFacadeService {
   }
 
   backToExamples() {
+    this.fullscreenScoreSig.set(false);
     this.loadToken++;
     this.destroyPlayer();
     this.clearScoreContainer();
@@ -301,6 +340,7 @@ export class StudyFacadeService {
     this.currentRenderedXml = null;
     this.idControl.setValue('');
     this.selectedExampleId = null;
+    this.selectedSongIdSig.set(null);
     this.pause();
   }
 
@@ -318,6 +358,7 @@ export class StudyFacadeService {
     if (this.player?.pause) this.player.pause();
     this.isPlaying = false;
     this.stopLoopMonitor();
+    this.stopCursorSync();
     this.stopMetronome();
   }
 
@@ -329,6 +370,9 @@ export class StudyFacadeService {
     }
     this.isPlaying = false;
     this.stopLoopMonitor();
+    this.stopCursorSync();
+    this.lastOsmdCursorMeasure = -1;
+    this.lastOsmdCursorBeat = -1;
     this.stopMetronome();
   }
 
@@ -340,14 +384,22 @@ export class StudyFacadeService {
 
   toggleMetronome() {
     this.metronomeEnabled = !this.metronomeEnabled;
-    if (this.metronomeEnabled) this.startMetronome();
-    else this.stopMetronome();
+    if (this.metronomeEnabled) {
+      if (this.isPlaying) this.startMetronomeSync();
+    } else {
+      this.stopMetronome();
+    }
   }
 
   setMetronomeVolume(event: any) {
     const value = typeof event === 'number' ? event : event?.value;
     if (value == null) return;
     this.metronomeVolume = value;
+  }
+
+  setAudioVolume(value: number) {
+    if (value == null) return;
+    this.audioVolume = value;
   }
 
   setTempo(event: any) {
@@ -435,6 +487,8 @@ export class StudyFacadeService {
     this.updateBpmRange();
     if (this.metronomeEnabled) this.restartMetronome();
     this.instrumentService.initializeFromXml(id, xml);
+    this.instrumentCardCollapsed = true;
+    this.instrumentCardCollapsed = true;
     await this.applyInstrumentSelection(id, token);
   }
 
@@ -494,6 +548,7 @@ export class StudyFacadeService {
         this.osmd = new OpenSheetMusicDisplay(containerRef.nativeElement, {
           drawingParameters: 'default',
           autoResize: true,
+          followCursor: true,
         });
       }
       await this.osmd.load(xml);
@@ -503,6 +558,7 @@ export class StudyFacadeService {
       if (token === this.loadToken) {
         this.xmlLoaded = true;
         this.scoreLoading = false;
+        if (this.isMobileView()) this.fullscreenScoreSig.set(true);
       }
     } catch {
       if (token === this.loadToken) this.scoreLoading = false;
@@ -525,11 +581,13 @@ export class StudyFacadeService {
       if (!el) return;
       el.setAttribute('aria-hidden', 'true');
       el.style.setProperty('position', 'fixed');
-      el.style.setProperty('left', '-9999px');
-      el.style.setProperty('width', '1px');
-      el.style.setProperty('height', '1px');
+      el.style.setProperty('left', '-10000px');
+      el.style.setProperty('top', '0');
+      el.style.setProperty('width', '800px');
+      el.style.setProperty('height', '600px');
       el.style.setProperty('overflow', 'hidden');
       el.style.setProperty('pointer-events', 'none');
+      el.style.setProperty('visibility', 'hidden');
       document.body.appendChild(el);
       this.hiddenPlayerContainer = el;
       const converter = new (VerovioConverter as any)();
@@ -551,11 +609,16 @@ export class StudyFacadeService {
       this.playerReady = true;
       this.applyTempo();
       this.applyLoop();
-    } catch {
+      this.applyAudioVolume();
+    } catch (err) {
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('Study player init failed:', err);
+      }
       this.destroyVerovioAndHiddenContainer();
-      this.midiOnlyMode = true;
+      const isLikelyTooLarge = typeof xml === 'string' && xml.length > 500_000;
+      this.midiOnlyMode = isLikelyTooLarge;
       this.playerReady = true;
-      this.playerError = null;
+      this.playerError = isLikelyTooLarge ? null : 'Player indisponível. Tente outra partitura.';
     } finally {
       if (token === this.loadToken) this.playerLoading = false;
     }
@@ -609,9 +672,17 @@ export class StudyFacadeService {
     if (token !== this.loadToken || !this.midiLoaded) return;
 
     if (this.player) {
+      const measure = this.lastOsmdCursorMeasure >= 1 ? this.lastOsmdCursorMeasure : 1;
+      const beat = this.lastOsmdCursorBeat >= 0 ? this.lastOsmdCursorBeat : 0;
+      const moveTo = this.getMoveToFromMeasureBeat(measure, beat);
+      if (moveTo && this.player.moveTo) {
+        this.player.moveTo(moveTo.measureIndex, moveTo.measureStartMs, moveTo.measureOffsetMs);
+      }
       if (this.player?.play) this.player.play();
       this.isPlaying = true;
       this.startLoopMonitor();
+      this.startCursorSync();
+      this.syncOsmdCursorToPlayer();
       if (this.metronomeEnabled) this.startMetronomeSync();
       return;
     }
@@ -686,6 +757,9 @@ export class StudyFacadeService {
   }
 
   private clearScoreContainer() {
+    this.stopCursorSync();
+    this.lastOsmdCursorMeasure = -1;
+    this.lastOsmdCursorBeat = -1;
     this.osmd = null;
     const el = this.scoreContainerRef?.nativeElement;
     if (!el) return;
@@ -757,7 +831,16 @@ export class StudyFacadeService {
   private applyTempo() {
     if (!this.player) return;
     if ('velocity' in this.player) this.player.velocity = this.tempo;
-    if (this.metronomeEnabled) this.restartMetronome();
+    if (this.metronomeEnabled && this.isPlaying) this.restartMetronome();
+  }
+
+  private applyAudioVolume() {
+    const synth = (this.player as any)?._synthesizer;
+    if (synth?.setMasterParameter) {
+      try {
+        synth.setMasterParameter('masterGain', this.audioVolume);
+      } catch {}
+    }
   }
 
   private startMetronome() {
@@ -773,17 +856,21 @@ export class StudyFacadeService {
   }
 
   private restartMetronome() {
-    this.playerController.restartMetronome(this.isPlaying, this.bpm, this.beatsPerMeasure);
+    if (!this.metronomeEnabled) return;
+    this.playerController.stopMetronome();
+    if (this.isPlaying) this.playerController.startMetronomeSync(this.bpm, this.beatsPerMeasure);
   }
 
   private computeLoopTimestamps() {
     if (!this.player) return;
     const timemap = (this.player as any)?._options?.converter?.timemap;
-    if (!timemap || !this.loopStartMeasure || !this.loopEndMeasure) {
+    if (!Array.isArray(timemap) || timemap.length === 0 || !this.loopStartMeasure || !this.loopEndMeasure) {
       this.loopStartTs = null;
       this.loopEndTs = null;
       return;
     }
+    const lastTs = timemap[timemap.length - 1]?.timestamp ?? 0;
+    const toMs = (t: number) => (lastTs > 0 && lastTs < 1000 ? t * 1000 : t);
     const startMeasure = (this.loopStartMeasure ?? 0) - 1;
     const endMeasure = (this.loopEndMeasure ?? 0) - 1;
     if (startMeasure < 0 || endMeasure < 0) {
@@ -793,9 +880,10 @@ export class StudyFacadeService {
     }
     const startEntry = timemap.find((t: any) => t.measure === startMeasure);
     const endEntry = timemap.find((t: any) => t.measure === endMeasure);
-    this.loopStartTs = startEntry?.timestamp ?? null;
-    this.loopEndTs =
-      endEntry?.timestamp != null ? endEntry.timestamp + (endEntry.duration ?? 0) : null;
+    this.loopStartTs = startEntry?.timestamp != null ? toMs(startEntry.timestamp) : null;
+    const endStart = endEntry?.timestamp != null ? toMs(endEntry.timestamp) : null;
+    const endDur = endEntry?.duration != null ? toMs(endEntry.duration) : 0;
+    this.loopEndTs = endStart != null ? endStart + endDur : null;
   }
 
   private startLoopMonitor() {
@@ -803,11 +891,11 @@ export class StudyFacadeService {
       return;
     this.loopTimer = window.setInterval(() => {
       if (!this.player) return;
-      const pos = (this.player as any).position;
-      if (pos != null && this.loopEndTs != null && pos >= this.loopEndTs) {
-        const measure = this.loopStartMeasure ?? 0;
-        const start = this.loopStartTs ?? 0;
-        if (this.player?.moveTo) this.player.moveTo(measure, start, 0);
+      const posMs = this.getPlayerPositionMs();
+      if (posMs != null && this.loopEndTs != null && posMs >= this.loopEndTs) {
+        const measureIndex = Math.max(0, (this.loopStartMeasure ?? 1) - 1);
+        const startMs = this.loopStartTs ?? 0;
+        if (this.player?.moveTo) this.player.moveTo(measureIndex, startMs, 0);
         if (this.metronomeEnabled) this.restartMetronome();
       }
     }, 120);
@@ -820,11 +908,207 @@ export class StudyFacadeService {
     }
   }
 
+  /** Retorna posição em ms. Normaliza conforme timemap (converter pode usar segundos). */
+  private getPlayerPositionMs(): number | null {
+    const player = this.player as any;
+    if (!player || player.position == null) return null;
+    const pos = Number(player.position);
+    if (Number.isNaN(pos)) return null;
+    const timemap = player?._options?.converter?.timemap;
+    if (!Array.isArray(timemap) || timemap.length === 0) return pos > 1000 ? pos : pos * 1000;
+    const lastTs = timemap[timemap.length - 1]?.timestamp ?? 0;
+    const inSeconds = lastTs > 0 && lastTs < 1000;
+    return inSeconds ? pos * 1000 : pos;
+  }
+
+  /** Converte compasso (1-based) e beat (0-based) em parâmetros para player.moveTo. Retorna null se fora do timemap. */
+  private getMoveToFromMeasureBeat(measure: number, beatInMeasure: number): {
+    measureIndex: number;
+    measureStartMs: number;
+    measureOffsetMs: number;
+  } | null {
+    const player = this.player as any;
+    const timemap = player?._options?.converter?.timemap;
+    if (!Array.isArray(timemap) || timemap.length === 0) return null;
+    const measureIndex = Math.max(0, measure - 1);
+    if (measureIndex >= timemap.length) return null;
+    const lastTs = timemap[timemap.length - 1]?.timestamp ?? 0;
+    const timemapInSeconds = lastTs > 0 && lastTs < 1000;
+    const toMs = (t: number) => (timemapInSeconds ? t * 1000 : t);
+    const entry = timemap[measureIndex];
+    if (!entry) return null;
+    const measureStartMs = toMs(entry.timestamp ?? 0);
+    let duration = entry.duration != null ? toMs(entry.duration) : 0;
+    if (duration <= 0 && timemap[measureIndex + 1]) {
+      duration = toMs(timemap[measureIndex + 1].timestamp ?? 0) - measureStartMs;
+    }
+    const beats = Math.max(1, this.beatsPerMeasure);
+    const beatDuration = duration > 0 ? duration / beats : 0;
+    const measureOffsetMs = Math.min(
+      duration,
+      Math.max(0, beatInMeasure * beatDuration)
+    );
+    return { measureIndex, measureStartMs, measureOffsetMs };
+  }
+
+  /** Retorna compasso (1-based) e beat no compasso (0-based). Normaliza timemap para ms se vier em segundos. */
+  private getCurrentMeasureAndBeat(): { measure: number; beatInMeasure: number } | null {
+    const posMs = this.getPlayerPositionMs();
+    if (posMs == null) return null;
+    const player = this.player as any;
+    const timemap = player?._options?.converter?.timemap;
+    if (!Array.isArray(timemap) || timemap.length === 0) return null;
+    const lastTs = timemap[timemap.length - 1]?.timestamp ?? 0;
+    const timemapInSeconds = lastTs > 0 && lastTs < 1000;
+    const toMs = (t: number) => (timemapInSeconds ? t * 1000 : t);
+    const beats = Math.max(1, this.beatsPerMeasure);
+    let index = 0;
+    for (let i = 0; i < timemap.length - 1; i++) {
+      const start = toMs(timemap[i]?.timestamp ?? 0);
+      const nextStart = toMs(timemap[i + 1]?.timestamp ?? Infinity);
+      if (posMs >= start && posMs < nextStart) {
+        index = i;
+        break;
+      }
+      if (posMs < start) {
+        index = Math.max(0, i - 1);
+        break;
+      }
+      index = i;
+    }
+    const entry = timemap[index];
+    if (!entry) return null;
+    const measureStart = toMs(entry.timestamp ?? 0);
+    let duration = entry.duration != null ? toMs(entry.duration) : 0;
+    if (duration <= 0 && timemap[index + 1]) {
+      duration = toMs(timemap[index + 1].timestamp ?? 0) - measureStart;
+    }
+    if (duration <= 0) {
+      const measureNum = typeof entry.measure === 'number' ? entry.measure + 1 : index + 1;
+      return { measure: measureNum, beatInMeasure: 0 };
+    }
+    const beatDuration = duration / beats;
+    const beatInMeasure = Math.min(
+      beats - 1,
+      Math.max(0, Math.floor((posMs - measureStart) / beatDuration))
+    );
+    const measureNum = typeof entry.measure === 'number' ? entry.measure + 1 : index + 1;
+    return { measure: measureNum, beatInMeasure };
+  }
+
+  private lastSyncPositionMs: number | null = null;
+
+  /** Atualiza o cursor do OSMD para o compasso/beat atual e faz auto-scroll. */
+  private syncOsmdCursorToPlayer() {
+    const cursor = this.osmd?.cursor as any;
+    if (!cursor?.show) return;
+    const posMs = this.getPlayerPositionMs();
+    const pos = this.getCurrentMeasureAndBeat();
+    if (!pos) return;
+    const { measure: targetMeasure, beatInMeasure: targetBeat } = pos;
+    if (targetMeasure <= 0) return;
+    try {
+      const nextMeasure = cursor.nextMeasure as (() => void) | undefined;
+      const next = cursor.next as (() => void) | undefined;
+      const update = cursor.update as (() => void) | undefined;
+      let curMeasure = this.lastOsmdCursorMeasure;
+      let curBeat = this.lastOsmdCursorBeat;
+      if (posMs != null && this.lastSyncPositionMs != null && posMs < this.lastSyncPositionMs - 500) {
+        curMeasure = 999;
+        curBeat = 999;
+      }
+      if (posMs != null) this.lastSyncPositionMs = posMs;
+
+      if (curMeasure < 0 || targetMeasure < curMeasure || (targetMeasure === curMeasure && targetBeat < curBeat)) {
+        cursor.reset();
+        this.lastOsmdCursorMeasure = 1;
+        this.lastOsmdCursorBeat = 0;
+        for (let i = 1; i < targetMeasure; i++) {
+          if (nextMeasure) nextMeasure.call(cursor);
+          this.lastOsmdCursorMeasure = i + 1;
+        }
+        this.lastOsmdCursorMeasure = targetMeasure;
+        const maxNext = Math.min(targetBeat, 16);
+        for (let i = 0; i < maxNext && next; i++) {
+          next.call(cursor);
+          this.lastOsmdCursorBeat = i + 1;
+        }
+        this.lastOsmdCursorBeat = targetBeat;
+      } else if (targetMeasure > curMeasure) {
+        for (let i = curMeasure; i < targetMeasure; i++) {
+          if (nextMeasure) nextMeasure.call(cursor);
+          this.lastOsmdCursorMeasure = i + 1;
+        }
+        this.lastOsmdCursorMeasure = targetMeasure;
+        this.lastOsmdCursorBeat = 0;
+        const maxNext = Math.min(targetBeat, 16);
+        for (let i = 0; i < maxNext && next; i++) {
+          next.call(cursor);
+          this.lastOsmdCursorBeat = i + 1;
+        }
+        this.lastOsmdCursorBeat = targetBeat;
+      } else if (targetBeat > curBeat) {
+        const steps = Math.min(targetBeat - curBeat, 16);
+        for (let i = 0; i < steps && next; i++) {
+          next.call(cursor);
+          this.lastOsmdCursorBeat = curBeat + i + 1;
+        }
+        this.lastOsmdCursorBeat = targetBeat;
+      }
+
+      if (update) update.call(cursor);
+      this.scrollCursorIntoView();
+    } catch {
+      this.lastOsmdCursorMeasure = -1;
+      this.lastOsmdCursorBeat = -1;
+    }
+  }
+
+  private lastScrollIntoViewTime = 0;
+  private readonly scrollIntoViewThrottleMs = 150;
+
+  /** Faz scroll suave para manter o cursor visível no centro da área da partitura. */
+  private scrollCursorIntoView() {
+    const container = this.scoreContainerRef?.nativeElement;
+    if (!container || !this.osmd?.cursor) return;
+    const cursorEl = (this.osmd.cursor as { cursorElement?: HTMLElement }).cursorElement ?? container.querySelector('.cursor, .cursor-bar, .osmd-cursor') as HTMLElement | null;
+    if (!cursorEl) return;
+    const now = Date.now();
+    if (now - this.lastScrollIntoViewTime < this.scrollIntoViewThrottleMs) return;
+    this.lastScrollIntoViewTime = now;
+    try {
+      const cursorRect = cursorEl.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const relTop = cursorRect.top - containerRect.top + container.scrollTop;
+      const targetScrollTop = relTop - container.clientHeight / 2 + cursorRect.height / 2;
+      const clamped = Math.max(0, Math.min(targetScrollTop, container.scrollHeight - container.clientHeight));
+      if (Math.abs(container.scrollTop - clamped) > 4) {
+        container.scrollTo({ top: clamped, behavior: 'smooth' });
+      }
+    } catch {}
+  }
+
+  private startCursorSync() {
+    if (this.cursorSyncTimer) return;
+    this.lastOsmdCursorMeasure = -1;
+    this.lastOsmdCursorBeat = -1;
+    this.cursorSyncTimer = window.setInterval(() => this.syncOsmdCursorToPlayer(), 30);
+  }
+
+  private stopCursorSync() {
+    this.lastSyncPositionMs = null;
+    if (this.cursorSyncTimer) {
+      window.clearInterval(this.cursorSyncTimer);
+      this.cursorSyncTimer = null;
+    }
+  }
+
   private destroyPlayer() {
     this.destroyVerovioAndHiddenContainer();
     this.midiOnlyMode = false;
     this.isPlaying = false;
     this.playerReady = false;
+    this.stopCursorSync();
     this.stopMetronome();
     this.stopLoopMonitor();
   }
@@ -934,5 +1218,10 @@ export class StudyFacadeService {
   private isMobileView() {
     if (typeof window === 'undefined') return false;
     return window.matchMedia('(max-width: 600px)').matches;
+  }
+
+  /** Atualiza o signal isMobile (chamado pelo componente no init e no resize). */
+  updateMobileView() {
+    this.isMobileSig.set(this.isMobileView());
   }
 }

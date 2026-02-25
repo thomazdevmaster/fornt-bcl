@@ -23,26 +23,45 @@ const parseXml = (xml: string): Document | null => {
   return doc;
 };
 
+/** Extrai BPM e compasso do XML: prefere 1º compasso (direction/metronome/sound + attributes/time). */
 export const extractTempoInfoFromXml = (xml: string): TempoInfo | null => {
   const doc = parseXml(xml);
   if (!doc) return null;
   let bpm: number | null = null;
-  const soundTempo = doc.querySelector('sound[tempo]')?.getAttribute('tempo');
+  let beatsPerMeasure: number | null = null;
+  let beatUnit: number | null = null;
+
+  const firstMeasure = doc.querySelector('part measure');
+  const scope = firstMeasure ?? doc;
+
+  const soundTempo = scope.querySelector('sound[tempo]')?.getAttribute('tempo');
   if (soundTempo) {
     const parsed = Number(soundTempo);
     if (!Number.isNaN(parsed) && parsed > 0) bpm = parsed;
   }
-  const metronome = doc.querySelector('metronome > per-minute')?.textContent?.trim();
-  if (metronome) {
-    const parsed = Number(metronome);
-    if (!Number.isNaN(parsed) && parsed > 0) bpm = parsed;
+  if (bpm == null) {
+    const perMinute = scope.querySelector('metronome per-minute')?.textContent?.trim();
+    if (perMinute) {
+      const parsed = Number(perMinute);
+      if (!Number.isNaN(parsed) && parsed > 0) bpm = parsed;
+    }
   }
-  const beats = doc.querySelector('time > beats')?.textContent?.trim();
-  const beatType = doc.querySelector('time > beat-type')?.textContent?.trim();
-  const beatsPerMeasure = beats ? Number(beats) : null;
-  const beatUnit = beatType ? Number(beatType) : null;
+  const timeEl = scope.querySelector('time');
+  if (timeEl) {
+    const beats = timeEl.querySelector('beats')?.textContent?.trim();
+    const beatType = timeEl.querySelector('beat-type')?.textContent?.trim();
+    if (beats) beatsPerMeasure = Number(beats);
+    if (beatType) beatUnit = Number(beatType);
+  }
+  if (beatsPerMeasure == null || beatUnit == null) {
+    const beats = doc.querySelector('time > beats')?.textContent?.trim();
+    const beatType = doc.querySelector('time > beat-type')?.textContent?.trim();
+    if (beats) beatsPerMeasure = Number(beats);
+    if (beatType) beatUnit = Number(beatType);
+  }
+
   const timeSignature =
-    beatsPerMeasure && beatUnit ? `${beatsPerMeasure}/${beatUnit}` : null;
+    beatsPerMeasure != null && beatUnit != null ? `${beatsPerMeasure}/${beatUnit}` : null;
   return { bpm, timeSignature, beatsPerMeasure, beatUnit };
 };
 

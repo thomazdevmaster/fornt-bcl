@@ -23,6 +23,8 @@ export class StudyInstrumentPanelComponent {
   @Input({ required: true }) state!: InstrumentPanelState;
   @Input({ required: true }) loading = false;
   @Input({ required: true }) xmlLoaded = false;
+  /** Quando true, usa como menu lateral: sem header interno e conteúdo sempre visível. */
+  @Input() sidebarMode = false;
 
   @Output() instrumentCardCollapsedChange = new EventEmitter<boolean>();
   @Output() toggleInstrument = new EventEmitter<{ id: string; checked: boolean }>();
@@ -32,9 +34,15 @@ export class StudyInstrumentPanelComponent {
   @Output() applySelectedInstruments = new EventEmitter<void>();
   @Output() cancelInstrumentSelection = new EventEmitter<void>();
   @Output() openInstrumentSelection = new EventEmitter<void>();
+  @Output() closePanel = new EventEmitter<void>();
 
   isInstrumentSelected(id: string): boolean {
     return this.state.selectedInstrumentIds.includes(id);
+  }
+
+  onSelectAllChange(checked: boolean) {
+    if (checked) this.selectAllInstruments.emit();
+    else this.restoreAppliedInstruments.emit();
   }
 
   toggleCollapse() {

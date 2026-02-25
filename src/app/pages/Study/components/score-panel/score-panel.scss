@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  color: white;
+  color: var(--card-text, var(--mat-on-surface));
 }
 
 .panel-header {
@@ -17,11 +17,30 @@
   background: var(--mat-surface-container);
   color: var(--mat-on-surface);
   font-weight: 600;
+  font-size: 0.9375rem;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .panel-icon {
+    color: var(--mat-primary);
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
 
   .score-name {
     font-weight: 500;
     font-size: 0.85rem;
     color: var(--mat-on-surface-variant);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .status {
@@ -29,7 +48,9 @@
     align-items: center;
     gap: 8px;
     font-weight: 400;
+    font-size: 0.875rem;
     color: var(--mat-on-surface-variant);
+    flex-shrink: 0;
   }
 }
 
@@ -37,35 +58,148 @@
   min-height: 60vh;
   max-height: 70vh;
   padding: 16px;
-  background: var(--mat-surface);
+  background: #f8f8f8;
   overflow: auto;
   position: relative;
+
+  /* Partitura OSMD: ocupa 100% da largura do container */
+  #osmdSvgPage1 {
+    width: 100% !important;
+    max-width: 100%;
+    height: auto;
+  }
 }
 
+/* Linha vertical do compasso atual (playback) */
 .score-container .cursor,
 .score-container .cursor-bar,
 .score-container .osmd-cursor {
-  background: var(--mat-primary);
-  opacity: 0.2;
+  background: var(--mat-primary) !important;
+  opacity: 0.5 !important;
   pointer-events: none;
+  width: 2px !important;
+  border-radius: 1px;
 }
 
 .score-actions {
   display: flex;
   justify-content: flex-end;
-  padding: 8px 12px 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border);
+
+  button {
+    text-transform: none;
+    font-size: 0.9375rem;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  }
+}
+
+/* Botão sair da tela cheia: ícone no canto superior direito, ao hover vira stroked com texto */
+.exit-fullscreen-overlay {
+  position: absolute;
+  top: 6%;
+  right: 2%;
+  z-index: 1010;
+  min-width: 0;
+  padding: 8px;
+  border-radius: 50%;
+  transition: border-radius 0.2s ease, padding 0.2s ease, min-width 0.2s ease, box-shadow 0.2s ease;
+  background: var(--mat-surface);
+  box-shadow: var(--shadow-sm);
+  opacity: 0.7;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .exit-fullscreen-overlay-label {
+    display: inline-block;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.25s ease, opacity 0.2s ease, margin-left 0.2s ease;
+    margin-left: 0;
+    font-size: 0.875rem;
+  }
+
+  &:hover {
+    border-radius: 8px;
+    padding: 8px 14px 8px 10px;
+    min-width: auto;
+    box-shadow: var(--shadow-md);
+
+    .exit-fullscreen-overlay-label {
+      max-width: 180px;
+      opacity: 1;
+      margin-left: 6px;
+    }
+  }
 }
 
 .score-panel.fullscreen {
   position: fixed;
   inset: 0;
-  z-index: 20;
+  z-index: 1003;
   border-radius: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  /* Sem max-height: em alguns mobile o navegador reporta 100dvh menor que a área visível
+     (barra de endereço, gestos, bugs), aí o painel ficava curto e aparecia faixa embaixo. */
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  /* Workaround: em vários dispositivos 100dvh ainda fica menor que a tela visível.
+     130dvh cobre a área útil sem depender de número mágico por dispositivo. */
+  .score-panel.fullscreen {
+    height: 130dvh;
+    min-height: 130dvh;
+  }
+}
+
+.score-panel.fullscreen .panel-header {
+  flex-shrink: 0;
 }
 
 .score-panel.fullscreen .score-container {
+  flex: 1;
+  min-height: 0;
   max-height: none;
-  height: calc(100vh - 64px);
+  height: 100%;
+  padding: 16px;
+}
+
+.score-panel.fullscreen .score-actions {
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .score-panel.fullscreen .score-container {
+    transform: scale(0.72);
+    transform-origin: top center;
+    width: 138.9%;
+    max-width: 138.9%;
+    margin-left: -19.45%;
+  }
 }
 
 .loading-overlay {

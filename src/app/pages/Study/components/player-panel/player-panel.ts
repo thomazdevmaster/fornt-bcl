@@ -15,12 +15,15 @@ import { StudyPlayerPanelState } from '../../study/study.models';
 })
 export class StudyPlayerPanelComponent {
   @Input({ required: true }) state!: StudyPlayerPanelState;
+  /** No mobile fullscreen: true no sheet de controles (esconde header e botões play/pause/stop). */
+  @Input() mobileControlsOnly = false;
 
   @Output() play = new EventEmitter<void>();
   @Output() pause = new EventEmitter<void>();
   @Output() stop = new EventEmitter<void>();
   @Output() togglePlayerExpanded = new EventEmitter<void>();
   @Output() setTempo = new EventEmitter<number>();
+  @Output() setAudioVolume = new EventEmitter<number>();
   @Output() toggleMetronome = new EventEmitter<void>();
   @Output() setMetronomeVolume = new EventEmitter<number>();
   @Output() toggleLoop = new EventEmitter<void>();

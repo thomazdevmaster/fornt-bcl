@@ -22,6 +22,7 @@ import { SongViewerComponent } from '../SongViewer/song-viewer';
 import { SongFormStepperComponent } from '../SongFormStepper/song-form-stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SheetViewerDialog } from '../SheetViewer/sheet-viewer-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-songs',
@@ -33,6 +34,7 @@ import { SheetViewerDialog } from '../SheetViewer/sheet-viewer-dialog.component'
 export class SongComponent extends BaseCrudListComponent<Song> {
 
   private dialog = inject(MatDialog);
+  private router = inject(Router);
   instrumentFilter = new FormControl('');
 
   filteredData$!: Observable<Song[]>;
@@ -183,12 +185,16 @@ export class SongComponent extends BaseCrudListComponent<Song> {
     });
   }
 
-  override onView(song: Song) {
+  override   onView(song: Song) {
     this.dialog.open(SongViewerComponent, {
       width: '95vw',
       height: '90vh',
       data: song
     });
+  }
+
+  verPartitura(song: Song) {
+    this.router.navigate(['/study', String(song.id)]);
   }
 
   getSafeVideoUrl(url: string): SafeResourceUrl | null {

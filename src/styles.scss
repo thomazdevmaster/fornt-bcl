@@ -62,6 +62,50 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Study mobile fullscreen: altura total da tela + fundo para não aparecer faixa branca */
+body.study-mobile-fullscreen-active {
+  overflow: hidden;
+  height: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  background: #eef2f7;
+  background: color-mix(in srgb, var(--mat-surface-container) 98%, white);
+}
+
+body.study-mobile-fullscreen-active,
+html:has(body.study-mobile-fullscreen-active) {
+  height: 100% !important;
+  min-height: 100dvh !important;
+  min-height: -webkit-fill-available !important;
+}
+
+body.study-mobile-fullscreen-active {
+  /* Cadeia de altura até o conteúdo ocupar 100% da viewport no mobile */
+  app-root {
+    display: block !important;
+    height: 100% !important;
+    min-height: 100dvh !important;
+  }
+  .app-container,
+  .mat-sidenav-container,
+  mat-sidenav-container.mat-drawer-container {
+    height: 100% !important;
+    min-height: 100dvh !important;
+    min-height: -webkit-fill-available !important;
+  }
+  .mat-sidenav-content,
+  .mat-drawer-content {
+    height: 100% !important;
+    min-height: 100dvh !important;
+    min-height: -webkit-fill-available !important;
+  }
+  .container {
+    height: 100% !important;
+    min-height: 100dvh !important;
+    min-height: -webkit-fill-available !important;
+  }
+}
+
 /* -------------------------------------------------------
    MusicXML Player (Study Page)
    ------------------------------------------------------- */

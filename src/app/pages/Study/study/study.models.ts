@@ -18,6 +18,8 @@ export interface StudyPlayerPanelState {
   baseBpm: number;
   metronomeEnabled: boolean;
   metronomeVolume: number;
+  /** Volume do áudio da partitura (0–1). */
+  audioVolume: number;
   loopEnabled: boolean;
   loopStartMeasure: number | null;
   loopEndMeasure: number | null;
@@ -47,6 +49,8 @@ export interface StudyScorePanelState {
 export interface StudyInitialContentState {
   selectedExampleId: string | null;
   exampleOptions: ReadonlyArray<StudyExampleOption>;
+  songOptions: ReadonlyArray<StudyExampleOption>;
+  selectedSongId: string | null;
 }
 
 export interface StudyHeaderState {
@@ -60,4 +64,6 @@ export interface StudyViewModel {
   header: StudyHeaderState;
   player: StudyPlayerPanelState;
   score: StudyScorePanelState;
+  /** true quando viewport <= 600px (mobile). */
+  isMobile: boolean;
 }

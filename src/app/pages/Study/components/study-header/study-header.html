@@ -1,14 +1,13 @@
 <div class="study-header">
   <div class="title-block">
-    <h1>Estudo</h1>
-    <p>Espaço para estudar e se tornar cada vez mais habilidoso em tocar música.</p>
+    <div class="title-row">
+      <mat-icon class="title-icon" aria-hidden="true">music_note</mat-icon>
+      <h1>Estudo</h1>
+    </div>
+    <p>Escolha uma partitura de exemplo ou uma música salva para começar a praticar.</p>
   </div>
 
   <div class="load-block">
-    <!-- <mat-form-field appearance="outline">
-      <mat-label>ID da partitura</mat-label>
-      <input matInput [formControl]="idControl" placeholder="Ex: 123" />
-    </mat-form-field> -->
     @if (state.idControl.value) {
       <button mat-flat-button color="primary" (click)="handleLoad()">
         Carregar
@@ -16,6 +15,7 @@
     }
     @if (state.xmlLoaded) {
       <button mat-stroked-button type="button" (click)="backToExamples.emit()">
+        <mat-icon>arrow_back</mat-icon>
         Voltar aos exemplos
       </button>
     }
@@ -23,18 +23,40 @@
 </div>
 @if (state.showInitialContent) {
   <div class="initial-content">
-    <app-music-loader text="Selecione uma partitura de exemplo." size="lg"></app-music-loader>
-    <div class="example-buttons">
-      @for (example of state.initialContent.exampleOptions; track example.id) {
-        <button
-          mat-stroked-button
-          type="button"
-          (click)="selectExample.emit(example.id)"
-          [class.is-active]="state.initialContent.selectedExampleId === example.id"
-        >
-          {{ example.label }}
-        </button>
-      }
+    <div class="initial-message">
+      <mat-icon class="initial-icon" aria-hidden="true">library_music</mat-icon>
+      <p>Selecione uma partitura de exemplo ou uma música salva para começar.</p>
     </div>
+    <div class="example-section">
+      <span class="section-label">Exemplos</span>
+      <div class="example-buttons">
+        @for (example of state.initialContent.exampleOptions; track example.id) {
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="selectExample.emit(example.id)"
+            [class.is-active]="state.initialContent.selectedExampleId === example.id"
+          >
+            {{ example.label }}
+          </button>
+        }
+      </div>
+    </div>
+    @if (state.initialContent.songOptions.length > 0) {
+      <div class="song-select-row">
+        <mat-form-field appearance="outline" class="song-select-field">
+          <mat-label>Partituras salvas</mat-label>
+          <mat-select
+            [value]="state.initialContent.selectedSongId"
+            (selectionChange)="selectSong.emit($event.value)"
+            placeholder="Selecione uma música"
+          >
+            @for (song of state.initialContent.songOptions; track song.id) {
+              <mat-option [value]="song.id">{{ song.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    }
   </div>
 }

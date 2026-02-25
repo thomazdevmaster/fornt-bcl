@@ -1,82 +1,117 @@
-<div class="study-page">
-  <app-study-header
-    [state]="viewModel().header"
-    (loadById)="loadStudy($event)"
-    (backToExamples)="backToExamples()"
-    (selectExample)="selectExampleFromEmptyState($event)"
-  ></app-study-header>
+<div class="study-page" [class.study-fullscreen]="viewModel().score.fullscreenScore">
+  @if (!viewModel().score.fullscreenScore) {
+  <app-study-header [state]="viewModel().header" (loadById)="loadStudy($event)" (backToExamples)="backToExamples()"
+    (selectExample)="selectExampleFromEmptyState($event)" (selectSong)="selectSong($event)"></app-study-header>
+  }
 
-  <div class="study-layout">
-    <mat-drawer-container class="instrument-drawer-container">
-      <mat-drawer
-        #drawer
-        class="instrument-drawer"
-        mode="over"
-        position="start"
-        [opened]="!viewModel().player.instrument.instrumentCardCollapsed"
-        (openedChange)="setInstrumentCardCollapsed(!$event)"
-      >
-        <div class="instrument-drawer-header">
-          <span>Instrumentos</span>
-          <button mat-icon-button type="button" (click)="drawer.close()">
-            <mat-icon>close</mat-icon>
-          </button>
-        </div>
-        <app-study-instrument-panel
-          [state]="viewModel().player.instrument"
-          [loading]="viewModel().player.loading"
-          [xmlLoaded]="viewModel().score.xmlLoaded"
-          (instrumentCardCollapsedChange)="setInstrumentCardCollapsed($event)"
-          (toggleInstrument)="toggleInstrument($event.id, $event.checked)"
-          (selectOnlyInstrument)="selectOnlyInstrument($event)"
-          (selectAllInstruments)="selectAllInstruments()"
+  <div class="study-layout" [class.study-mobile-fullscreen]="viewModel().score.fullscreenScore && viewModel().isMobile">
+    @if (viewModel().score.fullscreenScore && viewModel().isMobile) {
+    @if (xmlLoaded && viewModel().player.instrument.availableInstruments.length > 1) {
+      <aside class="instruments-panel" [class.is-open]="!viewModel().player.instrument.instrumentCardCollapsed"
+        role="dialog" aria-label="Menu de instrumentos">
+        <app-study-instrument-panel [state]="viewModel().player.instrument" [loading]="viewModel().player.loading"
+          [xmlLoaded]="viewModel().score.xmlLoaded" (toggleInstrument)="toggleInstrument($event.id, $event.checked)"
+          (selectOnlyInstrument)="selectOnlyInstrument($event)" (selectAllInstruments)="selectAllInstruments()"
           (restoreAppliedInstruments)="restoreAppliedInstruments()"
           (applySelectedInstruments)="applySelectedInstruments()"
           (cancelInstrumentSelection)="cancelInstrumentSelection()"
-          (openInstrumentSelection)="openInstrumentSelection()"
-        ></app-study-instrument-panel>
-      </mat-drawer>
+          (closePanel)="setInstrumentCardCollapsed(true)"></app-study-instrument-panel>
+      </aside>
+      @if (viewModel().player.instrument.instrumentCardCollapsed) {
+        <button type="button" class="instruments-toggle" (click)="toggleInstrumentsMenu()"
+          aria-label="Expandir instrumentos" [attr.aria-expanded]="false">
+          <mat-icon>chevron_right</mat-icon>
+          <span class="instruments-toggle-text">Instrumentos</span>
+        </button>
+      }
+    }
+    <header class="study-mobile-topbar">
+      <button mat-icon-button type="button" (click)="backToExamples()" aria-label="Voltar aos exemplos">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="study-mobile-title">{{ viewModel().score.currentScoreName }}</span>
+      <button mat-icon-button type="button" (click)="toggleMobileSheet()" aria-label="Controles">
+        <mat-icon>tune</mat-icon>
+      </button>
+    </header>
+    }
 
-      <mat-drawer-content>
+    @if (!(viewModel().score.fullscreenScore && viewModel().isMobile)) {
+    <div class="study-desktop-content">
+      @if (xmlLoaded && viewModel().player.instrument.availableInstruments.length > 1) {
+      <aside class="instruments-panel" [class.is-open]="!viewModel().player.instrument.instrumentCardCollapsed"
+        role="dialog" aria-label="Menu de instrumentos">
+        <app-study-instrument-panel [state]="viewModel().player.instrument" [loading]="viewModel().player.loading"
+          [xmlLoaded]="viewModel().score.xmlLoaded" (toggleInstrument)="toggleInstrument($event.id, $event.checked)"
+          (selectOnlyInstrument)="selectOnlyInstrument($event)" (selectAllInstruments)="selectAllInstruments()"
+          (restoreAppliedInstruments)="restoreAppliedInstruments()"
+          (applySelectedInstruments)="applySelectedInstruments()"
+          (cancelInstrumentSelection)="cancelInstrumentSelection()"
+          (closePanel)="setInstrumentCardCollapsed(true)"></app-study-instrument-panel>
+      </aside>
+      @if (viewModel().player.instrument.instrumentCardCollapsed) {
+        <button type="button" class="instruments-toggle" (click)="toggleInstrumentsMenu()"
+          aria-label="Expandir instrumentos" [attr.aria-expanded]="false">
+          <mat-icon>chevron_right</mat-icon>
+          <span class="instruments-toggle-text">Instrumentos</span>
+        </button>
+      }
+      }
+      <div class="study-main">
         @if (xmlLoaded) {
-          <button
-            mat-stroked-button
-            type="button"
-            class="instrument-toggle"
-            (click)="drawer.toggle()"
-          >
-            <mat-icon>{{ drawer.opened ? 'chevron_left' : 'chevron_right' }}</mat-icon>
-            <span>Instrumentos</span>
-          </button>
-        }
-        <div class="study-main">
-      @if (xmlLoaded) {
-        <app-study-player-panel
-          [state]="viewModel().player"
-          (play)="play()"
-          (pause)="pause()"
-          (stop)="stop()"
-          (togglePlayerExpanded)="togglePlayerExpanded()"
-          (setTempo)="setTempo($event)"
-          (toggleMetronome)="toggleMetronome()"
-          (setMetronomeVolume)="setMetronomeVolume($event)"
-          (toggleLoop)="toggleLoop()"
-          (applyLoop)="applyLoop()"
+        <app-study-player-panel class="study-player-panel" [class.player-overlay]="viewModel().score.fullscreenScore"
+          [state]="viewModel().player" (play)="play()" (pause)="pause()" (stop)="stop()"
+          (togglePlayerExpanded)="togglePlayerExpanded()" (setTempo)="setTempo($event)"
+          (setAudioVolume)="setAudioVolume($event)" (toggleMetronome)="toggleMetronome()"
+          (setMetronomeVolume)="setMetronomeVolume($event)" (toggleLoop)="toggleLoop()" (applyLoop)="applyLoop()"
           (loopStartMeasureChange)="setLoopStartMeasure($event)"
-          (loopEndMeasureChange)="setLoopEndMeasure($event)"
-        ></app-study-player-panel>
-      }
+          (loopEndMeasureChange)="setLoopEndMeasure($event)"></app-study-player-panel>
+        }
+      </div>
+    </div>
+    }
 
+    <div class="study-main study-mobile-score-area"
+      [class.is-mobile-fullscreen]="viewModel().score.fullscreenScore && viewModel().isMobile">
       @if (xmlLoaded || scoreLoading || selectedExampleId) {
-        <app-study-score-panel
-          [state]="viewModel().score"
-          [loading]="viewModel().player.loading"
-          [xmlLoaded]="viewModel().score.xmlLoaded"
-          (toggleFullscreen)="toggleFullscreenScore()"
-        ></app-study-score-panel>
+      <app-study-score-panel [state]="viewModel().score" [loading]="viewModel().player.loading"
+        [xmlLoaded]="viewModel().score.xmlLoaded" (toggleFullscreen)="toggleFullscreenScore()"></app-study-score-panel>
       }
+    </div>
+
+    @if (viewModel().score.fullscreenScore && viewModel().isMobile) {
+    <div class="study-mobile-transport-spacer" aria-hidden="true"></div>
+    <div class="study-mobile-transport">
+      <button mat-fab color="primary" (click)="play()" [disabled]="viewModel().player.loading" aria-label="Play">
+        <mat-icon>play_arrow</mat-icon>
+      </button>
+      <button mat-icon-button (click)="pause()" [disabled]="viewModel().player.loading" aria-label="Pausar">
+        <mat-icon>pause</mat-icon>
+      </button>
+      <button mat-icon-button (click)="stop()" [disabled]="viewModel().player.loading" aria-label="Parar">
+        <mat-icon>stop</mat-icon>
+      </button>
+    </div>
+    <div class="study-mobile-sheet" [class.is-open]="mobileSheetOpen()" role="dialog" aria-label="Controles do player">
+      <div class="study-mobile-sheet-backdrop" (click)="closeMobileSheet()"></div>
+      <div class="study-mobile-sheet-panel">
+        <div class="study-mobile-sheet-header">
+          <span>Controles</span>
+          <button mat-icon-button type="button" (click)="closeMobileSheet()" aria-label="Fechar">
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
-      </mat-drawer-content>
-    </mat-drawer-container>
+        <div class="study-mobile-sheet-body">
+          @if (viewModel().player.playerReady) {
+          <app-study-player-panel [state]="viewModel().player" [mobileControlsOnly]="true" (setTempo)="setTempo($event)"
+            (setAudioVolume)="setAudioVolume($event)" (toggleMetronome)="toggleMetronome()"
+            (setMetronomeVolume)="setMetronomeVolume($event)" (toggleLoop)="toggleLoop()" (applyLoop)="applyLoop()"
+            (loopStartMeasureChange)="setLoopStartMeasure($event)"
+            (loopEndMeasureChange)="setLoopEndMeasure($event)"></app-study-player-panel>
+          }
+        </div>
+      </div>
+    </div>
+    }
   </div>
 </div>

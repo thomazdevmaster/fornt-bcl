@@ -1,21 +1,34 @@
 @if (state.playerReady) {
-  <aside class="player-panel" [class.is-expanded]="state.playerExpanded" [class.is-collapsed]="!state.playerExpanded">
+  <aside class="player-panel" [class.is-expanded]="state.playerExpanded" [class.is-collapsed]="!state.playerExpanded" [class.mobile-controls-only]="mobileControlsOnly">
+    @if (!mobileControlsOnly) {
     <div class="panel-header">
+      <div class="header-left">
+        <mat-icon class="panel-icon" aria-hidden="true">play_circle</mat-icon>
+        <span class="header-title">Player</span>
+      </div>
       <div class="player-compact-controls">
-        <button mat-icon-button color="primary" (click)="play.emit()" [disabled]="state.loading || state.playerLoading">
+        <button mat-icon-button color="primary" (click)="play.emit()" [disabled]="state.loading || state.playerLoading" aria-label="Play">
           <mat-icon>play_arrow</mat-icon>
         </button>
-        <button mat-icon-button (click)="pause.emit()" [disabled]="state.loading || state.playerLoading">
+        <button mat-icon-button (click)="pause.emit()" [disabled]="state.loading || state.playerLoading" aria-label="Pausar">
           <mat-icon>pause</mat-icon>
         </button>
-        <button mat-icon-button (click)="stop.emit()" [disabled]="state.loading || state.playerLoading">
+        <button mat-icon-button (click)="stop.emit()" [disabled]="state.loading || state.playerLoading" aria-label="Parar">
           <mat-icon>stop</mat-icon>
         </button>
       </div>
+      <div class="header-volume">
+        <mat-icon class="header-volume-icon" aria-hidden="true">volume_up</mat-icon>
+        <mat-slider min="0" max="1" step="0.05" class="header-volume-slider" [disabled]="state.playerLoading">
+          <input matSliderThumb [ngModel]="state.audioVolume" (ngModelChange)="setAudioVolume.emit($event)" />
+        </mat-slider>
+      </div>
       <button mat-stroked-button type="button" class="player-toggle" (click)="togglePlayerExpanded.emit()">
-        {{ state.playerExpanded ? 'Recolher' : 'Expandir' }}
+        <mat-icon>{{ state.playerExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+        <span>{{ state.playerExpanded ? 'Recolher' : 'Expandir' }}</span>
       </button>
     </div>
+    }
 
     <div class="controls">
       @if (!state.midiLoaded) {
@@ -23,7 +36,8 @@
           <app-music-loader [text]="state.midiLoading ? 'Carregando MIDI...' : 'MIDI ainda não carregado (carrega ao tocar)'"></app-music-loader>
         </div>
       }
-      <div class="control-row">
+      @if (!mobileControlsOnly) {
+      <div class="control-row control-row-play">
         <button mat-icon-button color="primary" (click)="play.emit()" [disabled]="state.loading || state.playerLoading">
           <mat-icon>play_arrow</mat-icon>
         </button>
@@ -34,16 +48,31 @@
           <mat-icon>stop</mat-icon>
         </button>
       </div>
+      }
 
-      <div class="control-row tempo-row">
-        <span class="hide-mobile">Andamento</span>
-        <mat-slider [min]="state.bpmMin" [max]="state.bpmMax" step="1" [disabled]="state.playerLoading">
-          <input matSliderThumb [ngModel]="state.bpm" (ngModelChange)="setTempo.emit($event)" />
-        </mat-slider>
-        <span class="hide-mobile">{{ state.bpm | number: '1.0-0' }} BPM</span>
+      <div class="control-group">
+        <span class="control-group-label hide-mobile">Andamento</span>
+        <div class="control-row tempo-row">
+          <mat-slider [min]="state.bpmMin" [max]="state.bpmMax" step="1" [disabled]="state.playerLoading">
+            <input matSliderThumb [ngModel]="state.bpm" (ngModelChange)="setTempo.emit($event)" />
+          </mat-slider>
+          <span class="hide-mobile bpm-value">{{ state.bpm | number: '1.0-0' }} BPM</span>
+        </div>
       </div>
 
-      <div class="control-row metronome-row">
+      <div class="control-group">
+        <span class="control-group-label hide-mobile">Volume</span>
+        <div class="control-row volume-row">
+          <mat-slider min="0" max="1" step="0.05" [disabled]="state.playerLoading">
+            <input matSliderThumb [ngModel]="state.audioVolume" (ngModelChange)="setAudioVolume.emit($event)" />
+          </mat-slider>
+          <span class="hide-mobile volume-value">{{ (state.audioVolume * 100) | number: '1.0-0' }}%</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <span class="control-group-label hide-mobile">Metrônomo</span>
+        <div class="control-row metronome-row">
         <button
           mat-stroked-button
           type="button"
@@ -54,14 +83,17 @@
         </button>
         <span class="bpm-info hide-mobile">{{ state.timeSignature }} · Base {{ state.baseBpm | number: '1.0-0' }} BPM</span>
       </div>
-      <div class="control-row metronome-volume">
-        <span class="hide-mobile">Volume</span>
-        <mat-slider min="0" max="1" step="0.05" [disabled]="!state.metronomeEnabled || state.playerLoading">
-          <input matSliderThumb [ngModel]="state.metronomeVolume" (ngModelChange)="setMetronomeVolume.emit($event)" />
-        </mat-slider>
+        <div class="control-row metronome-volume">
+          <span class="hide-mobile label">Volume</span>
+          <mat-slider min="0" max="1" step="0.05" [disabled]="!state.metronomeEnabled || state.playerLoading">
+            <input matSliderThumb [ngModel]="state.metronomeVolume" (ngModelChange)="setMetronomeVolume.emit($event)" />
+          </mat-slider>
+        </div>
       </div>
 
-      <div class="control-row loop-row">
+      <div class="control-group">
+        <span class="control-group-label hide-mobile">Loop</span>
+        <div class="control-row loop-row">
         <mat-form-field appearance="outline">
           <mat-label>Loop In (compasso)</mat-label>
           <input
@@ -83,19 +115,20 @@
         <button mat-flat-button color="primary" (click)="toggleLoop.emit()" [disabled]="state.playerLoading">
           {{ state.loopEnabled ? 'Desativar Loop' : 'Ativar Loop' }}
         </button>
-      </div>
+        </div>
 
-      <div class="loop-info">
-        <span>In: {{ state.loopStartMeasure ?? '-' }}</span>
-        <span>Out: {{ state.loopEndMeasure ?? '-' }}</span>
+        <div class="loop-info">
+          <span>In: {{ state.loopStartMeasure ?? '-' }}</span>
+          <span>Out: {{ state.loopEndMeasure ?? '-' }}</span>
+        </div>
       </div>
     </div>
 
   </aside>
 } @else {
-  <aside class="player-panel player-placeholder" [class.is-expanded]="state.playerExpanded">
+  <aside class="player-panel player-placeholder" [class.is-expanded]="state.playerExpanded" [class.is-collapsed]="!state.playerExpanded">
     <div class="panel-header">
-      <span>Player</span>
+      <span class="header-title">Player</span>
     </div>
     <div class="player-loading">
       <app-music-loader

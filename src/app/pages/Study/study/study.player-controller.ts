@@ -107,29 +107,46 @@ export class StudyPlayerController {
     return isMs ? pos : pos * 1000;
   }
 
+  /** Normaliza timemap para ms (converter pode retornar segundos). */
+  private timemapToMs(timemap: Array<{ timestamp?: number; duration?: number }>): Array<{ startMs: number; durationMs: number }> {
+    if (!timemap?.length) return [];
+    const lastTs = timemap[timemap.length - 1]?.timestamp ?? 0;
+    const inSeconds = lastTs > 0 && lastTs < 1000;
+    const toMs = (t: number) => (inSeconds ? t * 1000 : t);
+    return timemap.map((entry, i) => {
+      const startMs = toMs(entry.timestamp ?? 0);
+      let durationMs = entry.duration != null ? toMs(entry.duration) : 0;
+      if (durationMs <= 0 && timemap[i + 1]) {
+        durationMs = toMs(timemap[i + 1].timestamp ?? 0) - startMs;
+      }
+      return { startMs, durationMs };
+    });
+  }
+
   private getBeatIndexFromTimemap(posMs: number, beatsPerMeasure: number): {
     globalBeat: number;
     beatInMeasure: number;
     measureIndex: number;
   } | null {
-    const timemap = (this.player as any)?._options?.converter?.timemap;
-    if (!Array.isArray(timemap) || timemap.length === 0) return null;
+    const rawTimemap = (this.player as any)?._options?.converter?.timemap;
+    if (!Array.isArray(rawTimemap) || rawTimemap.length === 0) return null;
+    const timemapMs = this.timemapToMs(rawTimemap);
     const beats = Math.max(1, beatsPerMeasure);
 
     let index = this.metronomeLastMeasureIndex ?? 0;
-    if (index >= timemap.length) index = 0;
+    if (index >= timemapMs.length) index = 0;
 
     const pos = posMs;
     const forward =
-      index < timemap.length - 1 &&
-      pos >= (timemap[index + 1]?.timestamp ?? Infinity);
-    const backward = pos < (timemap[index]?.timestamp ?? 0);
+      index < timemapMs.length - 1 &&
+      pos >= timemapMs[index + 1].startMs;
+    const backward = index < timemapMs.length && pos < timemapMs[index].startMs;
 
     if (forward || backward) {
       index = 0;
-      for (let i = 0; i < timemap.length - 1; i++) {
-        const start = timemap[i]?.timestamp ?? 0;
-        const nextStart = timemap[i + 1]?.timestamp ?? Infinity;
+      for (let i = 0; i < timemapMs.length - 1; i++) {
+        const start = timemapMs[i].startMs;
+        const nextStart = timemapMs[i + 1].startMs;
         if (pos >= start && pos < nextStart) {
           index = i;
           break;
@@ -139,22 +156,14 @@ export class StudyPlayerController {
           break;
         }
       }
+      if (index >= timemapMs.length) index = timemapMs.length - 1;
     }
 
-    const current = timemap[index];
-    if (!current) return null;
-    const measureStart = current.timestamp ?? 0;
-    let measureDuration = current.duration ?? 0;
-    if (!measureDuration || measureDuration <= 0) {
-      const next = timemap[index + 1];
-      if (next?.timestamp != null) {
-        const nextTs = next.timestamp;
-        measureDuration = Math.max(0, nextTs - measureStart);
-      }
-    }
-    if (!measureDuration || measureDuration <= 0) return null;
+    const current = timemapMs[index];
+    if (!current || current.durationMs <= 0) return null;
 
-    const beatDuration = measureDuration / beats;
+    const measureStart = current.startMs;
+    const beatDuration = current.durationMs / beats;
     const beatInMeasure = Math.min(
       beats - 1,
       Math.max(0, Math.floor((pos - measureStart) / beatDuration))

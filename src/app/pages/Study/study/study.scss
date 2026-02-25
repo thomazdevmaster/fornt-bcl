@@ -1,48 +1,179 @@
+/* Tokens visuais da página Study (padronização) */
 .study-page {
+  --study-gap: 20px;
+  --study-radius: 16px;
+  --study-panel-padding: 16px;
+  --study-header-padding: 12px 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  gap: var(--study-gap);
+  padding-bottom: var(--study-gap);
+}
+
+.study-page.study-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+  overflow: hidden;
+  padding-bottom: 0;
+  width: 100vw;
+  height: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  max-height: 100vh;
+  max-height: 100dvh;
+  box-sizing: border-box;
+}
+
+.study-page.study-fullscreen .study-layout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.study-page.study-fullscreen .study-layout .study-mobile-score-area {
+  flex: 1;
+  min-height: 0;
+}
+
+.study-page.study-fullscreen .study-main {
+  height: 100%;
+}
+
+.study-player-panel.player-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1004;
+  background: color-mix(in srgb, var(--card-background) 98%, transparent);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+  padding: 8px 16px;
 }
 
 .study-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
-}
-
-.instrument-drawer-container {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--study-gap);
+  flex: 1;
   min-height: 0;
-  background: transparent;
 }
 
-.instrument-drawer {
-  width: min(360px, 90vw);
+.study-desktop-content {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.instruments-panel {
+  position: fixed;
+  left: 0;
+  top: 56px;
+  bottom: 0;
+  width: 320px;
+  max-width: 90vw;
+  z-index: 200;
   background: var(--card-background);
   border-right: 1px solid var(--color-border);
-}
-
-.instrument-drawer-header {
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--color-border);
-  font-weight: 600;
+  flex-direction: column;
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 0.25s ease, visibility 0.25s ease;
+  overflow: hidden;
+}
+.instruments-panel.is-open {
+  transform: translateX(0);
+  visibility: visible;
+}
+.study-page.study-fullscreen .instruments-panel {
+  top: 0;
+  z-index: 1100;
 }
 
-.instrument-toggle {
-  margin-bottom: 12px;
+.instruments-toggle {
+  position: fixed;
+  left: 0;
+  top: 56px;
+  z-index: 201;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  min-width: 48px;
+  width: 48px;
+  height: 48px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  background: var(--card-background);
+  color: var(--mat-on-surface);
+  cursor: pointer;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  transition: width 0.2s ease, min-width 0.2s ease, background 0.15s ease;
+  overflow: hidden;
+}
+.instruments-toggle:hover {
+  min-width: 140px;
+  width: auto;
+  padding-left: 12px;
+  padding-right: 14px;
+  background: var(--mat-surface-container);
+}
+.instruments-toggle .instruments-toggle-text {
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0;
+  max-width: 0;
+  transition: opacity 0.2s ease, max-width 0.2s ease;
+}
+.instruments-toggle:hover .instruments-toggle-text {
+  opacity: 1;
+  max-width: 120px;
+}
+.instruments-toggle mat-icon {
+  flex-shrink: 0;
+}
+.instruments-toggle.is-open mat-icon {
+  transform: rotate(180deg);
+}
+.study-page.study-fullscreen .instruments-toggle {
+  top: 0;
+  z-index: 1101;
+}
+.study-layout.study-mobile-fullscreen .instruments-toggle {
+  top: 56px;
+}
+.study-layout.study-mobile-fullscreen .instruments-panel {
+  top: 56px;
 }
 
 .study-main {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--study-gap);
   min-width: 0;
 }
 
@@ -50,4 +181,235 @@
   .study-layout {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 600px) {
+  .study-main {
+    min-height: 60vh;
+  }
+}
+
+/* ========== Mobile fullscreen (partitura em tela cheia + barra de transporte embaixo) ========== */
+.study-layout.study-mobile-fullscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  width: 100%;
+  background: var(--mat-surface, #fafbfc);
+  box-sizing: border-box;
+}
+
+.study-mobile-topbar {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 56px;
+  min-height: 56px;
+  padding: 0 8px 0 4px;
+  padding-left: max(8px, env(safe-area-inset-left));
+  padding-right: max(8px, env(safe-area-inset-right));
+  padding-top: env(safe-area-inset-top);
+  background: var(--header-background, #143c6b);
+  color: var(--header-text, #fff);
+  box-shadow: var(--shadow-sm);
+  z-index: 1005;
+
+  .study-mobile-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  button {
+    flex-shrink: 0;
+  }
+}
+
+/* Área da partitura: no mobile fullscreen ocupa o meio (flex 1); no desktop fica abaixo do drawer */
+.study-mobile-score-area {
+  min-width: 0;
+
+  &.is-mobile-fullscreen {
+    flex: 1 1 0;
+    min-height: 0;
+    position: relative;
+    z-index: 1003;
+    overflow: visible;
+
+    /* Host do painel precisa ter altura para o conteúdo aparecer */
+    ::ng-deep app-study-score-panel {
+      display: block !important;
+      height: 100% !important;
+      min-height: 0;
+    }
+
+    /* Score panel em fullscreen: reservar espaço para topbar e transport; esconder overlay/header duplicados */
+    ::ng-deep .score-panel.fullscreen {
+      .score-container {
+        padding-top: calc(56px + env(safe-area-inset-top, 0px));
+        padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+        flex: 1;
+        min-height: 0;
+        max-height: none;
+      }
+      .exit-fullscreen-overlay,
+      .panel-header {
+        display: none;
+      }
+      .score-actions {
+        display: none;
+      }
+    }
+  }
+}
+
+/* Reserva espaço no flex quando a barra está position:fixed */
+.study-mobile-transport-spacer {
+  flex-shrink: 0;
+  min-height: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Barra fixa no fundo da viewport; altura inclui safe area para não sobrar faixa branca */
+.study-mobile-transport {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: calc(72px + env(safe-area-inset-bottom, 0px));
+  padding: 0 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--card-background) 98%, transparent);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  z-index: 1005;
+  box-sizing: border-box;
+
+  button mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .mat-mdc-fab {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+.study-mobile-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 1006;
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0.25s ease;
+
+  &.is-open {
+    pointer-events: auto;
+    visibility: visible;
+
+    .study-mobile-sheet-backdrop {
+      opacity: 1;
+    }
+
+    .study-mobile-sheet-panel {
+      transform: translateY(0);
+    }
+  }
+}
+
+.study-mobile-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.study-mobile-sheet-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 70vh;
+  border-radius: 16px 16px 0 0;
+  background: var(--card-background);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.study-mobile-sheet-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
+  font-size: 1rem;
+  background: var(--mat-surface-container);
+  color: var(--mat-on-surface);
+  border-radius: 16px 16px 0 0;
+}
+
+.study-mobile-sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 16px 16px 0 0;
+  background: var(--card-background);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.study-mobile-sheet-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
+  font-size: 1rem;
+  background: var(--mat-surface-container);
+  color: var(--mat-on-surface);
+  border-radius: 16px 16px 0 0;
+}
+
+.study-mobile-sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }

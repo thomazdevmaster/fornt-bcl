@@ -1,17 +1,32 @@
 <section class="score-panel" [class.fullscreen]="state.fullscreenScore">
+  @if (state.fullscreenScore) {
+    <button
+      mat-stroked-button
+      type="button"
+      class="exit-fullscreen-overlay"
+      (click)="toggleFullscreen.emit()"
+      aria-label="Sair da tela cheia"
+    >
+      <mat-icon>fullscreen_exit</mat-icon>
+      <span class="exit-fullscreen-overlay-label">Sair da tela cheia</span>
+    </button>
+  }
   <div class="panel-header">
-    <span>Partitura</span>
-    <span class="score-name">{{ state.currentScoreName }}</span>
+    <div class="header-left">
+      <mat-icon class="panel-icon" aria-hidden="true">menu_book</mat-icon>
+      <span>Partitura</span>
+      <span class="score-name">{{ state.currentScoreName }}</span>
+    </div>
     <div class="status">
       @if (state.scoreLoading) {
         <mat-spinner diameter="20"></mat-spinner>
-        <span>Carregando partitura...</span>
+        <span>Carregando...</span>
       }
       @if (!state.scoreLoading && state.error) {
         <span class="error-text">{{ state.error }}</span>
       }
       @if (!state.scoreLoading && !state.error) {
-        <span class="ok-text">{{ state.xmlLoaded ? 'Partitura OK' : 'Partitura pendente' }}</span>
+        <span class="ok-text">{{ state.xmlLoaded ? 'Pronto' : 'Pendente' }}</span>
       }
     </div>
   </div>
@@ -38,7 +53,18 @@
   @if (state.xmlLoaded) {
     <div class="score-actions">
       <button mat-stroked-button type="button" (click)="toggleFullscreen.emit()">
-        {{ state.fullscreenScore ? 'Sair da tela cheia' : 'Tela cheia' }}
+        @if (state.fullscreenScore) {
+          <mat-icon>fullscreen_exit</mat-icon>
+        }
+        @if (!state.fullscreenScore) {
+          <mat-icon>fullscreen</mat-icon>
+        }
+        @if (state.fullscreenScore) {
+          Sair da tela cheia
+        }
+        @if (!state.fullscreenScore) {
+          Tela cheia
+        }
       </button>
     </div>
   }

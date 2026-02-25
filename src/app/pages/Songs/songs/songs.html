@@ -82,6 +82,10 @@
 
 <ng-template #actionsTmpl let-element>
   <div class="action-buttons">
+    <button mat-flat-button color="primary" (click)="verPartitura(element)" title="Ver partitura">
+      <mat-icon>menu_book</mat-icon>
+      Ver partitura
+    </button>
     <button mat-icon-button (click)="onView(element)" title="Visualizar">
       <mat-icon>visibility</mat-icon>
     </button>
