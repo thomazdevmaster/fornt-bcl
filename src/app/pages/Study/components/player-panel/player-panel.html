@@ -31,9 +31,12 @@
     }
 
     <div class="controls">
-      @if (!state.midiLoaded) {
-        <div class="player-loading">
-          <app-music-loader [text]="state.midiLoading ? 'Carregando MIDI...' : 'MIDI ainda não carregado (carrega ao tocar)'"></app-music-loader>
+      @if (state.playerLoading || !state.midiLoaded) {
+        <div class="player-midi-loader">
+          <app-music-loader
+            size="lg"
+            [text]="state.playerLoading ? 'Preparando o player...' : (state.midiLoading ? 'Carregando áudio (MIDI)...' : 'Áudio será carregado ao tocar em Play')"
+          ></app-music-loader>
         </div>
       }
       @if (!mobileControlsOnly) {

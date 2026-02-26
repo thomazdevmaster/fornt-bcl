@@ -70,14 +70,22 @@
   }
 }
 
-/* Linha vertical do compasso atual (playback) */
-.score-container .cursor,
-.score-container .cursor-bar,
-.score-container .osmd-cursor {
-  background: var(--mat-primary) !important;
-  opacity: 0.5 !important;
+/* Cursor de playback customizado (linha vertical alinhada ao áudio) */
+.study-playback-cursor-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
   pointer-events: none;
-  width: 2px !important;
+  z-index: 5;
+}
+
+.study-playback-cursor-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--mat-primary);
+  opacity: 0.6;
   border-radius: 1px;
 }
 

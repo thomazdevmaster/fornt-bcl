@@ -121,8 +121,13 @@ export class StudyFacadeService {
   private loopStartTs: number | null = null;
   private loopEndTs: number | null = null;
   private cursorSyncTimer: number | null = null;
-  private lastOsmdCursorMeasure = -1;
-  private lastOsmdCursorBeat = -1;
+  /** Última posição conhecida (compasso/beat) para moveTo ao dar Play. */
+  private lastCursorMeasure = -1;
+  private lastCursorBeat = -1;
+  private playbackCursorOverlayEl: HTMLElement | null = null;
+  private playbackCursorLineEl: HTMLElement | null = null;
+  /** Cache: measureIndex → bounds (xStart, xEnd, yTop, yBottom) em px. Invalidado ao limpar partitura. */
+  private measureBoundsCache: Array<{ xStart: number; xEnd: number; yTop: number; yBottom: number }> = [];
   tempo = 1.0;
   isPlaying = false;
   beatsPerMeasure = 4;
@@ -371,8 +376,8 @@ export class StudyFacadeService {
     this.isPlaying = false;
     this.stopLoopMonitor();
     this.stopCursorSync();
-    this.lastOsmdCursorMeasure = -1;
-    this.lastOsmdCursorBeat = -1;
+    this.lastCursorMeasure = -1;
+    this.lastCursorBeat = -1;
     this.stopMetronome();
   }
 
@@ -553,8 +558,9 @@ export class StudyFacadeService {
       }
       await this.osmd.load(xml);
       await this.osmd.render();
-      this.osmd.cursor?.show();
-      this.osmd.cursor?.reset();
+      this.measureBoundsCache = [];
+      this.ensurePlaybackCursorOverlay();
+      this.osmd.enableOrDisableCursors(false);
       if (token === this.loadToken) {
         this.xmlLoaded = true;
         this.scoreLoading = false;
@@ -565,7 +571,7 @@ export class StudyFacadeService {
     }
   }
 
-  /** Tenta criar o player Verovio em um container oculto; em falha (ex.: arquivo grande), usa modo MIDI-only. */
+  /** Tenta criar o player Verovio em um container oculto; em falha, retenta uma vez. Só usa modo MIDI-only para arquivos muito grandes. */
   private async initVerovioPlayerInHiddenContainer(xml: string, id: string, token: number) {
     if (token !== this.loadToken) return;
     this.playerReady = false;
@@ -574,11 +580,9 @@ export class StudyFacadeService {
     this.midiOnlyMode = false;
     this.playerLoading = true;
     this.destroyVerovioAndHiddenContainer();
-    try {
-      this.patchAudioWorklet();
-      this.patchScrollIntoView();
+    const tryCreate = async (): Promise<boolean> => {
       const el = typeof document !== 'undefined' ? document.createElement('div') : null;
-      if (!el) return;
+      if (!el) return false;
       el.setAttribute('aria-hidden', 'true');
       el.style.setProperty('position', 'fixed');
       el.style.setProperty('left', '-10000px');
@@ -589,20 +593,43 @@ export class StudyFacadeService {
       el.style.setProperty('pointer-events', 'none');
       el.style.setProperty('visibility', 'hidden');
       document.body.appendChild(el);
+      if (token !== this.loadToken) return false;
       this.hiddenPlayerContainer = el;
       const converter = new (VerovioConverter as any)();
       const renderer = new (VerovioRenderer as any)();
-      this.player = await (Player as any).create({
-        container: el,
-        musicXml: xml,
-        converter,
-        renderer,
-        followCursor: false,
-        velocity: this.tempo,
-        repeat: this.loopEnabled ? -1 : 1,
-      });
-      if (token !== this.loadToken) {
+      try {
+        this.player = await (Player as any).create({
+          container: el,
+          musicXml: xml,
+          converter,
+          renderer,
+          followCursor: false,
+          velocity: this.tempo,
+          repeat: this.loopEnabled ? -1 : 1,
+        });
+        return true;
+      } catch (e) {
         this.destroyVerovioAndHiddenContainer();
+        throw e;
+      }
+    };
+    try {
+      this.patchAudioWorklet();
+      this.patchScrollIntoView();
+      let ok = false;
+      try {
+        ok = await tryCreate();
+      } catch (firstErr) {
+        if (typeof console !== 'undefined' && console.warn) {
+          console.warn('Study player init (1ª tentativa) falhou:', firstErr);
+        }
+        if (token !== this.loadToken) return;
+        await new Promise((r) => setTimeout(r, 800));
+        if (token !== this.loadToken) return;
+        ok = await tryCreate();
+      }
+      if (!ok || token !== this.loadToken) {
+        if (token === this.loadToken) this.destroyVerovioAndHiddenContainer();
         return;
       }
       this.playerController.player = this.player;
@@ -615,10 +642,13 @@ export class StudyFacadeService {
         console.warn('Study player init failed:', err);
       }
       this.destroyVerovioAndHiddenContainer();
-      const isLikelyTooLarge = typeof xml === 'string' && xml.length > 500_000;
-      this.midiOnlyMode = isLikelyTooLarge;
+      const xmlLen = typeof xml === 'string' ? xml.length : 0;
+      const isVeryLarge = xmlLen > 2_000_000;
+      this.midiOnlyMode = isVeryLarge;
       this.playerReady = true;
-      this.playerError = isLikelyTooLarge ? null : 'Player indisponível. Tente outra partitura.';
+      this.playerError = isVeryLarge
+        ? null
+        : 'Não foi possível preparar o áudio. Tente recarregar a partitura.';
     } finally {
       if (token === this.loadToken) this.playerLoading = false;
     }
@@ -672,8 +702,8 @@ export class StudyFacadeService {
     if (token !== this.loadToken || !this.midiLoaded) return;
 
     if (this.player) {
-      const measure = this.lastOsmdCursorMeasure >= 1 ? this.lastOsmdCursorMeasure : 1;
-      const beat = this.lastOsmdCursorBeat >= 0 ? this.lastOsmdCursorBeat : 0;
+      const measure = this.lastCursorMeasure >= 1 ? this.lastCursorMeasure : 1;
+      const beat = this.lastCursorBeat >= 0 ? this.lastCursorBeat : 0;
       const moveTo = this.getMoveToFromMeasureBeat(measure, beat);
       if (moveTo && this.player.moveTo) {
         this.player.moveTo(moveTo.measureIndex, moveTo.measureStartMs, moveTo.measureOffsetMs);
@@ -682,7 +712,7 @@ export class StudyFacadeService {
       this.isPlaying = true;
       this.startLoopMonitor();
       this.startCursorSync();
-      this.syncOsmdCursorToPlayer();
+      this.syncPlaybackCursor();
       if (this.metronomeEnabled) this.startMetronomeSync();
       return;
     }
@@ -758,8 +788,10 @@ export class StudyFacadeService {
 
   private clearScoreContainer() {
     this.stopCursorSync();
-    this.lastOsmdCursorMeasure = -1;
-    this.lastOsmdCursorBeat = -1;
+    this.lastCursorMeasure = -1;
+    this.lastCursorBeat = -1;
+    this.measureBoundsCache = [];
+    this.removePlaybackCursorOverlay();
     this.osmd = null;
     const el = this.scoreContainerRef?.nativeElement;
     if (!el) return;
@@ -951,8 +983,8 @@ export class StudyFacadeService {
     return { measureIndex, measureStartMs, measureOffsetMs };
   }
 
-  /** Retorna compasso (1-based) e beat no compasso (0-based). Normaliza timemap para ms se vier em segundos. */
-  private getCurrentMeasureAndBeat(): { measure: number; beatInMeasure: number } | null {
+  /** Retorna compasso (1-based), beat no compasso (0-based) e fração no compasso (0..1). Normaliza timemap para ms. */
+  private getCurrentMeasureAndBeat(): { measure: number; beatInMeasure: number; fractionInMeasure: number } | null {
     const posMs = this.getPlayerPositionMs();
     if (posMs == null) return null;
     const player = this.player as any;
@@ -983,96 +1015,138 @@ export class StudyFacadeService {
     if (duration <= 0 && timemap[index + 1]) {
       duration = toMs(timemap[index + 1].timestamp ?? 0) - measureStart;
     }
+    const measureNum = typeof entry.measure === 'number' ? entry.measure + 1 : index + 1;
     if (duration <= 0) {
-      const measureNum = typeof entry.measure === 'number' ? entry.measure + 1 : index + 1;
-      return { measure: measureNum, beatInMeasure: 0 };
+      return { measure: measureNum, beatInMeasure: 0, fractionInMeasure: 0 };
     }
     const beatDuration = duration / beats;
     const beatInMeasure = Math.min(
       beats - 1,
       Math.max(0, Math.floor((posMs - measureStart) / beatDuration))
     );
-    const measureNum = typeof entry.measure === 'number' ? entry.measure + 1 : index + 1;
-    return { measure: measureNum, beatInMeasure };
+    const fractionInMeasure = Math.max(0, Math.min(1, (posMs - measureStart) / duration));
+    return { measure: measureNum, beatInMeasure, fractionInMeasure };
   }
 
-  private lastSyncPositionMs: number | null = null;
-
-  /** Atualiza o cursor do OSMD para o compasso/beat atual e faz auto-scroll. */
-  private syncOsmdCursorToPlayer() {
-    const cursor = this.osmd?.cursor as any;
-    if (!cursor?.show) return;
-    const posMs = this.getPlayerPositionMs();
-    const pos = this.getCurrentMeasureAndBeat();
-    if (!pos) return;
-    const { measure: targetMeasure, beatInMeasure: targetBeat } = pos;
-    if (targetMeasure <= 0) return;
+  /** Retorna bounds (x, y, largura, altura) do compasso no sistema de coordenadas do OSMD. */
+  private getMeasureBoundsFromOsmd(measureIndex: number): { xStart: number; xEnd: number; yTop: number; yBottom: number } | null {
+    if (measureIndex < 0 || !this.osmd) return null;
+    const cached = this.measureBoundsCache[measureIndex];
+    if (cached) return cached;
+    const osmdAny = this.osmd as unknown as Record<string, unknown>;
+    const graphic = (osmdAny['GraphicSheet'] ?? osmdAny['graphic']) as { findGraphicalMeasure?: (mi: number, si: number) => unknown } | undefined;
+    if (!graphic?.findGraphicalMeasure) return null;
     try {
-      const nextMeasure = cursor.nextMeasure as (() => void) | undefined;
-      const next = cursor.next as (() => void) | undefined;
-      const update = cursor.update as (() => void) | undefined;
-      let curMeasure = this.lastOsmdCursorMeasure;
-      let curBeat = this.lastOsmdCursorBeat;
-      if (posMs != null && this.lastSyncPositionMs != null && posMs < this.lastSyncPositionMs - 500) {
-        curMeasure = 999;
-        curBeat = 999;
-      }
-      if (posMs != null) this.lastSyncPositionMs = posMs;
-
-      if (curMeasure < 0 || targetMeasure < curMeasure || (targetMeasure === curMeasure && targetBeat < curBeat)) {
-        cursor.reset();
-        this.lastOsmdCursorMeasure = 1;
-        this.lastOsmdCursorBeat = 0;
-        for (let i = 1; i < targetMeasure; i++) {
-          if (nextMeasure) nextMeasure.call(cursor);
-          this.lastOsmdCursorMeasure = i + 1;
-        }
-        this.lastOsmdCursorMeasure = targetMeasure;
-        const maxNext = Math.min(targetBeat, 16);
-        for (let i = 0; i < maxNext && next; i++) {
-          next.call(cursor);
-          this.lastOsmdCursorBeat = i + 1;
-        }
-        this.lastOsmdCursorBeat = targetBeat;
-      } else if (targetMeasure > curMeasure) {
-        for (let i = curMeasure; i < targetMeasure; i++) {
-          if (nextMeasure) nextMeasure.call(cursor);
-          this.lastOsmdCursorMeasure = i + 1;
-        }
-        this.lastOsmdCursorMeasure = targetMeasure;
-        this.lastOsmdCursorBeat = 0;
-        const maxNext = Math.min(targetBeat, 16);
-        for (let i = 0; i < maxNext && next; i++) {
-          next.call(cursor);
-          this.lastOsmdCursorBeat = i + 1;
-        }
-        this.lastOsmdCursorBeat = targetBeat;
-      } else if (targetBeat > curBeat) {
-        const steps = Math.min(targetBeat - curBeat, 16);
-        for (let i = 0; i < steps && next; i++) {
-          next.call(cursor);
-          this.lastOsmdCursorBeat = curBeat + i + 1;
-        }
-        this.lastOsmdCursorBeat = targetBeat;
-      }
-
-      if (update) update.call(cursor);
-      this.scrollCursorIntoView();
+      const gMeasure = graphic.findGraphicalMeasure(measureIndex, 0) as Record<string, unknown> | null | undefined;
+      if (!gMeasure) return null;
+      const pos = (gMeasure['PositionAndShape'] ?? gMeasure['positionAndShape'] ?? gMeasure['boundingBox']) as {
+        AbsolutePosition?: { x: number; y: number };
+        absolutePosition?: { x: number; y: number };
+        Size?: { width: number; height: number };
+        size?: { width: number; height: number };
+      } | undefined;
+      if (!pos) return null;
+      const ap = pos.AbsolutePosition ?? pos.absolutePosition;
+      const sz = pos.Size ?? pos.size;
+      const ax = ap?.x ?? 0;
+      const ay = ap?.y ?? 0;
+      const w = sz?.width ?? 0;
+      const h = sz?.height ?? 0;
+      const bounds = { xStart: ax, xEnd: ax + w, yTop: ay, yBottom: ay + h };
+      this.measureBoundsCache[measureIndex] = bounds;
+      return bounds;
     } catch {
-      this.lastOsmdCursorMeasure = -1;
-      this.lastOsmdCursorBeat = -1;
+      return null;
     }
+  }
+
+  /** Calcula posição x do cursor (px). Usa bounds do OSMD se disponível; senão estima por medida. */
+  private getCursorXFromPosition(): number | null {
+    const pos = this.getCurrentMeasureAndBeat();
+    if (!pos) return null;
+    const container = this.scoreContainerRef?.nativeElement;
+    if (!container) return null;
+    const player = this.player as any;
+    const timemap = player?._options?.converter?.timemap;
+    const numMeasures = Math.max(1, Array.isArray(timemap) ? timemap.length : 1);
+    const measureIndex = pos.measure - 1;
+    const fraction = Math.max(0, Math.min(1, pos.fractionInMeasure));
+    const bounds = this.getMeasureBoundsFromOsmd(measureIndex);
+    if (bounds && (bounds.xEnd - bounds.xStart) > 0) {
+      const xOsmd = bounds.xStart + fraction * (bounds.xEnd - bounds.xStart);
+      const lastBounds = numMeasures > 0 ? this.getMeasureBoundsFromOsmd(numMeasures - 1) : null;
+      const totalWidthOsmd = lastBounds ? lastBounds.xEnd : bounds.xEnd;
+      if (totalWidthOsmd > 0) {
+        const scale = container.scrollWidth / totalWidthOsmd;
+        return xOsmd * scale;
+      }
+    }
+    const progress = (measureIndex + fraction) / numMeasures;
+    return progress * container.scrollWidth;
+  }
+
+  /** Cria overlay e linha do cursor de playback quando a partitura está renderizada. */
+  private ensurePlaybackCursorOverlay() {
+    const container = this.scoreContainerRef?.nativeElement;
+    if (!container || this.playbackCursorOverlayEl) return;
+    const overlay = document.createElement('div');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.className = 'study-playback-cursor-overlay';
+    overlay.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:5;';
+    const line = document.createElement('div');
+    line.className = 'study-playback-cursor-line';
+    line.style.cssText = 'position:absolute;top:0;bottom:0;left:0;width:2px;background:var(--mat-primary);opacity:0.6;border-radius:1px;';
+    overlay.appendChild(line);
+    container.appendChild(overlay);
+    this.playbackCursorOverlayEl = overlay;
+    this.playbackCursorLineEl = line;
+    this.updatePlaybackCursorOverlaySize();
+  }
+
+  private updatePlaybackCursorOverlaySize() {
+    const container = this.scoreContainerRef?.nativeElement;
+    const overlay = this.playbackCursorOverlayEl;
+    if (!container || !overlay) return;
+    const w = container.scrollWidth;
+    const h = container.scrollHeight;
+    overlay.style.width = w + 'px';
+    overlay.style.height = h + 'px';
+  }
+
+  private removePlaybackCursorOverlay() {
+    if (this.playbackCursorOverlayEl?.parentNode) {
+      this.playbackCursorOverlayEl.parentNode.removeChild(this.playbackCursorOverlayEl);
+    }
+    this.playbackCursorOverlayEl = null;
+    this.playbackCursorLineEl = null;
+  }
+
+  /** Atualiza a posição do cursor de playback (linha vertical) e faz auto-scroll. */
+  private syncPlaybackCursor() {
+    const pos = this.getCurrentMeasureAndBeat();
+    if (pos) {
+      this.lastCursorMeasure = pos.measure;
+      this.lastCursorBeat = pos.beatInMeasure;
+    }
+    let x = this.getCursorXFromPosition();
+    const line = this.playbackCursorLineEl;
+    const overlay = this.playbackCursorOverlayEl;
+    if (!line || !overlay) return;
+    if (x == null || Number.isNaN(x)) x = 0;
+    line.style.left = x + 'px';
+    line.style.display = '';
+    this.updatePlaybackCursorOverlaySize();
+    this.scrollCursorIntoView();
   }
 
   private lastScrollIntoViewTime = 0;
   private readonly scrollIntoViewThrottleMs = 150;
 
-  /** Faz scroll suave para manter o cursor visível no centro da área da partitura. */
+  /** Faz scroll suave para manter o cursor de playback visível no centro da área da partitura. */
   private scrollCursorIntoView() {
     const container = this.scoreContainerRef?.nativeElement;
-    if (!container || !this.osmd?.cursor) return;
-    const cursorEl = (this.osmd.cursor as { cursorElement?: HTMLElement }).cursorElement ?? container.querySelector('.cursor, .cursor-bar, .osmd-cursor') as HTMLElement | null;
-    if (!cursorEl) return;
+    const cursorEl = this.playbackCursorLineEl;
+    if (!container || !cursorEl || cursorEl.style.display === 'none') return;
     const now = Date.now();
     if (now - this.lastScrollIntoViewTime < this.scrollIntoViewThrottleMs) return;
     this.lastScrollIntoViewTime = now;
@@ -1090,13 +1164,10 @@ export class StudyFacadeService {
 
   private startCursorSync() {
     if (this.cursorSyncTimer) return;
-    this.lastOsmdCursorMeasure = -1;
-    this.lastOsmdCursorBeat = -1;
-    this.cursorSyncTimer = window.setInterval(() => this.syncOsmdCursorToPlayer(), 30);
+    this.cursorSyncTimer = window.setInterval(() => this.syncPlaybackCursor(), 30);
   }
 
   private stopCursorSync() {
-    this.lastSyncPositionMs = null;
     if (this.cursorSyncTimer) {
       window.clearInterval(this.cursorSyncTimer);
       this.cursorSyncTimer = null;
