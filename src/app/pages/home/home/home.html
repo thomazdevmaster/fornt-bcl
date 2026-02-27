@@ -42,6 +42,20 @@
     </div>
   </section>
 
+  <!-- Momentos (galeria com as 4 imagens) -->
+  <section class="gallery-section" aria-labelledby="gallery-heading">
+    <h2 id="gallery-heading" class="section-title">Momentos</h2>
+    <p class="gallery-intro">Alguns registros da nossa história e das nossas apresentações.</p>
+    <div class="gallery-grid">
+      @for (item of galleryImages; track item.src) {
+        <div class="gallery-item">
+          <img [src]="item.src" [alt]="item.alt" class="gallery-img" loading="lazy" />
+          <div class="gallery-caption">{{ item.alt }}</div>
+        </div>
+      }
+    </div>
+  </section>
+
   <!-- Nossa História -->
   <section class="history-section" aria-labelledby="history-heading">
     <h2 id="history-heading" class="section-title">Nossa História</h2>
@@ -74,6 +88,30 @@
         </a>
       </div>
     </div>
+  </section>
+
+  <!-- Vídeos do canal YouTube -->
+  <section class="videos-section" aria-labelledby="videos-heading">
+    <h2 id="videos-heading" class="section-title">Vídeos</h2>
+    <p class="videos-intro">Confira algumas gravações do nosso canal no YouTube.</p>
+    <div class="videos-grid">
+      @for (videoId of displayedVideos; track videoId) {
+        <div class="video-wrapper">
+          <iframe
+            [src]="embedUrl(videoId)"
+            title="Vídeo do canal Banda Carmelitana Luminarense"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            loading="lazy"
+            class="video-iframe"
+          ></iframe>
+        </div>
+      }
+    </div>
+    <a mat-stroked-button [href]="youtubeChannelUrl" target="_blank" rel="noopener noreferrer" class="videos-link" aria-label="Abrir canal no YouTube">
+      <mat-icon>play_circle</mat-icon>
+      Ver mais no YouTube
+    </a>
   </section>
 
   <!-- Notícias -->
@@ -123,11 +161,15 @@
         <mat-icon>public</mat-icon>
         Visite Luminárias
       </a>
-      <a mat-stroked-button href="https://www.facebook.com/visiteluminarias" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Facebook">
+      <a mat-stroked-button href="https://www.facebook.com/bandacarmelitanalms" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Facebook">
         <mat-icon>facebook</mat-icon>
         Facebook
       </a>
-      <a mat-stroked-button href="https://www.youtube.com/@visiteluminarias" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="YouTube">
+      <a mat-stroked-button href="https://www.instagram.com/p/DReeO_3lhuP/" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Istagram">
+        <mat-icon>instagram</mat-icon>
+        instagram
+      </a>
+      <a mat-stroked-button href="https://www.youtube.com/@bandacarmelitanaluminarens4347" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="YouTube">
         <mat-icon>play_circle</mat-icon>
         YouTube
       </a>
