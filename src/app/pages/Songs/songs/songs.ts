@@ -5,6 +5,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AppMaterialModule } from '../../../shared/app-material/app-material-module';
 import { SharedTableComponent } from '../../../shared/components/table/table';
+import { PageContainerComponent } from '../../../shared/components/page-container/page-container';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
+import { MusicLoaderComponent } from '../../../shared/components/music-loader/music-loader';
 import { DialogsService } from '../../../shared/services/dialogs.service';
 import { BaseCrudListComponent } from '../../../shared/base-classes/base-crud-list.component';
 import { ICrudListConfig } from '../../../shared/interfaces/icrud-config';
@@ -27,7 +30,16 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-songs',
   standalone: true,
-  imports: [CommonModule, AppMaterialModule, SharedTableComponent, ReactiveFormsModule, MatTooltipModule],
+  imports: [
+    CommonModule,
+    AppMaterialModule,
+    SharedTableComponent,
+    ReactiveFormsModule,
+    MatTooltipModule,
+    PageContainerComponent,
+    PageHeaderComponent,
+    MusicLoaderComponent,
+  ],
   templateUrl: './songs.html',
   styleUrl: './songs.scss',
 })

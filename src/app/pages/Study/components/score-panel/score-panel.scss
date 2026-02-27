@@ -51,6 +51,17 @@
     font-size: 0.875rem;
     color: var(--mat-on-surface-variant);
     flex-shrink: 0;
+
+    app-music-loader {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+
+      .loading-text {
+        margin-top: 0;
+      }
+    }
   }
 }
 

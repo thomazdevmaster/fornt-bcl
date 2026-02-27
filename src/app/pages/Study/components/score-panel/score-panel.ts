@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { AppMaterialModule } from '../../../../shared/app-material/app-material-module';
-import { MusicLoaderComponent } from '../music-loader/music-loader';
+import { MusicLoaderComponent } from '../../../../shared/components/music-loader/music-loader';
 import { StudyScorePanelState } from '../../study/study.models';
 
 @Component({

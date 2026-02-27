@@ -1,34 +1,34 @@
-@if (filteredData$ | async; as data) {
+<app-page-container>
+  <app-page-header [title]="config.title" subtitle="Repertório e partituras"></app-page-header>
 
-<div class="filter-header">
-  <span>Filtrar naipes:</span>
-  @for (name of allInstruments; track name) {
-  @let meta = getInstrumentMetadata(name);
-  <button mat-icon-button [class.filter-active]="selectedInstruments.includes(name)"
-    (click)="toggleInstrumentFilter(name)" [matTooltip]="name">
-    <img [src]="meta.path" class="filter-img">
-  </button>
+  @if (filteredData$ | async; as data) {
+    <div class="filter-header">
+      <span>Filtrar naipes:</span>
+      @for (name of allInstruments; track name) {
+        @let meta = getInstrumentMetadata(name);
+        <button mat-icon-button [class.filter-active]="selectedInstruments.includes(name)"
+          (click)="toggleInstrumentFilter(name)" [matTooltip]="name" [attr.aria-label]="'Filtrar por ' + name">
+          <img [src]="meta.path" class="filter-img" alt="">
+        </button>
+      }
+      @if (selectedInstruments.length > 0) {
+        <button mat-button color="warn" (click)="clearFilters()">
+          Limpar Filtros ({{ selectedInstruments.length }})
+        </button>
+      }
+    </div>
+
+    <app-shared-table [data]="(filteredSongs$ | async) || []" [columnsConfig]="config.columns" [tableTitle]="config.title"
+      [templates]="{ partsIcons: partsIcons, actions: actionsTmpl }"
+      [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao buscar músicas.' : 'Nenhuma música cadastrada.'"
+      [canAdd]="true" [searchPlaceholder]="'Buscar por músicas, responsáveis, email ou telefone'"
+      (add)="onAdd()"></app-shared-table>
+  } @else {
+    <div class="loading-spinner">
+      <app-music-loader text="Carregando músicas..." size="lg"></app-music-loader>
+    </div>
   }
-
-  @if (selectedInstruments.length > 0) {
-  <button mat-button color="warn" (click)="clearFilters()">
-    Limpar Filtros ({{ selectedInstruments.length }})
-  </button>
-  }
-</div>
-
-<app-shared-table [data]="(filteredSongs$ | async) || []" [columnsConfig]="config.columns" [tableTitle]="config.title"
-  [templates]="{ partsIcons: partsIcons, actions: actionsTmpl }"
-  [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao buscar músicas.' : 'Nenhum apresentação cadastrado.'"
-  [canAdd]="true" [searchPlaceholder]="'Buscar por músicas, responsáveis, email ou telefone'"
-  (add)="onAdd()"></app-shared-table>
-
-} @else {
-<div class="loading-spinner">
-  <mat-spinner strokeWidth="3" diameter="50"></mat-spinner>
-  <p>Carregando espetáculos...</p>
-</div>
-}
+</app-page-container>
 
 <ng-template #partsIcons let-element>
   <div class="instrument-grid-container">

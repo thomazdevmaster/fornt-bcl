@@ -11,5 +11,5 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class MusicLoaderComponent {
   @Input() text: string | null = null;
-  @Input() size: 'lg' | 'md' = 'md';
+  @Input() size: 'sm' | 'md' | 'lg' = 'md';
 }

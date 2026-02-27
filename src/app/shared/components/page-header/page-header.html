@@ -1,0 +1,15 @@
+<header class="page-header" role="banner">
+  @if (showBack) {
+    <a mat-button [routerLink]="backRoute" class="back-link" [attr.aria-label]="backLabel">
+      <mat-icon>arrow_back</mat-icon>
+      <span>{{ backLabel }}</span>
+    </a>
+  }
+  <div class="page-header-text">
+    <h1 class="page-title">{{ title }}</h1>
+    @if (subtitle) {
+      <p class="page-subtitle">{{ subtitle }}</p>
+    }
+  </div>
+  <ng-content></ng-content>
+</header>

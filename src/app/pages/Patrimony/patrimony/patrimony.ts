@@ -4,6 +4,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppMaterialModule } from '../../../shared/app-material/app-material-module';
 import { SharedTableComponent } from '../../../shared/components/table/table';
+import { MusicLoaderComponent } from '../../../shared/components/music-loader/music-loader';
 import { DialogsService } from '../../../shared/services/dialogs.service';
 import { BaseCrudListComponent } from '../../../shared/base-classes/base-crud-list.component';
 import { ICrudListConfig } from '../../../shared/interfaces/icrud-config';
@@ -21,7 +22,7 @@ import { PatrimonyService } from '../services/patrimony.service';
 @Component({
   selector: 'app-patrimonys',
   standalone: true,
-  imports: [CommonModule, AppMaterialModule, SharedTableComponent, MatSnackBarModule],
+  imports: [CommonModule, AppMaterialModule, SharedTableComponent, MatSnackBarModule, MusicLoaderComponent],
   templateUrl: './patrimony.html',
   styleUrl: './patrimony.scss',
 })

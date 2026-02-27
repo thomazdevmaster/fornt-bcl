@@ -19,8 +19,7 @@
     </div>
     <div class="status">
       @if (state.scoreLoading) {
-        <mat-spinner diameter="20"></mat-spinner>
-        <span>Carregando...</span>
+        <app-music-loader size="sm" text="Carregando..."></app-music-loader>
       }
       @if (!state.scoreLoading && state.error) {
         <span class="error-text">{{ state.error }}</span>

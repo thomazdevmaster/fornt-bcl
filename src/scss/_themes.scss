@@ -1,233 +1,197 @@
 /**
  * Sistema de Temas - Angular Material 20
- * ==========================================
- * Define variáveis de cores para light/dark mode
- * Segue as recomendações de Material Design 3
+ * Paleta Banda Carmelitana Luminarense (130 anos)
+ * Azul profundo + dourado + neutros
  */
 
 @use '@angular/material' as mat;
-@use 'sass:map';
+
 
 // ==========================================
-// 1) DEFINIÇÃO DAS PALETAS DE CORES
+// 2) TEMA CLARO – Azul real + dourado
 // ==========================================
-
-// Paletas fornecidas pelo Material
-$light-primary-palette: mat.$azure-palette;
-$light-tertiary-palette: mat.$blue-palette;
-
-$dark-primary-palette: mat.$magenta-palette;
-$dark-tertiary-palette: mat.$violet-palette;
-
-// ==========================================
-// 2) MIXINS PARA CORES POR TEMA
-// ==========================================
-
-/**
- * Aplica cores do tema claro
- */
 @mixin light-theme-colors {
-  // Cores de superfície
-  --mat-surface: #fafbfc;
-  --mat-surface-dim: #eef2f7;
+  // Superfícies (neutro quente, bege/creme leve)
+  --mat-surface: #faf8f5;
+  --mat-surface-dim: #f0ede8;
   --mat-surface-bright: #ffffff;
-  --mat-surface-container: #f5f7fa;
-  --mat-surface-container-low: #fafbfc;
-  --mat-surface-container-high: #eeeff2;
-  --mat-surface-container-highest: #e8e9ee;
+  --mat-surface-container: #f5f2ed;
+  --mat-surface-container-low: #faf8f5;
+  --mat-surface-container-high: #ebe8e3;
+  --mat-surface-container-highest: #e0dcd6;
 
-  // Cores de texto
-  --mat-on-surface: #1a1c1e;
-  --mat-on-surface-variant: #49454e;
+  // Texto
+  --mat-on-surface: #1a1a1a;
+  --mat-on-surface-variant: #4a4845;
 
-  // Cores primárias (Azure Light)
-  --mat-primary: #2187da;
+  // Primária: azul profundo (fundo da arte)
+  --mat-primary: #0d2d5c;
   --mat-on-primary: #ffffff;
-  --mat-primary-container: #56a8d7;
-  --mat-on-primary-container: #1f3050;
+  --mat-primary-container: #1e3a5f;
+  --mat-on-primary-container: #ffffff;
 
-  // Cores secundárias
-  --mat-secondary: #625b71;
-  --mat-on-secondary: #ffffff;
-  --mat-secondary-container: #eaddff;
-  --mat-on-secondary-container: #21005d;
+  // Secundária / Terciária: dourado (faixa 130 anos)
+  --mat-secondary: #b8860b;
+  --mat-on-secondary: #1a1a1a;
+  --mat-secondary-container: #e6c04c;
+  --mat-on-secondary-container: #2d2200;
 
-  // Cores de erro
+  // Terciária (acento dourado claro)
+  --mat-tertiary: #c9a227;
+  --mat-on-tertiary: #1a1a1a;
+
+  // Erro, sucesso, aviso, info
   --mat-error: #b3261e;
   --mat-on-error: #ffffff;
   --mat-error-container: #f9dedc;
   --mat-on-error-container: #410e0b;
-
-  // Cores de sucesso (verde)
   --mat-success: #1b5e20;
   --mat-on-success: #ffffff;
   --mat-success-container: #c8e6c9;
   --mat-on-success-container: #001d00;
-
-  // Cores de aviso (laranja)
-  --mat-warning: #f57c00;
-  --mat-on-warning: #ffffff;
-  --mat-warning-container: #ffe0b2;
-  --mat-on-warning-container: #331a00;
-
-  // Cores de informação (azul)
-  --mat-info: #0288d1;
+  --mat-warning: #d4a017;
+  --mat-on-warning: #1a1a1a;
+  --mat-warning-container: #f5e6c8;
+  --mat-on-warning-container: #2d2200;
+  --mat-info: #0d2d5c;
   --mat-on-info: #ffffff;
-  --mat-info-container: #b3e5fc;
-  --mat-on-info-container: #001e3c;
+  --mat-info-container: #c5d4e8;
+  --mat-on-info-container: #001d00;
 
-  // Outline (bordas)
+  // Outline
   --mat-outline: #79747e;
   --mat-outline-variant: #cac7d0;
 
-  // Cores de background personalizadas
-  --color-primary: #2187da;
+  // Componentes
+  --color-primary: #0d2d5c;
   --color-text-primary: #ffffff;
-  --color-background: #fafbfc;
+  --color-background: #faf8f5;
   --color-surface: #ffffff;
-  --color-border: #e0e0e0;
-
-  // Cores específicas para componentes
-  --header-background: #143c6b;
+  --color-border: #e0dcd6;
+  --header-background: linear-gradient(135deg, #0d2d5c 0%, #244c80 50%, #50f7ee 100%);
   --header-text: #ffffff;
   --card-background: #ffffff;
-  --card-text: #1a1c1e;
-  --table-header-background: #f5f7fa;
-  --table-header-text: #1a1c1e;
-  --table-row-background: #f3f4f8;
-  --table-row-text: #494849;
-  --table-row-hover: #f5f7fa;
-  --table-border: #e0e0e0;
+  --card-text: #1a1a1a;
+  --table-header-background: #1e3a5f;
+  --table-header-text: #ffffff;
+  --table-row-background: #faf8f5;
+  --table-row-text: #4a4845;
+  --table-row-hover: #f0ede8;
+  --table-border: #e0dcd6;
   --input-background: #ffffff;
   --input-border: #cac7d0;
-
-  --button-primary-background: #56a8d7;
-  --button-primary-color: #eee9f5;
-  --button-primary-hover-background: #2d5d70;
-  --button-disabled-background: rgba(184, 133, 217, 0.12);
-  --button-disabled-color: rgba(184, 133, 217, 0.38);
+  --button-primary-background: #1e3a5f;
+  --button-primary-color: #ffffff;
+  --button-primary-hover-background: #0d2d5c;
+  --button-disabled-background: rgba(13, 45, 92, 0.12);
+  --button-disabled-color: rgba(13, 45, 92, 0.38);
 }
 
-/**
- * Aplica cores do tema escuro
- */
+// ==========================================
+// 3) TEMA ESCURO – Azul + dourado sobre neutro escuro
+// ==========================================
 @mixin dark-theme-colors {
-  // Cores de superfície
-  --mat-surface: #181c20;
-  --mat-surface-dim: #11131c;
-  --mat-surface-bright: #36343b;
-  --mat-surface-container: #21232b;
-  --mat-surface-container-low: #21232b;
-  --mat-surface-container-high: #2b2d36;
-  --mat-surface-container-highest: #373940;
+  // Superfícies (neutro escuro, do logo)
+  --mat-surface: #121212;
+  --mat-surface-dim: #0e0e0e;
+  --mat-surface-bright: #2a2a2a;
+  --mat-surface-container: #1a1a1a;
+  --mat-surface-container-low: #1e1e1e;
+  --mat-surface-container-high: #252525;
+  --mat-surface-container-highest: #2e2e2e;
 
-  // Cores de texto
-  --mat-on-surface: #f8f8f8;
+  // Texto
+  --mat-on-surface: #f5f5f5;
   --mat-on-surface-variant: #cac7d0;
 
-  // Cores primárias (Magenta Dark)
-  --mat-primary: #859bd9;
-  --mat-on-primary: #52337a;
-  --mat-primary-container: #502074;
-  --mat-on-primary-container: #e6d9f6;
+  // Primária: azul mais claro para contraste
+  --mat-primary: #6b9bd1;
+  --mat-on-primary: #0d2d5c;
+  --mat-primary-container: #1e3a5f;
+  --mat-on-primary-container: #e8eef5;
 
-  // Cores secundárias
-  --mat-secondary: #cfc2db;
-  --mat-on-secondary: #332d41;
-  --mat-secondary-container: #4a4458;
-  --mat-on-secondary-container: #e8def8;
+  // Secundária: dourado
+  --mat-secondary: #e6c04c;
+  --mat-on-secondary: #2d2200;
+  --mat-secondary-container: #b8860b;
+  --mat-on-secondary-container: #f5e6c8;
 
-  // Cores de erro
+  --mat-tertiary: #e6c04c;
+  --mat-on-tertiary: #2d2200;
+
+  // Erro, sucesso, aviso, info
   --mat-error: #f2b8b5;
   --mat-on-error: #601410;
   --mat-error-container: #8c1d18;
   --mat-on-error-container: #f9dedc;
-
-  // Cores de sucesso (verde)
   --mat-success: #a5d6a7;
   --mat-on-success: #003d00;
   --mat-success-container: #1b5e20;
   --mat-on-success-container: #c8e6c9;
+  --mat-warning: #e6c04c;
+  --mat-on-warning: #2d2200;
+  --mat-warning-container: #8b6914;
+  --mat-on-warning-container: #f5e6c8;
+  --mat-info: #6b9bd1;
+  --mat-on-info: #001d00;
+  --mat-info-container: #0d2d5c;
+  --mat-on-info-container: #c5d4e8;
 
-  // Cores de aviso (laranja)
-  --mat-warning: #ffb74d;
-  --mat-on-warning: #331a00;
-  --mat-warning-container: #cc6600;
-  --mat-on-warning-container: #ffe0b2;
-
-  // Cores de informação (azul)
-  --mat-info: #4fc3f7;
-  --mat-on-info: #00344e;
-  --mat-info-container: #004a77;
-  --mat-on-info-container: #b3e5fc;
-
-  // Outline (bordas)
+  // Outline
   --mat-outline: #938f99;
   --mat-outline-variant: #49454e;
 
-  // Cores de background personalizadas
-  --color-primary: #55566b;
-  --color-text-primary: #ffffff;
-  --color-background: #1a1c1e;
-  --color-surface: #21232b;
-  --color-border: #49454e;
-
-  // Cores específicas para componentes
-  --header-background: #1e3a5f;
+  // Componentes
+  --color-primary: #6b9bd1;
+  --color-text-primary: #f5f5f5;
+  --color-background: #121212;
+  --color-surface: #1a1a1a;
+  --color-border: #3a3a3a;
+  --header-background: linear-gradient(135deg, #0d2d5c 0%, #244c80 50%, #50f7ee 100%);
   --header-text: #ffffff;
-  --card-background: #21232b;
-  --card-text: #e6e1e6;
-  --table-header-background: #2b2d36;
-  --table-row-background: #94969c;
-  --table-header-text: #e6e1e6;
-  --table-row-text: #bdb9bd;
-  --table-row-hover: #2b2d36;
-  --table-border: #49454e;
-  --input-background: #21232b;
+  --card-background: #1a1a1a;
+  --card-text: #e6e6e6;
+  --table-header-background: #1e3a5f;
+  --table-header-text: #ffffff;
+  --table-row-background: #1e1e1e;
+  --table-row-text: #cac7d0;
+  --table-row-hover: #252525;
+  --table-border: #3a3a3a;
+  --input-background: #1a1a1a;
   --input-border: #49454e;
-  --button-hover-background: rgba(184, 133, 217, 0.12);
-  --button-disabled-background: rgba(184, 133, 217, 0.12);
-  --button-disabled-color: rgba(184, 133, 217, 0.38);
-
-  // buttons
-  --button-primary-background: #a278c7;
-  --button-primary-color: #eee9f5;
-  --button-primary-hover-background: #7c5a9e;
+  --button-primary-background: #1e3a5f;
+  --button-primary-color: #ffffff;
+  --button-primary-hover-background: #2d4a7a;
+  --button-disabled-background: rgba(107, 155, 209, 0.12);
+  --button-disabled-color: rgba(107, 155, 209, 0.38);
 }
 
-/**
- * Aplica gradiente do tema claro
- */
+// ==========================================
+// 4) GRADIENTES
+// ==========================================
 @mixin light-theme-gradients {
-  --gradient-primary-secondary: linear-gradient(135deg, #2187da, #1e88e5);
+  --gradient-primary-secondary: linear-gradient(135deg, #0d2d5c, #1e3a5f);
   --gradient-success: linear-gradient(135deg, #1b5e20, #2e7d32);
-  --gradient-warning: linear-gradient(135deg, #f57c00, #e65100);
+  --gradient-warning: linear-gradient(135deg, #d4a017, #b8860b);
   --gradient-error: linear-gradient(135deg, #b3261e, #d32f2f);
-  --gradient-info: linear-gradient(135deg, #0288d1, #01579b);
-  --gradient-card: linear-gradient(135deg, #f5f7fa, #e8eef5);
-  --gradient-welcome: linear-gradient(135deg, #16a18f, #1565c0);
+  --gradient-info: linear-gradient(135deg, #0d2d5c, #1e3a5f);
+  --gradient-card: linear-gradient(135deg, #f5f2ed, #ebe8e3);
+  --gradient-welcome: linear-gradient(135deg, #0d2d5c 0%, #1e3a5f 50%, #50f7ee 100%);
 }
 
-/**
- * Aplica gradiente do tema escuro
- */
 @mixin dark-theme-gradients {
-  --gradient-primary-secondary: linear-gradient(135deg, #b885d9, #9c6db5);
-  --gradient-success: linear-gradient(135deg, #072474, #3988bd);
-  --gradient-warning: linear-gradient(135deg, #ffb74d, #ffa726);
+  --gradient-primary-secondary: linear-gradient(135deg, #1e3a5f, #2d4a7a);
+  --gradient-success: linear-gradient(135deg, #1b5e20, #2e7d32);
+  --gradient-warning: linear-gradient(135deg, #e6c04c, #b8860b);
   --gradient-error: linear-gradient(135deg, #f2b8b5, #ef5350);
-  --gradient-info: linear-gradient(135deg, #4fc3f7, #0288d1);
-  --gradient-card: linear-gradient(135deg, #2b2d36, #1a1c1e);
-  --gradient-welcome: linear-gradient(135deg, #1f1b5e, #533963);
+  --gradient-info: linear-gradient(135deg, #6b9bd1, #1e3a5f);
+  --gradient-card: linear-gradient(135deg, #1a1a1a, #252525);
+  --gradient-welcome: linear-gradient(135deg, #0d2d5c 0%, #1e3a5f 50%, #50f7ee 100%);
 }
 
 // ==========================================
-// 3) APLICAR TEMAS NO ROOT
+// 5) APLICAR TEMAS NO ROOT
 // ==========================================
-
-/**
- * Tema Light (padrão)
- */
 html,
 html.light {
   @include light-theme-colors;
@@ -236,17 +200,12 @@ html.light {
   @include mat.theme((
     color: (
       theme-type: light,
-      primary: $light-primary-palette,
-      tertiary: $light-tertiary-palette,
     ),
     typography: Roboto,
     density: 0,
   ));
 }
 
-/**
- * Tema Dark
- */
 html.dark {
   @include dark-theme-colors;
   @include dark-theme-gradients;
@@ -254,18 +213,13 @@ html.dark {
   @include mat.theme((
     color: (
       theme-type: dark,
-      primary: $dark-primary-palette,
-      tertiary: $dark-tertiary-palette,
     ),
     typography: Roboto,
     density: 0,
   ));
 }
 
-// ==========================================
-// 4) PREFERÊNCIA DE SISTEMA (FALLBACK)
-// ==========================================
-
+// Preferência do sistema
 @media (prefers-color-scheme: dark) {
   html:not(.light):not(.dark) {
     @include dark-theme-colors;
@@ -274,8 +228,6 @@ html.dark {
     @include mat.theme((
       color: (
         theme-type: dark,
-        primary: $dark-primary-palette,
-        tertiary: $dark-tertiary-palette,
       ),
       typography: Roboto,
       density: 0,

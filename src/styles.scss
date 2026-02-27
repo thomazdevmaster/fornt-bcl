@@ -6,6 +6,7 @@
 
 @use '@angular/material' as mat;
 @use './scss/themes' as *;
+@use './scss/design-tokens-v2' as *;
 @use './scss/musical-background' as *;
 
 /* -------------------------------------------------------
@@ -87,6 +88,7 @@ body.study-mobile-fullscreen-active {
     min-height: 100dvh !important;
   }
   .app-container,
+  .app-shell-container,
   .mat-sidenav-container,
   mat-sidenav-container.mat-drawer-container {
     height: 100% !important;
@@ -94,12 +96,15 @@ body.study-mobile-fullscreen-active {
     min-height: -webkit-fill-available !important;
   }
   .mat-sidenav-content,
-  .mat-drawer-content {
+  .mat-drawer-content,
+  .app-shell-content,
+  .app-shell-main {
     height: 100% !important;
     min-height: 100dvh !important;
     min-height: -webkit-fill-available !important;
   }
-  .container {
+  .container,
+  .page-container {
     height: 100% !important;
     min-height: 100dvh !important;
     min-height: -webkit-fill-available !important;

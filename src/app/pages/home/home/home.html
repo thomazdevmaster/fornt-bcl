@@ -1,26 +1,136 @@
-<mat-card class="welcome-card">
-  <mat-card-header>
-    <mat-card-title>🎶 Bem-vindo ao portal da Banda Carmelitana Luminarense 🎶</mat-card-title>
-    <mat-card-subtitle>Escola Luminarense de música</mat-card-subtitle>
-  </mat-card-header>
-</mat-card>
-
-<!-- Notícias -->
-<div class="news-section">
-  <h2>Notícias</h2>
-  <div class="news-list">
-    <mat-card class="news-card" *ngFor="let n of news">
-      <mat-card-header>
-        <mat-card-title>{{ n.title }}</mat-card-title>
-        <mat-card-subtitle>{{ n.date | date }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ n.summary }}</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary" >Ler mais</button>
-      </mat-card-actions>
-    </mat-card>
+<!-- Hero full-width -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-bg" [class.has-image]="heroImage">
+    @if (heroImage) {
+      <img class="hero-bg-img" [src]="heroImage" alt="" aria-hidden="true" />
+    }
+    <div class="hero-overlay"></div>
   </div>
-</div>
-<app-environment-config-example></app-environment-config-example>
+  <div class="hero-inner app-page-container">
+    <div class="hero-content">
+      <img src="assets/logo.png" alt="" class="hero-logo" width="120" height="120" />
+      <h1 id="hero-title" class="hero-title">Banda Carmelitana Luminarense</h1>
+      <p class="hero-subtitle">Desde 1894 · Cultura e patrimônio de Luminárias, MG</p>
+      <div class="hero-cta">
+        <a mat-flat-button color="primary" routerLink="/study" class="hero-btn">
+          <mat-icon>menu_book</mat-icon>
+          Partituras
+        </a>
+        <a mat-stroked-button routerLink="/songs" class="hero-btn hero-btn-outline">
+          <mat-icon>library_music</mat-icon>
+          Repertório
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-page-container>
+  <!-- Acesso rápido -->
+  <section class="quick-actions" aria-labelledby="quick-heading">
+    <h2 id="quick-heading" class="section-title">Acesso rápido</h2>
+    <div class="quick-grid">
+      @for (action of quickActions; track action.route) {
+        <a [routerLink]="action.route" class="quick-card" [attr.aria-label]="action.label">
+          <span class="quick-card-icon">
+            <mat-icon>{{ action.icon }}</mat-icon>
+          </span>
+          <span class="quick-card-label">{{ action.label }}</span>
+          <span class="quick-card-desc">{{ action.description }}</span>
+        </a>
+      }
+    </div>
+  </section>
+
+  <!-- Nossa História -->
+  <section class="history-section" aria-labelledby="history-heading">
+    <h2 id="history-heading" class="section-title">Nossa História</h2>
+    <div class="history-layout">
+      <div class="history-visual">
+        @if (historyImage) {
+          <img [src]="historyImage" alt="Banda Carmelitana Luminarense" class="history-img" />
+        } @else {
+          <div class="history-placeholder">
+            <img src="assets/logo.png" alt="" class="history-placeholder-logo" />
+            <span class="history-placeholder-text">130 anos</span>
+          </div>
+        }
+      </div>
+      <div class="history-content">
+        <div class="history-highlights">
+          @for (h of historyHighlights; track h.year) {
+            <div class="history-highlight">
+              <span class="history-year">{{ h.year }}</span>
+              <p class="history-highlight-text">{{ h.text }}</p>
+            </div>
+          }
+        </div>
+        <p class="history-full">
+          Em 1894, Américo Costa reuniu músicos solitários e formou uma pequena corporação. Em 1910 nasceu a <strong>Associação Carmelitana Luminarense</strong>. Como dizia o Maestro Sr. Nem: <em>“Quem canta ou toca reza duas vezes.”</em> Uma história que não pode ser esquecida, mas sim reconhecida como cultura e patrimônio do nosso povo.
+        </p>
+        <a mat-stroked-button color="primary" href="https://visiteluminarias.com.br/banda-carmelitana-luminarense/" target="_blank" rel="noopener noreferrer" class="history-link">
+          Conheça mais no Visite Luminárias
+          <mat-icon>open_in_new</mat-icon>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Notícias -->
+  <section class="news-section" aria-labelledby="news-heading">
+    <h2 id="news-heading" class="section-title">Notícias</h2>
+    <div class="news-list">
+      @for (n of news; track n.title) {
+        <mat-card class="news-card">
+          <div class="news-card-visual">
+            <mat-icon class="news-card-icon">article</mat-icon>
+          </div>
+          <mat-card-header>
+            <mat-card-title>{{ n.title }}</mat-card-title>
+            <mat-card-subtitle>{{ n.date | date : 'dd/MM/yyyy' }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ n.summary }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-button color="primary">Ler mais</button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  </section>
+
+  <!-- Sobre -->
+  <section class="about-section" aria-labelledby="about-heading">
+    <h2 id="about-heading" class="section-title">Sobre o portal</h2>
+    <p class="about-intro">
+      Este portal reúne repertório, partituras, estudos e o cadastro de alunos e músicos da Banda Carmelitana Luminarense, facilitando o acesso ao material de estudo e à gestão da escola de música.
+    </p>
+    <mat-expansion-panel class="about-tech-panel" [expanded]="false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Informações técnicas do ambiente</mat-panel-title>
+        <mat-panel-description>Configuração e recursos do sistema</mat-panel-description>
+      </mat-expansion-panel-header>
+      <app-environment-config-example></app-environment-config-example>
+    </mat-expansion-panel>
+  </section>
+
+  <!-- Redes -->
+  <section class="links-section" aria-labelledby="links-heading">
+    <h2 id="links-heading" class="section-title">Siga e conheça</h2>
+    <div class="links-grid">
+      <a mat-stroked-button href="https://visiteluminarias.com.br/" target="_blank" rel="noopener noreferrer" class="link-button">
+        <mat-icon>public</mat-icon>
+        Visite Luminárias
+      </a>
+      <a mat-stroked-button href="https://www.facebook.com/visiteluminarias" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Facebook">
+        <mat-icon>facebook</mat-icon>
+        Facebook
+      </a>
+      <a mat-stroked-button href="https://www.youtube.com/@visiteluminarias" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="YouTube">
+        <mat-icon>play_circle</mat-icon>
+        YouTube
+      </a>
+    </div>
+  </section>
+</app-page-container>

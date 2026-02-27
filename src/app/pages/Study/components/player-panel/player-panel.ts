@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppMaterialModule } from '../../../../shared/app-material/app-material-module';
-import { MusicLoaderComponent } from '../music-loader/music-loader';
+import { MusicLoaderComponent } from '../../../../shared/components/music-loader/music-loader';
 import { StudyPlayerPanelState } from '../../study/study.models';
 
 @Component({

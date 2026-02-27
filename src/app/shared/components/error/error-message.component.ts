@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppMaterialModule } from '../../app-material/app-material-module';
+import { MusicLoaderComponent } from '../music-loader/music-loader';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -173,12 +174,11 @@ export class ValidationErrorsComponent {
 @Component({
   selector: 'app-loading-overlay',
   standalone: true,
-  imports: [CommonModule, AppMaterialModule],
+  imports: [CommonModule, AppMaterialModule, MusicLoaderComponent],
   template: `
     <div *ngIf="isLoading" class="loading-overlay">
       <div class="loading-container">
-        <mat-spinner [diameter]="50"></mat-spinner>
-        <p *ngIf="message">{{ message }}</p>
+        <app-music-loader [text]="message" size="lg"></app-music-loader>
       </div>
     </div>
   `,

@@ -1,17 +1,18 @@
-@if (data$ | async; as data) {
+<app-page-container>
+  <app-page-header [title]="config.title"></app-page-header>
 
-<app-shared-table [data]="data" [columnsConfig]="config.columns" [tableTitle]="config.title"
-  [templates]="{ name: nameTmpl, actions: actionsTmpl }"
-  [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao buscar alunos.' : 'Nenhum aluno cadastrado.'" [canAdd]="true"
-  [searchPlaceholder]="'Buscar por alunos, responsáveis, email ou telefone'"
-  (add)="onAdd()"></app-shared-table>
-
-} @else {
-<div class="loading-spinner">
-  <mat-spinner strokeWidth="3" diameter="50"></mat-spinner>
-  <p>Carregando promessas...</p>
-</div>
-}
+  @if (data$ | async; as data) {
+    <app-shared-table [data]="data" [columnsConfig]="config.columns" [tableTitle]="config.title"
+      [templates]="{ name: nameTmpl, actions: actionsTmpl }"
+      [emptyMessage]="hasError ? 'Ops! Ocorreu um erro ao buscar alunos.' : 'Nenhum aluno cadastrado.'" [canAdd]="true"
+      [searchPlaceholder]="'Buscar por alunos, responsáveis, email ou telefone'"
+      (add)="onAdd()"></app-shared-table>
+  } @else {
+    <div class="loading-spinner">
+      <app-music-loader text="Carregando alunos..." size="lg"></app-music-loader>
+    </div>
+  }
+</app-page-container>
 
 <ng-template #nameTmpl let-element>
   {{ element.firstName }} {{ element.lastName }}

@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GalleryService } from '../services/gallery.service';
 import { AppMaterialModule } from '../../../shared/app-material/app-material-module';
+import { MusicLoaderComponent } from '../../../shared/components/music-loader/music-loader';
 import { AlbumPageComponent } from '../AlbumPage/album-page'; // Seu componente de detalhes
 import { MatDialog } from '@angular/material/dialog';
 import { Gallery } from '../model/gallery';
@@ -9,7 +10,7 @@ import { Gallery } from '../model/gallery';
 @Component({
   selector: 'app-gallery-view',
   standalone: true,
-  imports: [CommonModule, AppMaterialModule],
+  imports: [CommonModule, AppMaterialModule, MusicLoaderComponent],
   templateUrl: './gallery-view.html',
   styleUrl: './gallery-view.scss'
 })
